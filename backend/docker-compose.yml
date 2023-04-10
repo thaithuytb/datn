@@ -1,16 +1,16 @@
 version: '3.8'
 services:
-  api:
-    container_name: datn_backend
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    command: yarn start:dev
-    ports:
-      - '${PORT}:${PORT}'
-    depends_on:
-      - db
+  # api:
+  #   container_name: datn_backend
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   restart: unless-stopped
+  #   command: yarn start:dev
+  #   ports:
+  #     - '${PORT}:${PORT}'
+  #   depends_on:
+  #     - db
   db:
     container_name: datn_database
     image: mysql:8.0.23

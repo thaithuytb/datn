@@ -10,10 +10,19 @@ import {
 } from '@nestjs/common';
 import { SampleService } from './sample.service';
 import { CreateSampleDto } from './dto/sample.dto';
+import { PublicMqttService } from '../../mqtt/publish';
 
 @Controller('sample')
 export class SampleController {
-  constructor(private readonly sampleService: SampleService) {}
+  constructor(
+    private readonly sampleService: SampleService,
+    private readonly mqttService: PublicMqttService,
+  ) {}
+
+  @Get('publish')
+  public publish(@Query('topic') topic: string): void {
+    this.mqttService.sendMessage(topic, (Math.random() * 100).toString());
+  }
 
   @Get()
   async getSamples(
