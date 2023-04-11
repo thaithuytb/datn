@@ -3,6 +3,7 @@ import * as mqtt from 'mqtt';
 const prisma = new PrismaClient();
 
 export function subcribeMqtt() {
+  //3.122.43.101:1883 is IP
   const client = mqtt.connect('mqtt://broker.hivemq.com:1883');
 
   client.on('connect', async function () {

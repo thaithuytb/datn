@@ -15,7 +15,7 @@ services:
     container_name: datn_database
     image: mysql:8.0.23
     platform: linux/x86_64
-    restart: always
+    # restart: always
     environment:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
