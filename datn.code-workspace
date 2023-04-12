@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "TempSensor"
+		},
+		{
+			"path": "backend"
+		},
+		{
+			"path": "web"
+		}
+	],
+	"settings": {}
+}
