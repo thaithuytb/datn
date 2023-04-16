@@ -1,26 +1,33 @@
 import { PrismaClient } from '@prisma/client';
 import * as mqtt from 'mqtt';
+import { newTopicJWT } from '../common/setJwtMqtt';
+import { uuid } from 'uuidv4';
+
 const prisma = new PrismaClient();
 
 export function subscribeMqtt() {
   //3.122.43.101:1883 is IP
-  const client = mqtt.connect('mqtt://broker.hivemq.com:1883');
+  const client = mqtt.connect(
+    process.env.MQTT_URL ?? 'mqtt://broker.hivemq.com:1883',
+  );
 
   client.on('connect', async function () {
     console.log('Connected to MQTT broker');
-    //topic datn/abc/temp...
-    //topic datn/thai/temp
-    client.subscribe(`datn/${process.env.SECRET_TOPIC}/#`);
+    let topic = uuid();
     setInterval(() => {
-      client.publish('datn/changePassword', 'jwt');
-      client.unsubscribe(`datn/${process.env.SECRET_TOPIC}/#`);
-      client.subscribe(`datn/thai/#`);
-    }, 600);
+      client.unsubscribe(`datn/${topic.slice(10)}/#`);
+      console.log('unsubscribe topic: ', `datn/${topic.slice(10)}`);
+      topic = uuid();
+      client.publish('datn/changePassword', newTopicJWT(topic));
+      console.log('jwt', newTopicJWT(topic));
+      client.subscribe(`datn/${topic.slice(10)}/#`);
+      console.log('subscribe topic: ', `datn/${topic.slice(10)}`);
+    }, 60000 * 10); //10m //interval only has 32 bit
   });
 
   client.on('message', async function (topic, message) {
     //check topic here
-    switch (topic.slice(process.env.SECRET_TOPIC.length + 5)) {
+    switch (topic.slice(16)) {
       case '/sample': {
         await prisma.sample.create({
           data: {
@@ -28,6 +35,40 @@ export function subscribeMqtt() {
             status: false,
           },
         });
+        break;
+      }
+      case '/sensor': {
+        const data = JSON.parse(message as unknown as string);
+        //TODO: need refactor
+        if (data['sensorName'] === 'temp_air') {
+          await prisma.tempAir.create({
+            data: {
+              temp: data['temp'],
+              tempThreshold: 30, //TODO: change after having spec
+              airHumidity: data['airHumidity'],
+              airHumidityThreshold: 80, //TODO: change after having spec
+              ip: data['ip'],
+            },
+          });
+        } else if (data['sensorName'] === 'light') {
+          await prisma.light.create({
+            data: {
+              value: data['value'],
+              threshold: 8500, //TODO: change after having spec
+              ip: data['ip'],
+            },
+          });
+        } else if (data['sensorName'] === 'humi') {
+          await prisma.light.create({
+            data: {
+              value: data['value'],
+              threshold: 8500, //TODO: change after having spec
+              ip: data['ip'],
+            },
+          });
+        } else {
+          break;
+        }
         break;
       }
       default:
