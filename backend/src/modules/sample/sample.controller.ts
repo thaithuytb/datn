@@ -21,7 +21,10 @@ export class SampleController {
 
   @Get('publish')
   public publish(@Query('topic') topic: string): void {
-    this.mqttService.sendMessage(topic, (Math.random() * 100).toString());
+    this.mqttService.sendMessage(
+      topic,
+      'thaidz' + (Math.random() * 100).toString(),
+    );
   }
 
   @Get()

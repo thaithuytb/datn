@@ -9,11 +9,97 @@ datasource db {
 }
 
 model Sample {
-  id     Int     @id @default(autoincrement())
-  name   String
-  status Boolean
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  id        Int      @id @default(autoincrement())
+  name      String
+  status    Boolean
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
 
   @@map("samples")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  name        String
+  phoneNumber String   @map("phone_number")
+  email       String   @unique
+  password    String
+  role        Role     @default(USER)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+
+  @@map("users")
+}
+
+model TempAir {
+  id                   Int      @id @default(autoincrement())
+  temp                 Float
+  tempThreshold        Float    @map("temp_threshold")
+  airHumidity          Float    @map("air_humidity")
+  airHumidityThreshold Float    @map("air_humidity_threshold")
+  ip                   String
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt            DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+
+  @@map("temp_airs")
+}
+
+model Humi {
+  id        Int      @id @default(autoincrement())
+  value     Float
+  threshold Float
+  ip        String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+
+  @@map("humis")
+}
+
+model Light {
+  id        Int      @id @default(autoincrement())
+  value     Float
+  threshold Float
+  ip        String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+
+  @@map("lights")
+}
+
+model Fan {
+  id        Int      @id @default(autoincrement())
+  value     Float?
+  status    Boolean
+  ip        String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+
+  @@map("fans")
+}
+
+model Pump {
+  id        Int      @id @default(autoincrement())
+  value     Float?
+  status    Boolean
+  ip        String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+
+  @@map("pumps")
+}
+
+model Nebulizer {
+  id        Int      @id @default(autoincrement())
+  value     Float?
+  status    Boolean
+  ip        String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+
+  @@map("nebulizers")
+}
+
+enum Role {
+  USER
+  ADMIN
 }

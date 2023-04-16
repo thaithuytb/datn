@@ -2,14 +2,20 @@ import { PrismaClient } from '@prisma/client';
 import * as mqtt from 'mqtt';
 const prisma = new PrismaClient();
 
-export function subcribeMqtt() {
+export function subscribeMqtt() {
   //3.122.43.101:1883 is IP
   const client = mqtt.connect('mqtt://broker.hivemq.com:1883');
 
   client.on('connect', async function () {
     console.log('Connected to MQTT broker');
-    //topic datn/testabc/...
+    //topic datn/abc/temp...
+    //topic datn/thai/temp
     client.subscribe(`datn/${process.env.SECRET_TOPIC}/#`);
+    setInterval(() => {
+      client.publish('datn/changePassword', 'jwt');
+      client.unsubscribe(`datn/${process.env.SECRET_TOPIC}/#`);
+      client.subscribe(`datn/thai/#`);
+    }, 600);
   });
 
   client.on('message', async function (topic, message) {
