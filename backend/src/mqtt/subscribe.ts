@@ -44,9 +44,9 @@ export function subscribeMqtt() {
           await prisma.tempAir.create({
             data: {
               temp: data['temp'],
-              tempThreshold: 30, //TODO: change after having spec
+              tempThreshold: data['tempThreshold'], //TODO: change after having spec
               airHumidity: data['airHumidity'],
-              airHumidityThreshold: 80, //TODO: change after having spec
+              airHumidityThreshold: data['airHumidityThreshold'], //TODO: change after having spec
               ip: data['ip'],
             },
           });
@@ -54,7 +54,7 @@ export function subscribeMqtt() {
           await prisma.light.create({
             data: {
               value: data['value'],
-              threshold: 8500, //TODO: change after having spec
+              threshold: data['threshold'], //TODO: change after having spec
               ip: data['ip'],
             },
           });
@@ -62,7 +62,7 @@ export function subscribeMqtt() {
           await prisma.light.create({
             data: {
               value: data['value'],
-              threshold: 8500, //TODO: change after having spec
+              threshold: data['threshold'], //TODO: change after having spec
               ip: data['ip'],
             },
           });

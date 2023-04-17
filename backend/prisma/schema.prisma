@@ -34,9 +34,9 @@ model User {
 model TempAir {
   id                   Int      @id @default(autoincrement())
   temp                 Float
-  tempThreshold        Float    @map("temp_threshold")
+  tempThreshold        Float?   @map("temp_threshold")
   airHumidity          Float    @map("air_humidity")
-  airHumidityThreshold Float    @map("air_humidity_threshold")
+  airHumidityThreshold Float?   @map("air_humidity_threshold")
   ip                   String
   createdAt            DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt            DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
@@ -47,7 +47,7 @@ model TempAir {
 model Humi {
   id        Int      @id @default(autoincrement())
   value     Float
-  threshold Float
+  threshold Float?
   ip        String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
@@ -58,7 +58,7 @@ model Humi {
 model Light {
   id        Int      @id @default(autoincrement())
   value     Float
-  threshold Float
+  threshold Float?
   ip        String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
