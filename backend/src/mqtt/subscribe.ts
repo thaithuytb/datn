@@ -2,10 +2,16 @@ import { PrismaClient } from '@prisma/client';
 import * as mqtt from 'mqtt';
 import { newTopicJWT } from '../common/setJwtMqtt';
 import { uuid } from 'uuidv4';
+import { Redis } from 'ioredis';
 
 const prisma = new PrismaClient();
 
-export function subscribeMqtt() {
+const redis = new Redis({
+  host: process.env.REDIS_HOST || 'localhost',
+  port: process.env.CACHE_PORT ? parseInt(process.env.CACHE_PORT, 10) : 6998,
+});
+
+export async function subscribeMqtt() {
   //3.122.43.101:1883 is IP
   const client = mqtt.connect(
     process.env.MQTT_URL ?? 'mqtt://broker.hivemq.com:1883',
@@ -13,21 +19,26 @@ export function subscribeMqtt() {
 
   client.on('connect', async function () {
     console.log('Connected to MQTT broker');
-    let topic = uuid();
-    setInterval(() => {
-      client.unsubscribe(`datn/${topic.slice(10)}/#`);
-      console.log('unsubscribe topic: ', `datn/${topic.slice(10)}`);
-      topic = uuid();
-      client.publish('datn/changePassword', newTopicJWT(topic));
-      console.log('jwt', newTopicJWT(topic));
-      client.subscribe(`datn/${topic.slice(10)}/#`);
-      console.log('subscribe topic: ', `datn/${topic.slice(10)}`);
-    }, 60000 * 10); //10m //interval only has 32 bit
+    //init
+    const initTopic = uuid().slice(0, 10);
+    client.publish('datn/changePassword', newTopicJWT(initTopic));
+    client.subscribe(`datn/${initTopic}/#`);
+    await redis.set('newTopic', initTopic);
+    setInterval(async () => {
+      const oldTopic = await redis.get('newTopic');
+      const newTopic = uuid().slice(0, 10);
+      client.publish('datn/changePassword', newTopicJWT(newTopic));
+      await redis.set('newTopic', newTopic);
+      client.subscribe(`datn/${newTopic}/#`);
+      console.log('subscribe topic: ', `datn/${newTopic}`);
+      client.unsubscribe(`datn/${oldTopic}/#`);
+      console.log('unsubscribe topic: ', `datn/${oldTopic}`);
+    }, 60000); //3m- NOTE:interval only has 32 bit
   });
 
   client.on('message', async function (topic, message) {
     //check topic here
-    switch (topic.slice(16)) {
+    switch (topic.slice(0, 16)) {
       case '/sample': {
         await prisma.sample.create({
           data: {

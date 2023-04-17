@@ -1,11 +1,5 @@
 import { Optional } from '@nestjs/common';
-import {
-  IsBoolean,
-  IsNumber,
-  IsString,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsBoolean, IsNumber, IsString } from 'class-validator';
 
 export class GetSampleByIdDto {
   @IsNumber()
