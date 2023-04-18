@@ -4,15 +4,17 @@ import { createNebulizer } from './nebulizer';
 import { createFan } from './fan';
 import { createPump } from './pump';
 import { createMeasureDevice } from './measure-device';
+import { createGarden } from './garden';
 
 export const prismaForSeed = new PrismaClient();
 
 export const createResources = async (prisma: PrismaClient) => {
   await createSample(prisma);
-  await createNebulizer(prisma);
-  await createFan(prisma);
-  await createPump(prisma);
-  await createMeasureDevice(prisma);
+  const garden = await createGarden(prisma);
+  await createNebulizer(prisma, garden);
+  await createFan(prisma, garden);
+  await createPump(prisma, garden);
+  await createMeasureDevice(prisma, garden);
 };
 
 const seed = async () => {

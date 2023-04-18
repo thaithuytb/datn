@@ -1,11 +1,15 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Garden } from '@prisma/client';
 
-export async function createMeasureDevice(prisma: PrismaClient) {
+export async function createMeasureDevice(
+  prisma: PrismaClient,
+  garden: Garden,
+) {
   await prisma.light.create({
     data: {
       value: 8000.55,
       threshold: 8500,
       ip: 'light_1',
+      gardenId: garden.id,
     },
   });
 
@@ -14,6 +18,7 @@ export async function createMeasureDevice(prisma: PrismaClient) {
       value: 65.55,
       threshold: 70,
       ip: 'humi_1',
+      gardenId: garden.id,
     },
   });
 
@@ -24,6 +29,7 @@ export async function createMeasureDevice(prisma: PrismaClient) {
       airHumidity: 70,
       airHumidityThreshold: 80,
       ip: 'tempAir_1',
+      gardenId: garden.id,
     },
   });
 }

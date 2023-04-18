@@ -37,6 +37,18 @@ export async function subscribeMqtt() {
   });
 
   client.on('message', async function (topic, message) {
+    const data = JSON.parse(message as unknown as string);
+    if (!data['gardenName']) {
+      return console.log('error: gardenName is required');
+    }
+    const garden = await prisma.garden.findFirst({
+      where: {
+        name: data['gardenName'],
+      },
+    });
+    if (!garden) {
+      return console.log('error: garden not found');
+    }
     //check topic here
     switch (topic.slice(15)) {
       case '/sample': {
@@ -49,7 +61,6 @@ export async function subscribeMqtt() {
         break;
       }
       case '/sensor': {
-        const data = JSON.parse(message as unknown as string);
         switch (data['sensorName']) {
           case 'temp_air': {
             await prisma.tempAir.create({
@@ -59,6 +70,7 @@ export async function subscribeMqtt() {
                 airHumidity: data['airHumidity'],
                 airHumidityThreshold: data['airHumidityThreshold'],
                 ip: data['ip'],
+                gardenId: garden.id,
               },
             });
             break;
@@ -69,6 +81,7 @@ export async function subscribeMqtt() {
                 value: data['value'],
                 threshold: data['threshold'],
                 ip: data['ip'],
+                gardenId: garden.id,
               },
             });
             break;
@@ -79,6 +92,7 @@ export async function subscribeMqtt() {
                 value: data['value'],
                 threshold: data['threshold'],
                 ip: data['ip'],
+                gardenId: garden.id,
               },
             });
             break;
@@ -91,8 +105,6 @@ export async function subscribeMqtt() {
         break;
       }
       case '/actuator': {
-        const data = JSON.parse(message as unknown as string);
-
         switch (data['actuatorName']) {
           case 'fan': {
             await prisma.fan.create({
@@ -100,6 +112,7 @@ export async function subscribeMqtt() {
                 value: data['value'],
                 status: data['status'],
                 ip: data['ip'],
+                gardenId: garden.id,
               },
             });
             break;

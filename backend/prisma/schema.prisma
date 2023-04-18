@@ -40,7 +40,11 @@ model TempAir {
   ip                   String
   createdAt            DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt            DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  gardenId             Int      @map("garden_id")
+  garden               Garden   @relation(fields: [gardenId], references: [id], onDelete: Cascade)
 
+  @@index([ip])
+  @@index([gardenId], map: "temp_airs_garden_id_fkey")
   @@map("temp_airs")
 }
 
@@ -51,7 +55,11 @@ model Humi {
   ip        String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  gardenId  Int      @map("garden_id")
+  garden    Garden   @relation(fields: [gardenId], references: [id], onDelete: Cascade)
 
+  @@index([ip])
+  @@index([gardenId], map: "humis_garden_id_fkey")
   @@map("humis")
 }
 
@@ -62,7 +70,11 @@ model Light {
   ip        String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  gardenId  Int      @map("garden_id")
+  garden    Garden   @relation(fields: [gardenId], references: [id], onDelete: Cascade)
 
+  @@index([ip])
+  @@index([gardenId], map: "lights_garden_id_fkey")
   @@map("lights")
 }
 
@@ -73,7 +85,11 @@ model Fan {
   ip        String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  gardenId  Int      @map("garden_id")
+  garden    Garden   @relation(fields: [gardenId], references: [id], onDelete: Cascade)
 
+  @@index([ip])
+  @@index([gardenId], map: "fans_garden_id_fkey")
   @@map("fans")
 }
 
@@ -84,7 +100,11 @@ model Pump {
   ip        String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  gardenId  Int      @map("garden_id")
+  garden    Garden   @relation(fields: [gardenId], references: [id], onDelete: Cascade)
 
+  @@index([ip])
+  @@index([gardenId], map: "pumps_garden_id_fkey")
   @@map("pumps")
 }
 
@@ -95,8 +115,31 @@ model Nebulizer {
   ip        String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  gardenId  Int      @map("garden_id")
+  garden    Garden   @relation(fields: [gardenId], references: [id], onDelete: Cascade)
 
+  @@index([ip])
+  @@index([gardenId], map: "nebulizers_garden_id_fkey")
   @@map("nebulizers")
+}
+
+model Garden {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  address    String
+  width      Int?
+  length     Int?
+  landArea   Int         @map("land_area")
+  createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt  DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  fans       Fan[]
+  humis      Humi[]
+  lights     Light[]
+  nebulizers Nebulizer[]
+  pumps      Pump[]
+  tempAirs   TempAir[]
+
+  @@map("gardens")
 }
 
 enum Role {

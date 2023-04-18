@@ -15,6 +15,8 @@ export class ChangeFanStatusDto {
   status: boolean;
   @IsString()
   ip: string;
+  @IsString()
+  gardenName: string;
   static transform(arg: ChangeFanStatusDto): IChangeFanStatusDto {
     return {
       value: arg?.value,
