@@ -38,7 +38,7 @@ export async function subscribeMqtt() {
 
   client.on('message', async function (topic, message) {
     //check topic here
-    switch (topic.slice(0, 16)) {
+    switch (topic.slice(15)) {
       case '/sample': {
         await prisma.sample.create({
           data: {
@@ -50,41 +50,70 @@ export async function subscribeMqtt() {
       }
       case '/sensor': {
         const data = JSON.parse(message as unknown as string);
-        //TODO: need refactor
-        if (data['sensorName'] === 'temp_air') {
-          await prisma.tempAir.create({
-            data: {
-              temp: data['temp'],
-              tempThreshold: data['tempThreshold'], //TODO: change after having spec
-              airHumidity: data['airHumidity'],
-              airHumidityThreshold: data['airHumidityThreshold'], //TODO: change after having spec
-              ip: data['ip'],
-            },
-          });
-        } else if (data['sensorName'] === 'light') {
-          await prisma.light.create({
-            data: {
-              value: data['value'],
-              threshold: data['threshold'], //TODO: change after having spec
-              ip: data['ip'],
-            },
-          });
-        } else if (data['sensorName'] === 'humi') {
-          await prisma.light.create({
-            data: {
-              value: data['value'],
-              threshold: data['threshold'], //TODO: change after having spec
-              ip: data['ip'],
-            },
-          });
-        } else {
-          break;
+        switch (data['sensorName']) {
+          case 'temp_air': {
+            await prisma.tempAir.create({
+              data: {
+                temp: data['temp'],
+                tempThreshold: data['tempThreshold'],
+                airHumidity: data['airHumidity'],
+                airHumidityThreshold: data['airHumidityThreshold'],
+                ip: data['ip'],
+              },
+            });
+            break;
+          }
+          case 'humi': {
+            await prisma.light.create({
+              data: {
+                value: data['value'],
+                threshold: data['threshold'],
+                ip: data['ip'],
+              },
+            });
+            break;
+          }
+          case 'light': {
+            await prisma.light.create({
+              data: {
+                value: data['value'],
+                threshold: data['threshold'],
+                ip: data['ip'],
+              },
+            });
+            break;
+          }
+          default: {
+            console.log('error: /sensor ', data['sensorName']);
+          }
+        }
+
+        break;
+      }
+      case '/actuator': {
+        const data = JSON.parse(message as unknown as string);
+
+        switch (data['actuatorName']) {
+          case 'fan': {
+            await prisma.fan.create({
+              data: {
+                value: data['value'],
+                status: data['status'],
+                ip: data['ip'],
+              },
+            });
+            break;
+          }
+          default: {
+            console.log('error: /actuator ', data['actuatorName']);
+          }
         }
         break;
       }
-      default:
+      default: {
         console.log('topic', topic);
         console.log('Received message:', message.toString());
+      }
     }
   });
 }

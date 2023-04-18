@@ -18,7 +18,13 @@ export class FanService {
   async changeFanStatus(changeFanStatusDto: ChangeFanStatusDto) {
     const topic = await this.redis.get('newTopic');
     if (topic) {
-      this.mqttService.sendMessage(topic, JSON.stringify(changeFanStatusDto));
+      this.mqttService.sendMessage(
+        `datn/${topic}/actuator`,
+        JSON.stringify({
+          ...changeFanStatusDto,
+          actuatorName: 'fan',
+        }),
+      );
       return true;
     }
     //TODO: need handle case topic is null
