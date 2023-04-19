@@ -32,7 +32,7 @@ export class SampleController {
     @Query('status', ParseBoolPipe) status = true,
     @Query('name') name = '',
   ) {
-    return await this.sampleService.getSamples({
+    return this.sampleService.getSamples({
       name,
       status,
     });
@@ -40,13 +40,13 @@ export class SampleController {
 
   @Get(':id')
   async getSampleById(@Param('id', ParseIntPipe) id: number) {
-    return await this.sampleService.getSampleById({
+    return this.sampleService.getSampleById({
       id,
     });
   }
 
   @Post()
   async createSample(@Body('createSample') createSample: CreateSampleDto) {
-    return await this.sampleService.createSample(createSample);
+    return this.sampleService.createSample(createSample);
   }
 }

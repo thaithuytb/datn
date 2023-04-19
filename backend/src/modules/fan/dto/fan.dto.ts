@@ -1,5 +1,4 @@
-import { Optional } from '@nestjs/common';
-import { IsBoolean, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export interface IChangeFanStatusDto {
   value: number;
@@ -8,15 +7,15 @@ export interface IChangeFanStatusDto {
 }
 
 export class ChangeFanStatusDto {
-  @IsNumber()
-  @Optional()
-  value?: number;
   @IsBoolean()
   status: boolean;
   @IsString()
   ip: string;
   @IsString()
   gardenName: string;
+  @IsOptional()
+  @IsNumber()
+  value?: number;
   static transform(arg: ChangeFanStatusDto): IChangeFanStatusDto {
     return {
       value: arg?.value,

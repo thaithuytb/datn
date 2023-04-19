@@ -37,17 +37,22 @@ export async function subscribeMqtt() {
   });
 
   client.on('message', async function (topic, message) {
-    const data = JSON.parse(message as unknown as string);
-    if (!data['gardenName']) {
-      return console.log('error: gardenName is required');
-    }
-    const garden = await prisma.garden.findFirst({
-      where: {
-        name: data['gardenName'],
-      },
-    });
-    if (!garden) {
-      return console.log('error: garden not found');
+    const parseMessage = JSON.parse(message as unknown as string);
+    let gardenId = parseMessage['from'] === 'web' ? parseMessage['gardenId'] : null;
+    if (parseMessage['from'] !== 'web') {
+      if (!parseMessage['gardenName']) {
+        return console.log('error: gardenName is required');
+      }
+      
+      const garden = await prisma.garden.findFirst({
+        where: {
+          name: parseMessage['gardenName'],
+        },
+      });
+      if (!garden) {
+        return console.log('error: garden not found');
+      }
+      gardenId = garden.id
     }
     //check topic here
     switch (topic.slice(15)) {
@@ -61,16 +66,16 @@ export async function subscribeMqtt() {
         break;
       }
       case '/sensor': {
-        switch (data['sensorName']) {
+        switch (parseMessage['data']['sensorName']) {
           case 'temp_air': {
             await prisma.tempAir.create({
               data: {
-                temp: data['temp'],
-                tempThreshold: data['tempThreshold'],
-                airHumidity: data['airHumidity'],
-                airHumidityThreshold: data['airHumidityThreshold'],
-                ip: data['ip'],
-                gardenId: garden.id,
+                temp: parseMessage['data']['temp'],
+                tempThreshold: parseMessage['data']['tempThreshold'],
+                airHumidity: parseMessage['data']['airHumidity'],
+                airHumidityThreshold: parseMessage['data']['airHumidityThreshold'],
+                ip: parseMessage['data']['ip'],
+                gardenId,
               },
             });
             break;
@@ -78,10 +83,10 @@ export async function subscribeMqtt() {
           case 'humi': {
             await prisma.light.create({
               data: {
-                value: data['value'],
-                threshold: data['threshold'],
-                ip: data['ip'],
-                gardenId: garden.id,
+                value: parseMessage['data']['value'],
+                threshold: parseMessage['data']['threshold'],
+                ip: parseMessage['data']['ip'],
+                gardenId,
               },
             });
             break;
@@ -89,36 +94,36 @@ export async function subscribeMqtt() {
           case 'light': {
             await prisma.light.create({
               data: {
-                value: data['value'],
-                threshold: data['threshold'],
-                ip: data['ip'],
-                gardenId: garden.id,
+                value: parseMessage['data']['value'],
+                threshold: parseMessage['data']['threshold'],
+                ip: parseMessage['data']['ip'],
+                gardenId,
               },
             });
             break;
           }
           default: {
-            console.log('error: /sensor ', data['sensorName']);
+            console.log('error: /sensor ', parseMessage['data']['sensorName']);
           }
         }
 
         break;
       }
       case '/actuator': {
-        switch (data['actuatorName']) {
+        switch (parseMessage['data']['actuatorName']) {
           case 'fan': {
             await prisma.fan.create({
               data: {
-                value: data['value'],
-                status: data['status'],
-                ip: data['ip'],
-                gardenId: garden.id,
+                value: parseMessage['data']['value'],
+                status: parseMessage['data']['status'],
+                ip: parseMessage['data']['ip'],
+                gardenId,
               },
             });
             break;
           }
           default: {
-            console.log('error: /actuator ', data['actuatorName']);
+            console.log('error: no name in /actuator ', parseMessage['data']['actuatorName']);
           }
         }
         break;

@@ -8,7 +8,7 @@ export class SampleRepository implements ISampleRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async getSampleById(id: number): Promise<Sample> {
-    return await this.prisma.sample.findFirstOrThrow({
+    return this.prisma.sample.findFirstOrThrow({
       where: {
         id,
       },
@@ -16,11 +16,11 @@ export class SampleRepository implements ISampleRepository {
   }
 
   async getSamples(args: Prisma.SampleFindManyArgs): Promise<Sample[]> {
-    return await this.prisma.sample.findMany(args);
+    return this.prisma.sample.findMany(args);
   }
 
   async createSample(sampleDomain: ISampleDomain): Promise<Sample> {
-    return await this.prisma.sample.create({
+    return this.prisma.sample.create({
       data: sampleDomain.getSampleCreateInput(),
     });
   }
