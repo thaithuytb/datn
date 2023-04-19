@@ -22,7 +22,7 @@ export class FanService {
   async changeFanStatus(changeFanStatusDto: ChangeFanStatusDto) {
     const garden = await this.gardenRepository.getGardenByName(changeFanStatusDto.gardenName);
     if(!garden) {
-      throw new HttpException('Garden not found', HttpStatus.NOT_FOUND);
+      throw new HttpException(`Garden not found with name: ${changeFanStatusDto.gardenName}`, HttpStatus.NOT_FOUND);
     }
     const topic = await this.redis.get('newTopic');
     if (topic) {

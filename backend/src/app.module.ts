@@ -5,6 +5,7 @@ import { SampleModule } from './modules/sample/sample.module';
 import { RepositoryModule } from './repositories/repository.module';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { FanModule } from './modules/fan/fan.module';
+import { GardenModule } from './modules/garden/garden.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { FanModule } from './modules/fan/fan.module';
     RepositoryModule,
     SampleModule,
     FanModule,
+    GardenModule
   ],
   controllers: [AppController],
   providers: [AppService],
