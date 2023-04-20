@@ -7,10 +7,9 @@ import { FanGateway } from '../socket/fan/fan.socket.gateway';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
 
-
 export async function subscribeMqtt(fanGateway: FanGateway) {
   const prisma = new PrismaClient();
-  
+
   const redis = new Redis({
     host: process.env.REDIS_HOST || 'localhost',
     port: process.env.CACHE_PORT ? parseInt(process.env.CACHE_PORT, 10) : 6998,
@@ -25,32 +24,33 @@ export async function subscribeMqtt(fanGateway: FanGateway) {
     console.log('Connected to MQTT broker');
     //init
     const initTopic = uuid().slice(0, 10);
-    client.publish('datn/changePassword', newTopicJWT(initTopic));
+    client.publish('datn/changeTopic', newTopicJWT(initTopic));
+    console.log(newTopicJWT(initTopic));
     client.subscribe(`datn/${initTopic}/#`);
     await redis.set('newTopic', initTopic);
     setInterval(async () => {
       const oldTopic = await redis.get('newTopic');
       const newTopic = uuid().slice(0, 10);
-      client.publish('datn/changePassword', newTopicJWT(newTopic));
+      client.publish('datn/changeTopic', newTopicJWT(newTopic));
       await redis.set('newTopic', newTopic);
       client.subscribe(`datn/${newTopic}/#`);
       console.log('subscribe topic: ', `datn/${newTopic}`);
       client.unsubscribe(`datn/${oldTopic}/#`);
       console.log('unsubscribe topic: ', `datn/${oldTopic}`);
-    }, 60000); //3m- NOTE:interval only has 32 bit
+    }, 10000); //3m- NOTE:interval only has 32 bit
   });
 
   client.on('message', async function (topic, message) {
-    const parseMessage = JSON.parse(message as unknown as string);
+    const parseMessage = JSON.parse(message.toString() as unknown as string);
     if (parseMessage['from'] === 'web') {
-      console.log('message from web')
+      console.log('message from web');
       return;
     }
-    
+
     if (!parseMessage['gardenName']) {
       return console.log('error: gardenName is required');
     }
-    
+
     const garden = await prisma.garden.findFirst({
       where: {
         name: parseMessage['gardenName'],
@@ -59,7 +59,7 @@ export async function subscribeMqtt(fanGateway: FanGateway) {
     if (!garden) {
       return console.log('error: garden not found');
     }
-    const gardenId = garden.id
+    const gardenId = garden.id;
     //check topic here
     switch (topic.slice(15)) {
       case '/sample': {
@@ -79,7 +79,8 @@ export async function subscribeMqtt(fanGateway: FanGateway) {
                 temp: parseMessage['data']['temp'],
                 tempThreshold: parseMessage['data']['tempThreshold'],
                 airHumidity: parseMessage['data']['airHumidity'],
-                airHumidityThreshold: parseMessage['data']['airHumidityThreshold'],
+                airHumidityThreshold:
+                  parseMessage['data']['airHumidityThreshold'],
                 ip: parseMessage['data']['ip'],
                 gardenId,
               },
@@ -126,12 +127,15 @@ export async function subscribeMqtt(fanGateway: FanGateway) {
               },
             });
             if (data) {
-              fanGateway.server.emit('newFanStatus', data)
+              fanGateway.server.emit('newFanStatus', data);
             }
             break;
           }
           default: {
-            console.log('error: no name in /actuator ', parseMessage['data']['actuatorName']);
+            console.log(
+              'error: no name in /actuator ',
+              parseMessage['data']['actuatorName'],
+            );
           }
         }
         break;
