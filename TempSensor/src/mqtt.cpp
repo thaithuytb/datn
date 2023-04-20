@@ -1,6 +1,10 @@
 #include <mqtt.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
+#include <CustomJWT.h>
+#include <Crypto.h>
+#include <SHA512.h>
+#include <ArduinoJson.h>
 
 const char* ssid = "Azuby";
 const char* password = "desolator";
@@ -24,16 +28,38 @@ void setup_wifi() {
 const char* mqtt_server = "broker.hivemq.com";
 const int mqtt_port = 1883;
 const char* mqtt_client_id = "esp32";
-const char* mqtt_topic = "datn/testabc/sample";
+
+//Topic
+char actuatorTopic[30] = "datn/test/actuator";
+char uuidTopic[30] = "datn/changeTopic";
+char secret[30] = "haithai";
+
+CustomJWT jwt(secret, 256);
 
 WiFiClient espClient;
 PubSubClient client(espClient);
 
 void callback(char* topic, byte* payload, unsigned int length) {
+  char mes[length] = {0};
+
   for (int i=0;i<length;i++) {
+    mes[i] = (char)payload[i];
     Serial.print((char)payload[i]);
   }
+  mes[length] = '\0';
+
   Serial.println();
+  Serial.println(mes);
+
+  jwt.allocateJWTMemory();
+  jwt.decodeJWT(mes);
+
+  DynamicJsonDocument doc(1024);
+  deserializeJson(doc, jwt.payload);
+
+  Serial.println(doc["newTopic"].as<String>());
+
+  jwt.clear();
 }
 
 void reconnect() {
@@ -45,8 +71,7 @@ void reconnect() {
       Serial.println("connected");
       
       client.setCallback(callback);
-      client.publish(mqtt_topic, (char *)"yolo");
-      client.subscribe(mqtt_topic);
+      client.subscribe(uuidTopic);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -69,5 +94,10 @@ void reconnectMQTTHandle() {
   
   client.loop();
 
-  client.publish(mqtt_topic, (char *)"yolo");
+  String object = R"rawliteral(
+    {"data":{"actuatorName":"fan","status":false,"ip":"test_1"},"gardenName":"name_1"}
+  )rawliteral";
+
+  // client.publish(actuatorTopic, (char *)object.c_str());
+
 }
