@@ -2,7 +2,8 @@ export function messageToMqtt<T extends { gardenName: string}>(topic: string, da
   const { gardenName, ...spreadData} = data
   return JSON.stringify({
     gardenId: gardenId,
-    from: 'web',
+    // from: 'web', // command to test
     data: spreadData,
+    gardenName
   })
 }
