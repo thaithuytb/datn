@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { subscribeMqtt } from './mqtt/subscribe';
 import { ValidationPipe } from '@nestjs/common';
-import { AppService } from './app.service';
 import { FanGateway } from './socket/fan/fan.socket.gateway';
 
 async function bootstrap() {

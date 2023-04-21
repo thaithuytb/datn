@@ -25,7 +25,6 @@ export async function subscribeMqtt(fanGateway: FanGateway) {
     //init
     const initTopic = uuid().slice(0, 10);
     client.publish('datn/changeTopic', newTopicJWT(initTopic));
-    console.log(newTopicJWT(initTopic));
     client.subscribe(`datn/${initTopic}/#`);
     await redis.set('newTopic', initTopic);
     setInterval(async () => {
@@ -37,7 +36,7 @@ export async function subscribeMqtt(fanGateway: FanGateway) {
       console.log('subscribe topic: ', `datn/${newTopic}`);
       client.unsubscribe(`datn/${oldTopic}/#`);
       console.log('unsubscribe topic: ', `datn/${oldTopic}`);
-    }, 10000); //3m- NOTE:interval only has 32 bit
+    }, 60000*3); //3m- NOTE:interval only has 32 bit
   });
 
   client.on('message', async function (topic, message) {
