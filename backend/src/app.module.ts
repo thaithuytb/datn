@@ -6,10 +6,11 @@ import { RepositoryModule } from './repositories/repository.module';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { FanModule } from './modules/fan/fan.module';
 import { GardenModule } from './modules/garden/garden.module';
+import { FanSocketModule } from './socket/fan/fan.socket.module';
 
 @Module({
   imports: [
-    RedisModule.forRoot({
+  RedisModule.forRoot({
       config: {
         host: process.env.REDIS_HOST || 'localhost',
         port: process.env.CACHE_PORT
@@ -20,7 +21,8 @@ import { GardenModule } from './modules/garden/garden.module';
     RepositoryModule,
     SampleModule,
     FanModule,
-    GardenModule
+    GardenModule,
+    FanSocketModule
   ],
   controllers: [AppController],
   providers: [AppService],
