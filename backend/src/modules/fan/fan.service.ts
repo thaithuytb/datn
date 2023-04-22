@@ -40,12 +40,10 @@ export class FanService {
     if (topic) {
       this.mqttService.sendMessage(
         `datn/${topic}/actuator`,
-        messageToMqtt(
-          {
-            ...changeFanStatusDto,
-            actuatorName: 'fan',
-          },
-        ),
+        messageToMqtt({
+          ...changeFanStatusDto,
+          actuatorName: 'fan',
+        }),
       );
       return true;
     }

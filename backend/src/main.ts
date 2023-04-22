@@ -9,7 +9,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
   await app.listen(process.env.PORT || 7000);
-  
+
   const fanGateway = app.get(FanGateway);
   await subscribeMqtt(fanGateway);
 }

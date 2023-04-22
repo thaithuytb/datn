@@ -3,6 +3,6 @@ import { FanGateway } from './fan.socket.gateway';
 
 @Module({
   providers: [FanGateway],
-  exports: [FanGateway]
+  exports: [FanGateway],
 })
 export class FanSocketModule {}

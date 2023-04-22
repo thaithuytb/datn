@@ -9,7 +9,8 @@ export class FanController {
 
   @Post()
   public changeFanStatus(
-    @Body('changeFanStatusDto') changeFanStatusDto: ChangeFanStatusDto,
+    @Body('changeFanStatusDto')
+    changeFanStatusDto: ChangeFanStatusDto,
   ): Promise<boolean> {
     return this.fanService.changeFanStatus(changeFanStatusDto);
   }

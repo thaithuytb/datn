@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../infrastructures/prisma.service';
-import { Fan} from '@prisma/client';
+import { Fan } from '@prisma/client';
 
 @Injectable()
 export class FanRepository implements IFanRepository {
@@ -9,9 +9,9 @@ export class FanRepository implements IFanRepository {
   async getFanLatestStatus() {
     return this.prisma.fan.findFirst({
       orderBy: {
-        id: 'desc'
-      } 
-    })
+        id: 'desc',
+      },
+    });
   }
 }
 

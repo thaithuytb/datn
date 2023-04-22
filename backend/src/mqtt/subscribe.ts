@@ -4,8 +4,6 @@ import { newTopicJWT } from '../common/setJwtMqtt';
 import { uuid } from 'uuidv4';
 import { Redis } from 'ioredis';
 import { FanGateway } from '../socket/fan/fan.socket.gateway';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from '../app.module';
 
 export async function subscribeMqtt(fanGateway: FanGateway) {
   const prisma = new PrismaClient();
@@ -36,7 +34,7 @@ export async function subscribeMqtt(fanGateway: FanGateway) {
       console.log('subscribe topic: ', `datn/${newTopic}`);
       client.unsubscribe(`datn/${oldTopic}/#`);
       console.log('unsubscribe topic: ', `datn/${oldTopic}`);
-    }, 60000*3); //3m- NOTE:interval only has 32 bit
+    }, 60000 * 3); //3m- NOTE:interval only has 32 bit
   });
 
   client.on('message', async function (topic, message) {

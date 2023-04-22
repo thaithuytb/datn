@@ -10,7 +10,7 @@ import { FanSocketModule } from './socket/fan/fan.socket.module';
 
 @Module({
   imports: [
-  RedisModule.forRoot({
+    RedisModule.forRoot({
       config: {
         host: process.env.REDIS_HOST || 'localhost',
         port: process.env.CACHE_PORT
@@ -22,7 +22,7 @@ import { FanSocketModule } from './socket/fan/fan.socket.module';
     SampleModule,
     FanModule,
     GardenModule,
-    FanSocketModule
+    FanSocketModule,
   ],
   controllers: [AppController],
   providers: [AppService],
