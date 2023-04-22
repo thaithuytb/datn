@@ -4,17 +4,18 @@ import gardenApi from "../../api/garden";
 import { Garden } from "../../types/garden.type";
 
 export default function Sidebar() {
-  const [gardens, setGardens] = useState<Garden[] | []>([])
+  const [gardens, setGardens] = useState<Garden[] | []>([]);
 
   const getGardens = async () => {
     const { getGardens } = gardenApi;
     try {
       const response = await getGardens();
-      if (response.status === 200) {
-        setGardens(response.data.gardens)
+      console.log({ response });
+      if (response.data.success === true) {
+        setGardens(response.data.data);
       }
     } catch (error) {
-      console.log(error);
+      console.log({ error });
     }
   };
   // const [socket, setSocket] = useState<Socket | null>(null);
@@ -22,7 +23,7 @@ export default function Sidebar() {
 
   // useEffect(() => {
   //   // Kết nối tới server socket
-  //   const socket = socketIOClient("http://localhost:7000/fan"); 
+  //   const socket = socketIOClient("http://localhost:7000/fan");
   //   setSocket(socket)
 
   //   // Lắng nghe sự kiện "newFanStatus" từ server socket
@@ -46,21 +47,19 @@ export default function Sidebar() {
   //   }
   // };
   useEffect(() => {
-    getGardens()
-  }, [])
+    getGardens();
+  }, []);
 
   return (
     <div>
       <h3>Danh sách khu vườn</h3>
       <ul>
-        {
-          gardens.length > 0 &&
-          gardens.map((garden) => <li key={garden.id}>{garden.name}</li>)
-        }
+        {gardens?.length > 0 &&
+          gardens?.map((garden) => <li key={garden.id}>{garden.name}</li>)}
       </ul>
       <h3>Thông tin cá nhân</h3>
       {/* <button onClick={handleSendMessage}>Gửi tin nhắn</button> */}
       {/* <p>Trạng thái hiện tại của quạt:: {message}</p> */}
     </div>
-  )
+  );
 }

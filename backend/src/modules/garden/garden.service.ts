@@ -1,69 +1,77 @@
-import { HttpCode, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { GardenRepository } from '../../repositories/garden.repository';
-import { GardenDetail, Gardens } from './models/garden.model';
+import {
+  GardenDetail,
+  GardenDetailType,
+  GardensType,
+} from './models/garden.model';
 import { Prisma } from '@prisma/client';
+import { responseSuccess } from 'src/common/responseSuccess';
 
 @Injectable()
 export class GardenService {
   constructor(private readonly gardenRepository: GardenRepository) {}
 
-  async getGardenById(id: number): Promise<GardenDetail> {
+  async getGardenById(id: number): Promise<GardenDetailType> {
     const query: Prisma.GardenFindFirstArgsBase = {
       where: {
-        id
+        id,
       },
       include: {
         fans: {
           distinct: 'ip',
           select: {
-            ip: true
-          }
+            ip: true,
+          },
         },
         nebulizers: {
           distinct: 'ip',
           select: {
-            ip: true
-          }
+            ip: true,
+          },
         },
         pumps: {
           distinct: 'ip',
           select: {
-            ip: true
-          }
+            ip: true,
+          },
         },
         humis: {
           distinct: 'ip',
           select: {
-            ip: true
-          }
+            ip: true,
+          },
         },
         lights: {
           distinct: 'ip',
           select: {
-            ip: true
-          }
+            ip: true,
+          },
         },
         tempAirs: {
           distinct: 'ip',
           select: {
-            ip: true
-          }
-        }
-      }
-    }
+            ip: true,
+          },
+        },
+      },
+    };
 
-    const garden = await this.gardenRepository.getGardenById(query) as GardenDetail;
+    const garden = (await this.gardenRepository.getGardenById(
+      query,
+    )) as GardenDetail;
     if (!garden) {
-      throw new HttpException(`Garden not found with id: ${id}`, HttpStatus.NOT_FOUND)
+      throw new HttpException(
+        `Garden not found with id: ${id}`,
+        HttpStatus.NOT_FOUND,
+      );
     }
 
-    return garden
+    return responseSuccess(200, garden);
   }
 
-  async getGardens(): Promise<Gardens> {
-    const gardens = await this.gardenRepository.getGardens();  
-    return {
-      gardens
-    }
+  async getGardens(): Promise<GardensType> {
+    const gardens = await this.gardenRepository.getGardens();
+    return responseSuccess(200, gardens);
   }
 }
