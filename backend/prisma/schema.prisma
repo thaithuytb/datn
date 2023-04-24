@@ -123,6 +123,20 @@ model Nebulizer {
   @@map("nebulizers")
 }
 
+model Lamp {
+  id        Int      @id @default(autoincrement())
+  status    Boolean
+  ip        String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  gardenId  Int      @map("garden_id")
+  garden    Garden   @relation(fields: [gardenId], references: [id], onDelete: Cascade)
+
+  @@index([ip])
+  @@index([gardenId], map: "lamps_garden_id_fkey")
+  @@map("lamps")
+}
+
 model Garden {
   id         Int         @id @default(autoincrement())
   name       String      @unique
@@ -134,6 +148,7 @@ model Garden {
   updatedAt  DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   fans       Fan[]
   humis      Humi[]
+  lamps      Lamp[]
   lights     Light[]
   nebulizers Nebulizer[]
   pumps      Pump[]

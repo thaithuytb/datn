@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:db:pull": "prisma db pull",
+    "prisma:migrate:reset": "prisma migrate reset --schema prisma/schema.prisma && yarn prisma:init",
     "prisma:init": "yarn dotenv -e .env.$NODE_ENV ts-node prisma/seeds/index.ts"
   },
   "dependencies": {
@@ -30,6 +31,7 @@
     "@nestjs/platform-socket.io": "^9.4.0",
     "@nestjs/websockets": "^9.4.0",
     "@prisma/client": "^4.12.0",
+    "argon2": "^0.30.3",
     "dotenv": "^16.0.3",
     "dotenv-cli": "^7.2.1",
     "ioredis": "^5.3.2",
