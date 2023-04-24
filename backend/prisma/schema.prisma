@@ -19,14 +19,15 @@ model Sample {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
+  id          Int              @id @default(autoincrement())
   name        String
-  phoneNumber String   @map("phone_number")
-  email       String   @unique
+  phoneNumber String           @map("phone_number")
+  email       String           @unique
   password    String
-  role        Role     @default(USER)
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  role        Role             @default(USER)
+  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt   DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  gardens     GardensOnUsers[]
 
   @@map("users")
 }
@@ -138,15 +139,16 @@ model Lamp {
 }
 
 model Garden {
-  id         Int         @id @default(autoincrement())
-  name       String      @unique
+  id         Int              @id @default(autoincrement())
+  name       String           @unique
   address    String
   width      Int?
   length     Int?
-  landArea   Int         @map("land_area")
-  createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt  DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  landArea   Int              @map("land_area")
+  createdAt  DateTime         @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt  DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   fans       Fan[]
+  users      GardensOnUsers[]
   humis      Humi[]
   lamps      Lamp[]
   lights     Light[]
@@ -155,6 +157,19 @@ model Garden {
   tempAirs   TempAir[]
 
   @@map("gardens")
+}
+
+model GardensOnUsers {
+  userId    Int      @map("user_id")
+  gardenId  Int      @map("garden_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  garden    Garden   @relation(fields: [gardenId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@id([userId, gardenId])
+  @@index([gardenId], map: "gardensOnUsers_garden_id_fkey")
+  @@map("gardensOnUsers")
 }
 
 enum Role {

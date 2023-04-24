@@ -12,8 +12,8 @@ export const prismaForSeed = new PrismaClient();
 
 export const createResources = async (prisma: PrismaClient) => {
   await createSample(prisma);
-  await createUsers(prisma);
   const garden = await createGarden(prisma);
+  await createUsers(prisma, garden);
   await createNebulizer(prisma, garden);
   await createFan(prisma, garden);
   await createPump(prisma, garden);
