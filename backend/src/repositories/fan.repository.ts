@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../infrastructures/prisma.service';
-import { Fan } from '@prisma/client';
+import { Fan, Prisma } from '@prisma/client';
 
 @Injectable()
 export class FanRepository implements IFanRepository {
@@ -13,8 +13,13 @@ export class FanRepository implements IFanRepository {
       },
     });
   }
+
+  async getHistoryFanStatus(args: Prisma.FanFindManyArgs) {
+    return this.prisma.fan.findMany(args);
+  }
 }
 
 export interface IFanRepository {
   getFanLatestStatus(): Promise<Fan>;
+  getHistoryFanStatus(args: Prisma.FanFindManyArgs): Promise<Fan[]>;
 }

@@ -5,6 +5,9 @@ import { ChangeFanStatusDto } from './dto/fan.dto';
 import { GardenRepository } from '../../repositories/garden.repository';
 import { messageToMqtt } from '../../common/messageToMqtt';
 import { FanRepository } from '../../repositories/fan.repository';
+import { FanType, FansType } from './models/fan.model';
+import { responseSuccess } from '../../common/responseSuccess';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class FanService {
@@ -22,8 +25,24 @@ export class FanService {
     });
   }
 
-  async getFanLatestStatus() {
-    return this.fanRepository.getFanLatestStatus();
+  async getFanLatestStatus(): Promise<FanType> {
+    const fan = await this.fanRepository.getFanLatestStatus();
+    return responseSuccess(200, fan);
+  }
+
+  async getHistoryFanStatus(dto: {
+    page: number;
+    limit: number;
+  }): Promise<FansType> {
+    const query: Prisma.FanFindManyArgs = {
+      orderBy: {
+        id: 'desc',
+      },
+      skip: dto.page - 1,
+      take: dto.limit,
+    };
+    const fans = await this.fanRepository.getHistoryFanStatus(query);
+    return responseSuccess(200, fans);
   }
 
   async changeFanStatus(changeFanStatusDto: ChangeFanStatusDto) {

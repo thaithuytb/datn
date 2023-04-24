@@ -56,9 +56,9 @@ export class GardenService {
         },
         users: {
           select: {
-            userId: true
-          }
-        }
+            userId: true,
+          },
+        },
       },
     };
 
