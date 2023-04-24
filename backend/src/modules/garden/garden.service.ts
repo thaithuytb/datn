@@ -54,6 +54,11 @@ export class GardenService {
             ip: true,
           },
         },
+        users: {
+          select: {
+            userId: true
+          }
+        }
       },
     };
 
