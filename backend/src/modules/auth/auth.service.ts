@@ -35,6 +35,7 @@ export class AuthService {
     }
 
     const token = await this.signToken(existUser.id, existUser.email);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...responseUser } = existUser;
 
     return responseSuccess(200, { user: responseUser as User, token });
@@ -56,6 +57,7 @@ export class AuthService {
     });
 
     const token = await this.signToken(newUser.id, newUser.email);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...responseUser } = newUser;
 
     return responseSuccess(201, { user: responseUser as User, token });
