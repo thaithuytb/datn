@@ -1,9 +1,8 @@
 import { Garden, Prisma, PrismaClient, Role } from '@prisma/client';
 import * as argon2 from 'argon2';
 
-export async function 
-createUsers(prisma: PrismaClient, garden: Garden) {
-  const hashPW = await argon2.hash("admin");
+export async function createUsers(prisma: PrismaClient, garden: Garden) {
+  const hashPW = await argon2.hash('admin');
 
   await prisma.user.create({
     data: {
@@ -11,8 +10,8 @@ createUsers(prisma: PrismaClient, garden: Garden) {
       phoneNumber: '0337076651',
       email: 'admin@admin.com',
       password: hashPW,
-      role: Role.ADMIN
-    }
+      role: Role.ADMIN,
+    },
   });
   await prisma.user.create({
     data: {
@@ -23,9 +22,9 @@ createUsers(prisma: PrismaClient, garden: Garden) {
       role: Role.USER,
       gardens: {
         create: {
-          gardenId: garden.id
-      }
-    } as Prisma.GardensOnUsersCreateNestedManyWithoutUserInput
-    }
+          gardenId: garden.id,
+        },
+      } as Prisma.GardensOnUsersCreateNestedManyWithoutUserInput,
+    },
   });
 }

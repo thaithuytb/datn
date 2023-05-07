@@ -10,10 +10,10 @@ export class FanController {
   // TODO: fix after discussing with Mr. Hai
   @Post()
   public changeFanStatus(
-    @Body('changeFanStatusDto')
-    changeFanStatusDto: ChangeFanStatusDto,
+    @Body('dto')
+    dto: ChangeFanStatusDto,
   ): Promise<boolean> {
-    return this.fanService.changeFanStatus(changeFanStatusDto);
+    return this.fanService.changeFanStatus(dto);
   }
 
   @Get('/latest')

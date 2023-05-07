@@ -7,6 +7,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
 import { FanModule } from './modules/fan/fan.module';
 import { GardenModule } from './modules/garden/garden.module';
 import { FanSocketModule } from './socket/fan/fan.socket.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { FanSocketModule } from './socket/fan/fan.socket.module';
     FanModule,
     GardenModule,
     FanSocketModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

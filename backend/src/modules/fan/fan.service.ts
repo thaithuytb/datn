@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PublicMqttService } from 'src/mqtt/publish';
+import { PublicMqttService } from '../../mqtt/publish';
 import { Redis } from 'ioredis';
 import { ChangeFanStatusDto } from './dto/fan.dto';
 import { GardenRepository } from '../../repositories/garden.repository';
