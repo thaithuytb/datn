@@ -4,17 +4,21 @@ import { AuthRepository } from '../../repositories/auth.repository';
 import { sign, verify } from 'jsonwebtoken';
 import * as argon2 from 'argon2';
 import { responseSuccess } from '../../common/responseSuccess';
-import { LoginType } from './models/auth.model';
+import { LoginType, UserDetail } from './models/auth.model';
 import { RegisterDto } from './dto/register.dto';
 import { uuid } from 'uuidv4';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
   constructor(private readonly authRepository: AuthRepository) {}
 
   async login(dto: LoginDto): Promise<LoginType> {
-    const existUser = await this.authRepository.getUserByEmail(dto.email);
+    const existUser = await this.authRepository.getUserByEmail({
+      where: {
+        email: dto.email,
+      },
+    });
 
     if (!existUser) {
       throw new HttpException(
@@ -42,7 +46,11 @@ export class AuthService {
   }
 
   async register(dto: RegisterDto): Promise<LoginType> {
-    const existUser = await this.authRepository.getUserByEmail(dto.email);
+    const existUser = await this.authRepository.getUserByEmail({
+      where: {
+        email: dto.email,
+      },
+    });
 
     if (existUser) {
       throw new HttpException('Email is existed', HttpStatus.BAD_REQUEST);
@@ -63,8 +71,24 @@ export class AuthService {
     return responseSuccess(201, { user: responseUser as User, token });
   }
 
-  async getUserByEmail(email: string): Promise<User> {
-    return this.authRepository.getUserByEmail(email);
+  async getUserByEmail(email: string): Promise<UserDetail> {
+    const query: Prisma.UserFindFirstArgsBase = {
+      where: {
+        email,
+      },
+      include: {
+        gardens: {
+          select: {
+            gardenId: true,
+          },
+        },
+      },
+    };
+    const user = (await this.authRepository.getUserByEmail(
+      query,
+    )) as UserDetail;
+
+    return user;
   }
 
   private async signToken(id: number, email: string): Promise<string> {

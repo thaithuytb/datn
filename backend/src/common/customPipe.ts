@@ -13,7 +13,6 @@ export class OptionalParseIntPipe
     value: string | undefined,
     metadata: ArgumentMetadata,
   ): number | undefined {
-    console.log(metadata);
     if (value === undefined) {
       return undefined;
     }

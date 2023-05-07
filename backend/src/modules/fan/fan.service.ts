@@ -30,11 +30,15 @@ export class FanService {
     return responseSuccess(200, fan);
   }
 
-  async getHistoryFanStatus(dto: {
+  async getHistoryFanStatusByIp(dto: {
     page: number;
     limit: number;
+    ip: string;
   }): Promise<FansType> {
     const query: Prisma.FanFindManyArgs = {
+      where: {
+        ip: dto.ip,
+      },
       orderBy: {
         id: 'desc',
       },
@@ -42,16 +46,20 @@ export class FanService {
       take: dto.limit,
     };
     const fans = await this.fanRepository.getHistoryFanStatus(query);
-    return responseSuccess(200, fans);
+    if (fans.length) {
+      return responseSuccess(200, fans);
+    }
+    throw new HttpException(
+      `Fans not found or no records with ip: ${dto.ip}`,
+      HttpStatus.NOT_FOUND,
+    );
   }
 
-  async changeFanStatus(changeFanStatusDto: ChangeFanStatusDto) {
-    const garden = await this.gardenRepository.getGardenByName(
-      changeFanStatusDto.gardenName,
-    );
+  async changeFanStatus(dto: ChangeFanStatusDto) {
+    const garden = await this.gardenRepository.getGardenByName(dto.gardenName);
     if (!garden) {
       throw new HttpException(
-        `Garden not found with name: ${changeFanStatusDto.gardenName}`,
+        `Garden not found with name: ${dto.gardenName}`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -60,7 +68,7 @@ export class FanService {
       this.mqttService.sendMessage(
         `datn/${topic}/actuator`,
         messageToMqtt({
-          ...changeFanStatusDto,
+          ...dto,
           actuatorName: 'fan',
         }),
       );

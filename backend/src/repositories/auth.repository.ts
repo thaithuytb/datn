@@ -6,12 +6,8 @@ import { Prisma, User } from '@prisma/client';
 export class AuthRepository implements IAuthRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getUserByEmail(email: string): Promise<User> {
-    return this.prisma.user.findFirst({
-      where: {
-        email,
-      },
-    });
+  async getUserByEmail(args: Prisma.UserFindFirstArgs): Promise<User> {
+    return this.prisma.user.findFirst(args);
   }
 
   async createUser(args: Prisma.UserCreateInput): Promise<User> {
@@ -22,6 +18,6 @@ export class AuthRepository implements IAuthRepository {
 }
 
 export interface IAuthRepository {
-  getUserByEmail(email: string): Promise<User>;
+  getUserByEmail(args: Prisma.UserFindFirstArgs): Promise<User>;
   createUser(args: Prisma.UserCreateInput): Promise<User>;
 }
