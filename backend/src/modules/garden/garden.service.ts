@@ -7,6 +7,7 @@ import {
 } from './models/garden.model';
 import { Prisma } from '@prisma/client';
 import { responseSuccess } from 'src/common/responseSuccess';
+import { GetGardensDto } from './dto/garden.dto';
 
 @Injectable()
 export class GardenService {
@@ -75,8 +76,22 @@ export class GardenService {
     return responseSuccess(200, garden);
   }
 
-  async getGardens(): Promise<GardensType> {
-    const gardens = await this.gardenRepository.getGardens();
+  async getGardens(dto: GetGardensDto): Promise<GardensType> {
+    const query: Prisma.GardenFindManyArgs = dto.userId
+      ? {
+          where: {
+            users: {
+              some: {
+                userId: dto.userId,
+              },
+            },
+          },
+        }
+      : {};
+    query.select = {
+      id: true,
+    };
+    const gardens = await this.gardenRepository.getGardens(query);
     return responseSuccess(200, gardens);
   }
 }

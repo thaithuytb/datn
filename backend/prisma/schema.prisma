@@ -19,15 +19,18 @@ model Sample {
 }
 
 model User {
-  id          Int              @id @default(autoincrement())
-  name        String
-  phoneNumber String?          @map("phone_number")
-  email       String           @unique
-  password    String
-  role        Role             @default(USER)
-  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt   DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  gardens     GardensOnUsers[]
+  id                   Int                    @id @default(autoincrement())
+  phoneNumber          String?                @map("phone_number")
+  email                String                 @unique
+  password             String
+  role                 Role                   @default(USER)
+  createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt            DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  address              String?
+  fullName             String                 @map("full_name")
+  gender               Gender                 @default(MALE)
+  gardens              GardensOnUsers[]
+  notificationsOnUsers NotificationsOnUsers[]
 
   @@map("users")
 }
@@ -144,6 +147,7 @@ model Garden {
   address    String
   width      Int?
   length     Int?
+  hight      Int?
   landArea   Int              @map("land_area")
   createdAt  DateTime         @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt  DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
@@ -172,7 +176,36 @@ model GardensOnUsers {
   @@map("gardensOnUsers")
 }
 
+model Notification {
+  id        Int                    @id @default(autoincrement())
+  createdAt DateTime               @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  users     NotificationsOnUsers[]
+
+  @@map("notifications")
+}
+
+model NotificationsOnUsers {
+  userId         Int          @map("user_id")
+  notificationId Int          @map("notification_id")
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  description    String
+  title          String
+  notification   Notification @relation(fields: [notificationId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
+
+  @@id([userId, notificationId])
+  @@index([notificationId], map: "notificationsOnUsers_notification_id_fkey")
+  @@map("notificationsOnUsers")
+}
+
 enum Role {
   USER
   ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
 }

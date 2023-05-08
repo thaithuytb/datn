@@ -5,7 +5,7 @@ import { createFan } from './fan';
 import { createPump } from './pump';
 import { createMeasureDevice } from './measure-device';
 import { createGarden } from './garden';
-import { createlamb } from './lamp';
+import { createLamb } from './lamp';
 import { createUsers } from './user';
 
 export const prismaForSeed = new PrismaClient();
@@ -18,7 +18,7 @@ export const createResources = async (prisma: PrismaClient) => {
   await createFan(prisma, garden);
   await createPump(prisma, garden);
   await createMeasureDevice(prisma, garden);
-  await createlamb(prisma, garden);
+  await createLamb(prisma, garden);
 };
 
 const seed = async () => {

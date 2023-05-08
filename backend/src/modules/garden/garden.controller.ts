@@ -3,20 +3,22 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { GardenService } from './garden.service';
 import { RoleGardenGuard } from '../../guards/roleGardenGuard';
-import { RoleAdminGuard } from '../../guards/roleAdminGuard';
+import { Role } from '@prisma/client';
 
 @Controller('api/v1/gardens')
 export class GardenController {
   constructor(private readonly gardenService: GardenService) {}
-
-  @UseGuards(RoleAdminGuard)
   @Get()
-  async getGardens() {
-    return this.gardenService.getGardens();
+  async getGardens(@Req() req: any) {
+    if (req.user.role === Role.ADMIN) {
+      return this.gardenService.getGardens({});
+    }
+    return this.gardenService.getGardens({ userId: req.user.id });
   }
 
   @UseGuards(RoleGardenGuard)
