@@ -15,9 +15,14 @@ export class AuthRepository implements IAuthRepository {
       data: args,
     });
   }
+
+  async updateInformation(args: Prisma.UserUpdateArgs): Promise<User> {
+    return this.prisma.user.update(args);
+  }
 }
 
 export interface IAuthRepository {
   getUserByEmail(args: Prisma.UserFindFirstArgs): Promise<User>;
   createUser(args: Prisma.UserCreateInput): Promise<User>;
+  updateInformation(args: Prisma.UserUpdateArgs): Promise<User>;
 }

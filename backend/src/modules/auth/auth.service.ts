@@ -4,10 +4,16 @@ import { AuthRepository } from '../../repositories/auth.repository';
 import { sign, verify } from 'jsonwebtoken';
 import * as argon2 from 'argon2';
 import { responseSuccess } from '../../common/responseSuccess';
-import { LoginType, UserDetail } from './models/auth.model';
+import {
+  LoginType,
+  UserDetail,
+  UserResponseDetail,
+  UserResponseDetailType,
+} from './models/auth.model';
 import { RegisterDto } from './dto/register.dto';
 import { uuid } from 'uuidv4';
 import { Prisma, User } from '@prisma/client';
+import { UpdateInformationDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -39,10 +45,11 @@ export class AuthService {
     }
 
     const token = await this.signToken(existUser.id, existUser.email);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...responseUser } = existUser;
 
-    return responseSuccess(200, { user: responseUser as User, token });
+    return responseSuccess(200, {
+      user: UserResponseDetail.transform(existUser),
+      token,
+    });
   }
 
   async register(dto: RegisterDto): Promise<LoginType> {
@@ -65,10 +72,25 @@ export class AuthService {
     });
 
     const token = await this.signToken(newUser.id, newUser.email);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...responseUser } = newUser;
 
-    return responseSuccess(201, { user: responseUser as User, token });
+    return responseSuccess(201, {
+      user: UserResponseDetail.transform(newUser),
+      token,
+    });
+  }
+
+  async updateInformation(
+    userId: number,
+    dto: UpdateInformationDto,
+  ): Promise<UserResponseDetailType> {
+    const user = await this.authRepository.updateInformation({
+      where: {
+        id: userId,
+      },
+      data: dto,
+    });
+
+    return responseSuccess(200, UserResponseDetail.transform(user));
   }
 
   async getUserByEmail(email: string): Promise<UserDetail> {
