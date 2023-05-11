@@ -1,20 +1,20 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PublicMqttService } from '../../mqtt/publish';
 import { Redis } from 'ioredis';
-import { ChangeFanStatusDto } from './dto/fan.dto';
+import { ChangeFanStatusDto } from './dto/fan-data.dto';
 import { GardenRepository } from '../../repositories/garden.repository';
 import { messageToMqtt } from '../../common/messageToMqtt';
-import { FanRepository } from '../../repositories/fan.repository';
-import { FanType, FansType } from './models/fan.model';
+import { FanDataRepository } from '../../repositories/fan-data.repository';
+import { FanDataType, FanDatasType } from './models/fanData.model';
 import { responseSuccess } from '../../common/responseSuccess';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
-export class FanService {
+export class FanDataService {
   private readonly redis: Redis;
   constructor(
     private readonly mqttService: PublicMqttService,
-    private readonly fanRepository: FanRepository,
+    private readonly fanRepository: FanDataRepository,
     private readonly gardenRepository: GardenRepository,
   ) {
     this.redis = new Redis({
@@ -25,19 +25,21 @@ export class FanService {
     });
   }
 
-  async getFanLatestStatus(): Promise<FanType> {
-    const fan = await this.fanRepository.getFanLatestStatus();
-    return responseSuccess(200, fan);
+  async getFanLatestStatus(dto: { deviceId: number }): Promise<FanDataType> {
+    const fanDataLatest = await this.fanRepository.getFanDataLatestStatus(
+      dto.deviceId,
+    );
+    return responseSuccess(200, fanDataLatest);
   }
 
-  async getHistoryFanStatusByIp(dto: {
+  async getHistoryFanStatusByDeviceId(dto: {
     page: number;
     limit: number;
-    ip: string;
-  }): Promise<FansType> {
-    const query: Prisma.FanFindManyArgs = {
+    deviceId: number;
+  }): Promise<FanDatasType> {
+    const query: Prisma.FanDataFindManyArgs = {
       where: {
-        ip: dto.ip,
+        deviceId: dto.deviceId,
       },
       orderBy: {
         id: 'desc',
@@ -45,12 +47,12 @@ export class FanService {
       skip: dto.page - 1,
       take: dto.limit,
     };
-    const fans = await this.fanRepository.getHistoryFanStatus(query);
-    if (fans.length) {
-      return responseSuccess(200, fans);
+    const fanDatas = await this.fanRepository.getHistoryFanDatas(query);
+    if (fanDatas.length) {
+      return responseSuccess(200, fanDatas);
     }
     throw new HttpException(
-      `Fans not found or no records with ip: ${dto.ip}`,
+      `FanDatas not found or no records with device: ${dto.deviceId}`,
       HttpStatus.NOT_FOUND,
     );
   }

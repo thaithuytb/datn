@@ -57,6 +57,17 @@ export async function subscribeMqtt(fanGateway: FanGateway) {
       return console.log('error: garden not found');
     }
     const gardenId = garden.id;
+
+    const device = await prisma.device.findFirst({
+      where: {
+        ip: parseMessage['ip'],
+      },
+    });
+
+    if (!device) {
+      return console.log('error: garden not found');
+    }
+    const deviceId = device.id;
     //check topic here
     switch (topic.slice(15)) {
       case '/sample': {
@@ -71,40 +82,40 @@ export async function subscribeMqtt(fanGateway: FanGateway) {
       case '/sensor': {
         switch (parseMessage['data']['sensorName']) {
           case 'temp_air': {
-            await prisma.tempAir.create({
-              data: {
-                temp: parseMessage['data']['temp'],
-                tempThreshold: parseMessage['data']['tempThreshold'],
-                airHumidity: parseMessage['data']['airHumidity'],
-                airHumidityThreshold:
-                  parseMessage['data']['airHumidityThreshold'],
-                ip: parseMessage['data']['ip'],
-                gardenId,
-              },
-            });
+            // await prisma.tempAir.create({
+            //   data: {
+            //     temp: parseMessage['data']['temp'],
+            //     tempThreshold: parseMessage['data']['tempThreshold'],
+            //     airHumidity: parseMessage['data']['airHumidity'],
+            //     airHumidityThreshold:
+            //       parseMessage['data']['airHumidityThreshold'],
+            //     ip: parseMessage['data']['ip'],
+            //     gardenId,
+            //   },
+            // });
             break;
           }
           case 'humi': {
-            await prisma.light.create({
-              data: {
-                value: parseMessage['data']['value'],
-                threshold: parseMessage['data']['threshold'],
-                ip: parseMessage['data']['ip'],
-                gardenId,
-              },
-            });
+            // await prisma.light.create({
+            //   data: {
+            //     value: parseMessage['data']['value'],
+            //     threshold: parseMessage['data']['threshold'],
+            //     ip: parseMessage['data']['ip'],
+            //     gardenId,
+            //   },
+            // });
             break;
           }
           case 'light': {
-            await prisma.light.create({
-              data: {
-                value: parseMessage['data']['value'],
-                threshold: parseMessage['data']['threshold'],
-                ip: parseMessage['data']['ip'],
-                gardenId,
-              },
-            });
-            break;
+            // await prisma.light.create({
+            //   data: {
+            //     value: parseMessage['data']['value'],
+            //     threshold: parseMessage['data']['threshold'],
+            //     ip: parseMessage['data']['ip'],
+            //     gardenId,
+            //   },
+            // });
+            // break;
           }
           default: {
             console.log('error: /sensor ', parseMessage['data']['sensorName']);
@@ -115,11 +126,11 @@ export async function subscribeMqtt(fanGateway: FanGateway) {
       case '/actuator': {
         switch (parseMessage['data']['actuatorName']) {
           case 'fan': {
-            const data = await prisma.fan.create({
+            const data = await prisma.fanData.create({
               data: {
                 value: parseMessage['data']['value'],
                 status: parseMessage['data']['status'],
-                ip: parseMessage['data']['ip'],
+                deviceId,
                 gardenId,
               },
             });

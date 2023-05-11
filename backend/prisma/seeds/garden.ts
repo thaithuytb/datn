@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
 export async function createGarden(prisma: PrismaClient) {
-  await prisma.garden.create({
+  const garden = await prisma.garden.create({
     data: {
       name: 'garden_1',
       address: 'address_1',
@@ -11,7 +11,7 @@ export async function createGarden(prisma: PrismaClient) {
       landArea: 800,
     },
   });
-  return prisma.garden.create({
+  await prisma.garden.create({
     data: {
       name: 'garden_2',
       address: 'address_2',
@@ -21,4 +21,6 @@ export async function createGarden(prisma: PrismaClient) {
       hight: 20,
     },
   });
+
+  return garden;
 }

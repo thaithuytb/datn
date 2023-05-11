@@ -3,7 +3,7 @@ import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 export interface IChangeFanStatusDto {
   value: number;
   status: boolean;
-  ip: string;
+  deviceId: number;
 }
 
 export class ChangeFanStatusDto {
@@ -11,6 +11,8 @@ export class ChangeFanStatusDto {
   status: boolean;
   @IsString()
   ip: string;
+  @IsNumber()
+  deviceId: number;
   @IsString()
   gardenName: string;
   @IsOptional()
@@ -20,7 +22,7 @@ export class ChangeFanStatusDto {
     return {
       value: arg?.value,
       status: arg.status,
-      ip: arg.ip,
+      deviceId: arg.deviceId,
     };
   }
 }

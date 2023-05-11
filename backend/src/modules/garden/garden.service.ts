@@ -19,45 +19,19 @@ export class GardenService {
         id,
       },
       include: {
-        fans: {
-          distinct: 'ip',
+        devices: {
           select: {
+            id: true,
             ip: true,
-          },
-        },
-        nebulizers: {
-          distinct: 'ip',
-          select: {
-            ip: true,
-          },
-        },
-        pumps: {
-          distinct: 'ip',
-          select: {
-            ip: true,
-          },
-        },
-        humis: {
-          distinct: 'ip',
-          select: {
-            ip: true,
-          },
-        },
-        lights: {
-          distinct: 'ip',
-          select: {
-            ip: true,
-          },
-        },
-        tempAirs: {
-          distinct: 'ip',
-          select: {
-            ip: true,
+            type: true,
           },
         },
         users: {
           select: {
             userId: true,
+          },
+          where: {
+            gardenId: id,
           },
         },
       },
