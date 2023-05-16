@@ -1,5 +1,4 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { PrismaService } from '../../infrastructures/prisma.service';
 import { RepositoryModule } from '../../repositories/repository.module';
 import { PublicMqttService } from '../../mqtt/publish';
 import { GardenService } from './garden.service';
@@ -9,7 +8,7 @@ import { AuthService } from '../auth/auth.service';
 
 @Module({
   imports: [RepositoryModule],
-  providers: [GardenService, PrismaService, PublicMqttService, AuthService],
+  providers: [GardenService, PublicMqttService, AuthService],
   controllers: [GardenController],
 })
 export class GardenModule implements NestModule {

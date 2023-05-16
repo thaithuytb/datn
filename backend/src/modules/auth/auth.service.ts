@@ -12,7 +12,7 @@ import {
 } from './models/auth.model';
 import { RegisterDto } from './dto/register.dto';
 import { uuid } from 'uuidv4';
-import { Prisma, User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { UpdateInformationDto } from './dto/auth.dto';
 
 @Injectable()
