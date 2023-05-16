@@ -2,8 +2,9 @@ import axiosClient from "./axiosClient";
 
 class GardenApi {
   getGardens() {
-    const url = "/gardens";
-    return axiosClient.get(url);
+    //http://localhost:7000/sample?status=true&name=999999
+    // const url = "/gardens";
+    return axiosClient.get("sample?status=true&name=999999");
   }
 
   getGardenById(dto: { id: string }) {

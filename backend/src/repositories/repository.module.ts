@@ -4,6 +4,7 @@ import { SampleRepository } from './sample.repository';
 import { GardenRepository } from './garden.repository';
 import { FanDataRepository } from './fan-data.repository';
 import { AuthRepository } from './auth.repository';
+import { NotificationRepository } from './notification.repository';
 
 @Module({
   providers: [
@@ -12,12 +13,14 @@ import { AuthRepository } from './auth.repository';
     GardenRepository,
     FanDataRepository,
     AuthRepository,
+    NotificationRepository,
   ],
   exports: [
     SampleRepository,
     GardenRepository,
     FanDataRepository,
     AuthRepository,
+    NotificationRepository,
   ],
 })
 export class RepositoryModule {}

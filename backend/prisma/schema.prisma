@@ -177,23 +177,25 @@ model GardensOnUsers {
 }
 
 model Notification {
-  id        Int                    @id @default(autoincrement())
-  createdAt DateTime               @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  users     NotificationsOnUsers[]
+  id          Int                    @id @default(autoincrement())
+  description String
+  title       String
+  createdAt   DateTime               @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt   DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  users       NotificationsOnUsers[]
 
   @@map("notifications")
 }
 
 model NotificationsOnUsers {
-  userId         Int          @map("user_id")
-  notificationId Int          @map("notification_id")
-  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  description    String
-  title          String
-  notification   Notification @relation(fields: [notificationId], references: [id])
-  user           User         @relation(fields: [userId], references: [id])
+  userId         Int              @map("user_id")
+  notificationId Int              @map("notification_id")
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  seen           Boolean          @default(false)
+  type           NotificationType
+  notification   Notification     @relation(fields: [notificationId], references: [id])
+  user           User             @relation(fields: [userId], references: [id])
 
   @@id([userId, notificationId])
   @@index([notificationId], map: "notificationsOnUsers_notification_id_fkey")
@@ -218,4 +220,10 @@ enum DeviceTypeEnum {
   LIGHTSENSOR
   HUMISENSOR
   TEMPAIRSENSOR
+}
+
+enum NotificationType {
+  CALENDAR
+  NOTION
+  OTHER
 }

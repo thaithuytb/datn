@@ -8,6 +8,7 @@ import { FanDataModule } from './modules/fan-data/fan-data.module';
 import { GardenModule } from './modules/garden/garden.module';
 import { FanSocketModule } from './socket/fan/fan.socket.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AuthModule } from './modules/auth/auth.module';
     GardenModule,
     FanSocketModule,
     AuthModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
