@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../infrastructures/prisma.service';
+import { PrismaService } from '../infrastructures/dao/prisma.service';
 import { Garden, Prisma } from '@prisma/client';
 
 @Injectable()
@@ -19,13 +19,13 @@ export class GardenRepository implements IGardenRepository {
   }
 
   //TODO: can add feature filter garden
-  async getGardens(): Promise<Garden[]> {
-    return this.prisma.garden.findMany({});
+  async getGardens(args: Prisma.GardenFindManyArgs): Promise<Garden[]> {
+    return this.prisma.garden.findMany(args);
   }
 }
 
 export interface IGardenRepository {
   getGardenByName(name: string): Promise<Garden>;
   getGardenById(arg: Prisma.GardenFindFirstArgsBase): Promise<Garden>;
-  getGardens(name: string): Promise<Garden[]>;
+  getGardens(args: Prisma.GardenFindManyArgs): Promise<Garden[]>;
 }

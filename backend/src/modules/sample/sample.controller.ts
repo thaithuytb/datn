@@ -12,7 +12,7 @@ import { SampleService } from './sample.service';
 import { CreateSampleDto } from './dto/sample.dto';
 import { PublicMqttService } from '../../mqtt/publish';
 
-@Controller('sample')
+@Controller('api/v1/sample')
 export class SampleController {
   constructor(
     private readonly sampleService: SampleService,
@@ -32,10 +32,23 @@ export class SampleController {
     @Query('status', ParseBoolPipe) status = true,
     @Query('name') name = '',
   ) {
-    return this.sampleService.getSamples({
-      name,
-      status,
+    // setTimeout(() => {
+    //   console.log('c');
+    //   return this.sampleService.getSamples({
+    //     name,
+    //     status,
+    //   });
+    // }, 5000);
+
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve('testtttttttttttttttttttttttttttttttttt');
+      }, 60000 * 3);
     });
+    // return this.sampleService.getSamples({
+    //   name,
+    //   status,
+    // });
   }
 
   @Get(':id')

@@ -3,10 +3,11 @@ import {
   Injectable,
   OnModuleInit,
   Logger,
+  Scope,
 } from '@nestjs/common';
 import { Prisma, PrismaClient } from '@prisma/client';
 
-@Injectable()
+@Injectable({ scope: Scope.DEFAULT })
 export class PrismaService
   extends PrismaClient<Prisma.PrismaClientOptions, Prisma.LogLevel>
   implements OnModuleInit

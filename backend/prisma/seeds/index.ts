@@ -1,20 +1,27 @@
 import { PrismaClient } from '@prisma/client';
 import { createSample } from './sample';
-import { createNebulizer } from './nebulizer';
-import { createFan } from './fan';
-import { createPump } from './pump';
-import { createMeasureDevice } from './measure-device';
 import { createGarden } from './garden';
+import { createUsers } from './user';
+import { createDevices } from './device';
+import { createFanDatas } from './fan-data';
+import { createNotifications } from './notification';
+// import { createNebulizer } from './nebulizer';
+// import { createPump } from './pump';
+// import { createMeasureDevice } from './measure-device';
+// import { createLamb } from './lamp';
 
 export const prismaForSeed = new PrismaClient();
 
 export const createResources = async (prisma: PrismaClient) => {
   await createSample(prisma);
   const garden = await createGarden(prisma);
-  await createNebulizer(prisma, garden);
-  await createFan(prisma, garden);
-  await createPump(prisma, garden);
-  await createMeasureDevice(prisma, garden);
+  await createUsers(prisma, garden);
+  const devices = await createDevices(prisma, garden);
+  await createFanDatas(prisma, garden, devices);
+  await createNotifications(prisma);
+  // await createPump(prisma, garden);
+  // await createMeasureDevice(prisma, garden);
+  // await createLamb(prisma, garden);
 };
 
 const seed = async () => {
