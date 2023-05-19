@@ -11,7 +11,7 @@ import {
 import { ChangeFanStatusDto } from './dto/fan-data.dto';
 import { FanDataService } from './fan-data.service';
 import { FanDataType, FanDatasType } from './models/fanData.model';
-import { OptionalParseIntPipe } from '../../common/customPipe';
+import { OptionalParseIntPipe } from '../../pipes/optional-parse-int-pipe';
 import { RoleGardenGuard } from '../../guards/roleGardenGuard';
 
 @UseGuards(RoleGardenGuard)

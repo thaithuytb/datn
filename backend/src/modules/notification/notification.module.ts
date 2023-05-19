@@ -4,9 +4,10 @@ import { NotificationService } from './notification.service';
 import { verifyTokenMiddleware } from '../../middlewares/decoded-token';
 import { NotificationController } from './notification.controller';
 import { AuthService } from '../auth/auth.service';
+import { DaoModule } from '../../infrastructures/dao/dao.module';
 
 @Module({
-  imports: [RepositoryModule],
+  imports: [RepositoryModule, DaoModule],
   providers: [NotificationService, AuthService],
   controllers: [NotificationController],
 })
