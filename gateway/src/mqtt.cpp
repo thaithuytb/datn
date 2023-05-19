@@ -27,11 +27,8 @@ void setup_wifi() {
 
 const char* mqtt_server = "broker.hivemq.com";
 const int mqtt_port = 1883;
-const char* mqtt_client_id = "esp32";
+const char* mqtt_client_id = "Gateway";
 
-//Topic
-char actuatorTopic[30] = "datn/test/actuator";
-char uuidTopic[30] = "datn/changeTopic";
 char secret[30] = "haithai";
 
 CustomJWT jwt(secret, 256);
@@ -57,12 +54,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
   DynamicJsonDocument doc(1024);
   deserializeJson(doc, jwt.payload);
 
-  Serial.println(doc["newTopic"].as<String>());
-
   jwt.clear();
 }
 
-void reconnect() {
+void reconnect(String topic[]) {
   
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
@@ -71,7 +66,10 @@ void reconnect() {
       Serial.println("connected");
       
       client.setCallback(callback);
-      client.subscribe(uuidTopic);
+
+      for(int i = 0; i < topic->length(); i++) {
+        client.subscribe(topic[i].c_str());
+      }
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -87,9 +85,9 @@ void initMQTT() {
     client.setServer(mqtt_server, mqtt_port);
 }
 
-void reconnectMQTTHandle() {
-    if (!client.connected()) {
-    reconnect();
+void reconnectMQTTHandle(String topic[]) {
+  if (!client.connected()) {
+    reconnect(topic);
   }
   
   client.loop();
@@ -100,4 +98,15 @@ void reconnectMQTTHandle() {
 
   // client.publish(actuatorTopic, (char *)object.c_str());
 
+}
+
+String encodeJWT(String object) {
+  jwt.allocateJWTMemory();
+  jwt.encodeJWT((char *)object.c_str());
+
+  String result = jwt.out;
+
+  jwt.clear();
+
+  return result;
 }

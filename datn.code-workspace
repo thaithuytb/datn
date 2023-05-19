@@ -1,12 +1,23 @@
 {
 	"folders": [
 		{
-			"path": "TempSensor"
+			"name": "controller",
+			"path": "controller"
 		},
 		{
+			"name": "sensor",
+			"path": "sensor"
+		},
+		{
+			"name": "gateway",
+			"path": "gateway"
+		},
+		{
+			"name": "backend",
 			"path": "backend"
 		},
 		{
+			"name": "web",
 			"path": "web"
 		}
 	],

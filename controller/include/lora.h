@@ -5,6 +5,7 @@
 
 void initLora();
 void loraRead();
+void loraWrite(String string);
 
 extern void loraCallback(char c);
 
