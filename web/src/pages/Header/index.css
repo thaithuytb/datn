@@ -1,0 +1,32 @@
+.header {
+	display: flex;
+	justify-content: space-between;
+	background-color: rgb(149, 200, 230);
+	border-bottom: 1px solid #e2dbdb;
+	height: 70px;
+}
+
+.header_left {
+	display: flex;
+	align-items: center;
+}
+
+.header_right {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.header_right div {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.header_right div:hover {
+	cursor: pointer;
+}
+
+.header_right div:last-child {
+	margin-left: 5px;
+}
