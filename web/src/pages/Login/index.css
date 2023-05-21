@@ -1,0 +1,54 @@
+.wp_login {
+	height: calc(100vh - 50px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1;
+}
+
+.login {
+	width: 60%;
+	height: 75%;
+	box-shadow: -5px -1px 10px -1px rgba(0, 0, 0, 0.72);
+	-webkit-box-shadow: -5px -1px 10px -1px rgba(0, 0, 0, 0.72);
+	-moz-box-shadow: -5px -1px 10px -1px rgba(0, 0, 0, 0.72);
+	display: flex;
+	align-items: center;
+	border-radius: 20px;
+	display: flex;
+}
+
+.login_form {
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.login_form input {
+	width: 200px;
+	border-radius: 5px;
+	padding: 15px 20px;
+	outline: none;
+	margin-bottom: 20px;
+}
+
+.login_form button {
+	width: 200px;
+	padding: 15px 20px;
+	background-color: #25c8f1;
+	color: white;
+	border: none;
+	font-weight: bold;
+	cursor: pointer;
+	border-radius: 5px;
+}
+
+.login_title {
+	position: absolute;
+	top: 70px;
+	color: rgb(155, 154, 154);
+}
