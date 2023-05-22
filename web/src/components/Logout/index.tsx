@@ -7,8 +7,12 @@ export default function Logout() {
   const navigate = useNavigate();
 
   const logout = async () => {
-    await context?.logout()
-    return navigate('/login')
-  }
-  return <button style={{border: "1px solid #333"}} onClick={logout}>Logout</button>;
+    await context?.logout();
+    navigate("/login");
+  };
+  return (
+    <button style={{ border: "1px solid #333" }} onClick={logout}>
+      Logout
+    </button>
+  );
 }

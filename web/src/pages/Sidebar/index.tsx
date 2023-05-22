@@ -1,12 +1,25 @@
-import { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import socketIOClient, { Socket } from "socket.io-client";
 import gardenApi from "../../api/garden";
 import { Garden } from "../../types/garden.type";
-import { Menu } from "antd";
+import { Menu, Modal } from "antd";
+import {
+  CloseOutlined,
+  ExclamationCircleFilled,
+  LaptopOutlined,
+  NotificationOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import SubMenu from "antd/es/menu/SubMenu";
-import { Link } from "react-router-dom";
+import {
+  Link,
+  Navigate,
+  NavigateFunction,
+  useNavigate,
+} from "react-router-dom";
 import { MenuItem, listSidebar } from "../../routes/routeSidebar";
-
+import { AuthContext } from "../../contexts/authContext";
+const { confirm } = Modal;
 // export default function SidebarLayout() {
 // const [gardens, setGardens] = useState<Garden[] | []>([]);
 
@@ -68,7 +81,68 @@ import { MenuItem, listSidebar } from "../../routes/routeSidebar";
 //   );
 // }
 
+const items: any = listSidebar.map((item: MenuItem) => {
+  return {
+    key: item.key,
+    label: item.titleSidebar,
+    children:
+      item.children &&
+      item.children.map((childrenItem) => {
+        return {
+          key: childrenItem.key,
+          label: childrenItem.titleSidebar,
+        };
+      }),
+  };
+});
+
 export default function SidebarLayout() {
+  const context = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const showLogoutModal = () => {
+    confirm({
+      title: "Bạn có chắc chắn rời đi và không gặp lại:((((",
+      icon: <ExclamationCircleFilled />,
+      okText: "Đăng xuất:((",
+      closeIcon: <CloseOutlined />,
+      cancelText: "Ở lại",
+      onOk() {
+        navigate("/login");
+        context?.logout();
+      },
+      onCancel() {},
+    });
+  };
+
+  const logout = () => {
+    showLogoutModal();
+  };
+
+  const listItemSidebar = ({ key }: { key: string }) => {
+    const itemActive: MenuItem[] = [];
+    for (const item of listSidebar) {
+      if (item.key === key) {
+        itemActive.push(item);
+      }
+      if (item.children) {
+        const itemChildren = item.children.find(
+          (childrenItem: MenuItem) => childrenItem.key === key
+        );
+        if (itemChildren) {
+          itemActive.push(itemChildren);
+        }
+      }
+    }
+
+    if (itemActive.length) {
+      if (itemActive[0].url === "logout") {
+        logout();
+      } else {
+        navigate(`${itemActive[0].url}`);
+      }
+    }
+  };
   return (
     <Menu
       style={{ width: 256 }}
@@ -76,22 +150,8 @@ export default function SidebarLayout() {
       defaultOpenKeys={["sub1"]}
       mode="inline"
       theme={"light"}
-    >
-      {listSidebar.map((item: MenuItem) =>
-        item.children ? (
-          <SubMenu key={item.key} title={item.titleSidebar}>
-            {item.children.map((childItem: MenuItem) => (
-              <Menu.Item key={childItem.key}>
-                <Link to={`/${childItem.url}`}>{childItem.titleSidebar}</Link>
-              </Menu.Item>
-            ))}
-          </SubMenu>
-        ) : (
-          <Menu.Item key={item.key}>
-            <Link to={`/${item.url}`}>{item.titleSidebar}</Link>
-          </Menu.Item>
-        )
-      )}
-    </Menu>
+      onClick={listItemSidebar}
+      items={items}
+    />
   );
 }
