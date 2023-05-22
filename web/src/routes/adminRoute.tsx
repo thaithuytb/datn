@@ -4,7 +4,7 @@ interface PropsAdminRoute {
   componentRedirect: React.ComponentType;
 }
 
-export const AdminRoute: React.FC<PropsAdminRoute> = ({
+const AdminRoute: React.FC<PropsAdminRoute> = ({
   componentRedirect,
 }) => {
   const isAuthenticated = {
@@ -17,3 +17,5 @@ export const AdminRoute: React.FC<PropsAdminRoute> = ({
     <Navigate to="/login" />
   );
 };
+
+export default AdminRoute;

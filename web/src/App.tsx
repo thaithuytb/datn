@@ -6,21 +6,22 @@ import Garden from "./pages/Garden";
 import Logout from "./components/Logout";
 import ChangePassword from "./pages/ChangePassword";
 import PersonalInformation from "./pages/PersonalInformation";
-import { ProtectedRoute } from "./routes/protectedRoute";
-import { AdminRoute } from "./routes/adminRoute";
+import ProtectedRoute from "./routes/protectedRoute";
+import AdminRoute from "./routes/adminRoute";
 import NotFound from "./components/NotFound";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import AuthContextProvider from "./contexts/authContext";
 
 const App = () => {
   const location = useLocation();
   const url = location.pathname;
 
   return (
-    <div>
-      {url !== '/login' && <HeaderLayout />} 
+    <AuthContextProvider>
+      {url !== '/login' && <ProtectedRoute componentRedirect={HeaderLayout} />} 
       <div className={url !== '/login' ? 'app_content': "" }>
-        {url !== '/login' &&  <SidebarLayout />}  
+        {url !== '/login' && <ProtectedRoute componentRedirect={SidebarLayout} />}  
         <Routes>
           <Route path="/" element={<Home/>} />
           <Route path="/login" element={<Login />}/>
@@ -50,7 +51,7 @@ const App = () => {
           />
         </Routes>
       </div>
-    </div>
+    </AuthContextProvider>
   );
 };
 

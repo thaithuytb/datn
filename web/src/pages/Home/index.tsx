@@ -1,6 +1,10 @@
+import { useContext } from "react";
+import { AuthContext } from "../../contexts/authContext";
+import { Navigate } from "react-router-dom";
+
 export default function Home() {
-  // check if authenticated the redirect to garden, else redirect to login
-  return (
+  const context = useContext(AuthContext);
+    return context?.authInformation?.isAuthenticated ? (
     <div>home</div>
-  )
+  ): <Navigate to='/login' />
 }

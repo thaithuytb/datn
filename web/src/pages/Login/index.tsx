@@ -1,18 +1,24 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "./index.css";
 import AuthApi from "../../api/auth";
 import { LOCAL_STORAGE_TOKEN } from "../../common/local-storage-token";
 import { IInformationUserLogin } from "../../types/login.type";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../contexts/authContext";
 
-export default function Login(  ) {
+export default function Login() {
+  const context = useContext(AuthContext);
+  
   const [informationUserLogin, setInformationUserLogin] = useState<IInformationUserLogin>({
     email: 'admin@admin.com',
     password: 'admin'
   });
 
   const navigate = useNavigate();
-
+  
+  if (context?.authInformation.isAuthenticated) {
+    return <Navigate to='/' />
+  }
   const { email, password } = informationUserLogin
 
   const onChangeSetInformationUserLogin = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,17 +28,14 @@ export default function Login(  ) {
     e.preventDefault();
       
     try {
-      const res = await AuthApi.registerAuthApi().login({email, password});  
-      if (res.data.success) {
-        const { user, token } = res.data.data
-        localStorage.setItem(LOCAL_STORAGE_TOKEN, token);
-        console.log(user)
-        console.log(token)
+      if (context?.login) {
+        await context.login({ email, password}) 
         return navigate('/')
       }
     } catch (error: any) {
-      console.log(error.response.data.statusCode);
-      console.log(error.response.data.message);
+      // TODO: handleError
+      console.log(error?.statusCode)
+      console.log(error?.message)
     }
   };
   
