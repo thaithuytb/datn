@@ -1,12 +1,13 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import socketIOClient, { Socket } from "socket.io-client";
 import gardenApi from "../../api/garden";
 import { Garden } from "../../types/garden.type";
 import { Menu, Modal } from "antd";
 import { CloseOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { MenuItem, listSidebar } from "../../routes/routeSidebar";
+import { MenuItem, listSidebarInit } from "../../routes/routeSidebar";
 import { AuthContext } from "../../contexts/AuthContext";
+import { GardenContext } from "../../contexts/GardenContext";
 
 const { confirm } = Modal;
 // export default function SidebarLayout() {
@@ -70,23 +71,48 @@ const { confirm } = Modal;
 //   );
 // }
 
-const items: any = listSidebar.map((item: MenuItem) => {
-  return {
-    key: item.key,
-    label: item.titleSidebar,
-    children:
-      item.children &&
-      item.children.map((childrenItem) => {
-        return {
-          key: childrenItem.key,
-          label: childrenItem.titleSidebar,
-        };
-      }),
-  };
-});
-
 export default function SidebarLayout() {
-  const context = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
+  const gardenContext = useContext(GardenContext);
+
+  const [listSidebar, setListSidebar] = useState<MenuItem[]>(listSidebarInit);
+
+  useEffect(() => {
+    const gardens = gardenContext?.gardenInformation.gardens;
+    if (gardens?.length) {
+      setListSidebar([
+        {
+          ...listSidebar[0],
+          url: `garden/${gardens[0].id}`,
+          children: gardens.map((garden: any) => ({
+            titleSidebar: garden.name,
+            key: `${garden.id}`,
+            url: `garden/${garden.id}`,
+          })),
+        },
+        ...listSidebarInit.slice(1),
+      ]);
+    } else {
+      setListSidebar(listSidebarInit);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gardenContext?.gardenInformation.gardens]);
+
+  const items: any = listSidebar.map((item: MenuItem) => {
+    return {
+      key: item.key,
+      label: item.titleSidebar,
+      children:
+        item.children &&
+        item.children.map((childrenItem) => {
+          return {
+            key: childrenItem.key,
+            label: childrenItem.titleSidebar,
+          };
+        }),
+    };
+  });
+
   const navigate = useNavigate();
 
   const showLogoutModal = () => {
@@ -98,7 +124,7 @@ export default function SidebarLayout() {
       cancelText: "Ở lại",
       onOk() {
         navigate("/login");
-        context?.logout();
+        authContext?.logout();
       },
       onCancel() {},
     });
@@ -135,8 +161,6 @@ export default function SidebarLayout() {
   return (
     <Menu
       style={{ width: 256 }}
-      defaultSelectedKeys={["1"]}
-      defaultOpenKeys={["sub1"]}
       mode="inline"
       theme={"light"}
       onClick={listItemSidebar}

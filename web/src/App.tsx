@@ -12,8 +12,9 @@ import NotFound from "./components/NotFound";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import AuthContextProvider from "./contexts/AuthContext";
-import MessageProvider from "./contexts/MessageContext";
+import MessageContextProvider from "./contexts/MessageContext";
 import History from "./pages/Garden/History";
+import GardenContextProvider from "./contexts/GardenContext";
 
 const App = () => {
   const location = useLocation();
@@ -21,56 +22,60 @@ const App = () => {
 
   return (
     <AuthContextProvider>
-      <MessageProvider>
-        {url !== "/login" && (
-          <ProtectedRoute componentRedirect={HeaderLayout} />
-        )}
-        <div className={url !== "/login" ? "app_content" : ""}>
-          <div className="app_contentSidebarLayout">
-            {url !== "/login" && (
-              <ProtectedRoute componentRedirect={SidebarLayout} />
-            )}
-          </div>
-          <div className="">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route>
+      <MessageContextProvider>
+        <GardenContextProvider>
+          {url !== "/login" && (
+            <ProtectedRoute componentRedirect={HeaderLayout} />
+          )}
+          <div className={url !== "/login" ? "app_content" : ""}>
+            <div className="app_contentSidebarLayout">
+              {url !== "/login" && (
+                <ProtectedRoute componentRedirect={SidebarLayout} />
+              )}
+            </div>
+            <div className="">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route>
+                  <Route
+                    path="/garden/:gardenId"
+                    element={<ProtectedRoute componentRedirect={Garden} />}
+                  />
+                  <Route
+                    path="/garden/:gardenId/:id"
+                    element={<ProtectedRoute componentRedirect={History} />}
+                  />
+                </Route>
                 <Route
-                  path="/garden/:gardenId"
-                  element={<ProtectedRoute componentRedirect={Garden} />}
+                  path="/management-worker/*"
+                  element={<AdminRoute componentRedirect={NotFound} />}
                 />
                 <Route
-                  path="/garden/:gardenId/:id"
-                  element={<ProtectedRoute componentRedirect={History} />}
+                  path="/management-device/*"
+                  element={<AdminRoute componentRedirect={NotFound} />}
                 />
-              </Route>
-              <Route
-                path="/management-worker/*"
-                element={<AdminRoute componentRedirect={NotFound} />}
-              />
-              <Route
-                path="/management-device/*"
-                element={<AdminRoute componentRedirect={NotFound} />}
-              />
-              <Route
-                path="/personal-information"
-                element={
-                  <ProtectedRoute componentRedirect={PersonalInformation} />
-                }
-              />
-              <Route
-                path="/change-password"
-                element={<ProtectedRoute componentRedirect={ChangePassword} />}
-              />
-              <Route
-                path="/logout"
-                element={<ProtectedRoute componentRedirect={Logout} />}
-              />
-            </Routes>
+                <Route
+                  path="/personal-information"
+                  element={
+                    <ProtectedRoute componentRedirect={PersonalInformation} />
+                  }
+                />
+                <Route
+                  path="/change-password"
+                  element={
+                    <ProtectedRoute componentRedirect={ChangePassword} />
+                  }
+                />
+                <Route
+                  path="/logout"
+                  element={<ProtectedRoute componentRedirect={Logout} />}
+                />
+              </Routes>
+            </div>
           </div>
-        </div>
-      </MessageProvider>
+        </GardenContextProvider>
+      </MessageContextProvider>
     </AuthContextProvider>
   );
 };

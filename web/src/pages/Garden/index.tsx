@@ -70,7 +70,7 @@ export default function Garden() {
   console.log(gardenId);
   return (
     <div className="Garden">
-      <header>
+      {/* <header>
         <h2>Tên khu vườn</h2>
         <p>Diện tích</p>
         <p>Tổng quan</p>
@@ -78,7 +78,7 @@ export default function Garden() {
       <div className="GardenBody">
         <h3>Quản lý thiết bị</h3>
         <TableComponent click={true} text={"lịch sử"} dataTable={dataTable} />
-      </div>
+      </div> */}
     </div>
   );
 }

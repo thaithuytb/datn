@@ -1,13 +1,12 @@
 import { IInformationUserLogin } from "../types/login.type";
 import axiosClient from "./axiosClient";
 
-interface ApiResponse {
+export interface ApiResponse {
   success: boolean;
   data: any;
   message?: string; //Error
   statusCode?: number; //Error
 }
-
 
 class AuthApi {
   login(dto: IInformationUserLogin) {
@@ -23,9 +22,8 @@ class AuthApi {
   }
 
   static registerAuthApi() {
-    return new AuthApi()
+    return new AuthApi();
   }
 }
 
 export default AuthApi;
-

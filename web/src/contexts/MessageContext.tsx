@@ -15,7 +15,9 @@ export const MessageContext = createContext<IMessageContext | undefined>(
   undefined
 );
 
-const MessageProvider: React.FC<PropsMessageContext> = ({ children }) => {
+const MessageContextProvider: React.FC<PropsMessageContext> = ({
+  children,
+}) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const success = (message: string) => {
@@ -26,11 +28,10 @@ const MessageProvider: React.FC<PropsMessageContext> = ({ children }) => {
     });
   };
 
-  const error = (message: string) => {
-    console.log("aaaaaaaaaaaaaaaaaaaaaaa");
+  const error = (message?: string) => {
     messageApi.open({
       type: "error",
-      content: message,
+      content: message || "error !!!",
       duration: 4,
     });
   };
@@ -55,4 +56,4 @@ const MessageProvider: React.FC<PropsMessageContext> = ({ children }) => {
     </>
   );
 };
-export default MessageProvider;
+export default MessageContextProvider;

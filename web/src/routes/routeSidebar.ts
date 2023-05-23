@@ -4,47 +4,49 @@ export interface MenuItem {
   url: string;
   children?: MenuItem[];
 }
-export const listSidebar: MenuItem[] = [
+
+export const listSidebarInit: MenuItem[] = [
   {
     titleSidebar: "Quản lý vườn",
-    key: "1",
+    key: "garden",
     url: "garden",
-    children: [
-      {
-        titleSidebar: "Khu vườn Thái Bình",
-        key: "2",
-        url: "garden/2",
-      },
-      {
-        titleSidebar: "Khu vườn Hà Nội",
-        key: "3",
-        url: "garden/3",
-      },
-    ],
+    children: [],
+    // children: [
+    //   {
+    //     titleSidebar: "Khu vườn Thái Bình",
+    //     key: "2",
+    //     url: "garden/2",
+    //   },
+    //   {
+    //     titleSidebar: "Khu vườn Hà Nội",
+    //     key: "3",
+    //     url: "garden/3",
+    //   },
+    // ],
   },
   {
     titleSidebar: "Quản lý nhân viên",
-    key: "4",
+    key: "management-worker",
     url: "management-worker",
   },
   {
     titleSidebar: "Quản lý thiết bị",
-    key: "5",
+    key: "management-device",
     url: "management-device",
   },
   {
     titleSidebar: "Thông tin cá nhân",
-    key: "6",
+    key: "personal-information",
     url: "personal-information",
   },
   {
     titleSidebar: "Đổi mật khẩu",
-    key: "7",
+    key: "change-password",
     url: "change-password",
   },
   {
     titleSidebar: "Đăng xuất",
-    key: "8",
+    key: "logout",
     url: "logout",
   },
 ];
