@@ -10,39 +10,41 @@ interface PropsAuthContext {
 const authInformationDefault: IAuthInformation = {
   isAuthenticated: false,
   user: null,
-  token: null
+  token: null,
 };
 
 interface IAuthInformation {
-  isAuthenticated: boolean,
-  user: any | null, //User | null,
+  isAuthenticated: boolean;
+  user: any | null; //TODO: User | null,
   token: string | null;
 }
 
 interface IAuthContext {
   authInformation: IAuthInformation;
-  login: (dto: IInformationUserLogin) => void
-  logout: () => void
+  login: (dto: IInformationUserLogin) => void;
+  logout: () => void;
 }
 
-export const AuthContext = createContext<IAuthContext | undefined>(undefined)
+export const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
 const AuthContextProvider: React.FC<PropsAuthContext> = ({ children }) => {
-  const [authInformation, setAuthInformation] = useState<IAuthInformation>(authInformationDefault);
+  const [authInformation, setAuthInformation] = useState<IAuthInformation>(
+    authInformationDefault
+  );
 
-  async function autoLogin() {
+  const autoLogin = async () => {
     if (localStorage.getItem(LOCAL_STORAGE_TOKEN)) {
-      const authApi = AuthApi.registerAuthApi()
+      const authApi = AuthApi.registerAuthApi();
       try {
         const res = await authApi.autoLogin();
         if (res.success) {
-          const { user, token } = res.data
+          const { user, token } = res.data;
           setAuthInformation({
             ...authInformation,
             user,
             token,
             isAuthenticated: true,
-          })
+          });
         }
       } catch (error: any) {
         localStorage.removeItem(LOCAL_STORAGE_TOKEN);
@@ -50,48 +52,47 @@ const AuthContextProvider: React.FC<PropsAuthContext> = ({ children }) => {
     }
   };
 
-  async function login(dto: IInformationUserLogin){
-    const authApi = AuthApi.registerAuthApi()
+  const login = async (dto: IInformationUserLogin) => {
+    const authApi = AuthApi.registerAuthApi();
     try {
       const res = await authApi.login(dto);
       if (res.success) {
-        const { user, token } = res.data
+        const { user, token } = res.data;
         localStorage.setItem(LOCAL_STORAGE_TOKEN, token);
         setAuthInformation({
           ...authInformation,
           user,
           token,
           isAuthenticated: true,
-        })
+        });
       }
     } catch (error: any) {
       throw error;
     }
   };
 
-  async function logout() {
+  const logout = () => {
     localStorage.removeItem(LOCAL_STORAGE_TOKEN);
     setAuthInformation({
       ...authInformation,
       isAuthenticated: false,
       user: null,
-      token: null
+      token: null,
     });
   };
 
   useEffect(() => {
-    autoLogin(); 
+    autoLogin();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const data = {
     authInformation,
     login,
-    logout
+    logout,
   };
 
-  return (
-    <AuthContext.Provider value={data}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;
 };
 
 export default AuthContextProvider;

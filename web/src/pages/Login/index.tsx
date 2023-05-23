@@ -1,44 +1,62 @@
-import { useContext, useState } from "react";
 import "./index.css";
-import AuthApi from "../../api/auth";
-import { LOCAL_STORAGE_TOKEN } from "../../common/local-storage-token";
+import { useContext, useState } from "react";
 import { IInformationUserLogin } from "../../types/login.type";
 import { Navigate, useNavigate } from "react-router-dom";
-import { AuthContext } from "../../contexts/authContext";
+import { AuthContext } from "../../contexts/AuthContext";
+import { MessageContext } from "../../contexts/MessageContext";
 
 export default function Login() {
-  const context = useContext(AuthContext);
-  
-  const [informationUserLogin, setInformationUserLogin] = useState<IInformationUserLogin>({
-    email: 'admin@admin.com',
-    password: 'admin'
-  });
+  const authContext = useContext(AuthContext);
+  const messageContext = useContext(MessageContext);
+
+  const [informationUserLogin, setInformationUserLogin] =
+    useState<IInformationUserLogin>({
+      email: "admin@admin.com",
+      password: "admin",
+    });
 
   const navigate = useNavigate();
-  
-  if (context?.authInformation.isAuthenticated) {
-    return <Navigate to='/' />
-  }
-  const { email, password } = informationUserLogin
 
-  const onChangeSetInformationUserLogin = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInformationUserLogin({...informationUserLogin, [e.target.name]: e.target.value});
+  if (authContext?.authInformation.isAuthenticated) {
+    return <Navigate to="/" />;
   }
+  const { email, password } = informationUserLogin;
+
+  const onChangeSetInformationUserLogin = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setInformationUserLogin({
+      ...informationUserLogin,
+      [e.target.name]: e.target.value,
+    });
+  };
+  //validate data
+  const validateEmail = (email: any) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password: any) => {
+    return password.length >= 4;
+  };
+
   const submitFormLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-      
-    try {
-      if (context?.login) {
-        await context.login({ email, password}) 
-        return navigate('/')
+    if (!validateEmail(email)) {
+      messageContext?.error("email của bạn đang không đúng định dạng");
+    } else if (!validatePassword(password)) {
+      messageContext?.error("password tối thiểu 4 ký tự");
+    } else {
+      try {
+        await authContext?.login({ email, password });
+        messageContext?.success("Đăng nhập thành công");
+        return navigate("/");
+      } catch (error: any) {
+        messageContext?.error(error?.message);
       }
-    } catch (error: any) {
-      // TODO: handleError
-      console.log(error?.statusCode)
-      console.log(error?.message)
     }
   };
-  
+
   return (
     <div className="wp_login">
       <div className="login">

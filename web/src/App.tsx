@@ -11,7 +11,9 @@ import AdminRoute from "./routes/adminRoute";
 import NotFound from "./components/NotFound";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
-import AuthContextProvider from "./contexts/authContext";
+import AuthContextProvider from "./contexts/AuthContext";
+import MessageProvider from "./contexts/MessageContext";
+import History from "./pages/Garden/History";
 
 const App = () => {
   const location = useLocation();
@@ -19,38 +21,56 @@ const App = () => {
 
   return (
     <AuthContextProvider>
-      {url !== '/login' && <ProtectedRoute componentRedirect={HeaderLayout} />} 
-      <div className={url !== '/login' ? 'app_content': "" }>
-        {url !== '/login' && <ProtectedRoute componentRedirect={SidebarLayout} />}  
-        <Routes>
-          <Route path="/" element={<Home/>} />
-          <Route path="/login" element={<Login />}/>
-          <Route
-            path="/garden/*"
-            element={<ProtectedRoute componentRedirect={Garden} />}
-          />
-          <Route
-            path="/management-worker/*"
-            element={<AdminRoute componentRedirect={NotFound} />}
-          />
-          <Route
-            path="/management-device/*"
-            element={<AdminRoute componentRedirect={NotFound} />}
-          />
-          <Route
-            path="/personal-information"
-            element={<ProtectedRoute componentRedirect={PersonalInformation} />}
-          />
-          <Route
-            path="/change-password"
-            element={<ProtectedRoute componentRedirect={ChangePassword} />}
-          />
-          <Route
-            path="/logout"
-            element={<ProtectedRoute componentRedirect={Logout} />}
-          />
-        </Routes>
-      </div>
+      <MessageProvider>
+        {url !== "/login" && (
+          <ProtectedRoute componentRedirect={HeaderLayout} />
+        )}
+        <div className={url !== "/login" ? "app_content" : ""}>
+          <div className="app_contentSidebarLayout">
+            {url !== "/login" && (
+              <ProtectedRoute componentRedirect={SidebarLayout} />
+            )}
+          </div>
+          <div className="">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route>
+                <Route
+                  path="/garden/:gardenId"
+                  element={<ProtectedRoute componentRedirect={Garden} />}
+                />
+                <Route
+                  path="/garden/:gardenId/:id"
+                  element={<ProtectedRoute componentRedirect={History} />}
+                />
+              </Route>
+              <Route
+                path="/management-worker/*"
+                element={<AdminRoute componentRedirect={NotFound} />}
+              />
+              <Route
+                path="/management-device/*"
+                element={<AdminRoute componentRedirect={NotFound} />}
+              />
+              <Route
+                path="/personal-information"
+                element={
+                  <ProtectedRoute componentRedirect={PersonalInformation} />
+                }
+              />
+              <Route
+                path="/change-password"
+                element={<ProtectedRoute componentRedirect={ChangePassword} />}
+              />
+              <Route
+                path="/logout"
+                element={<ProtectedRoute componentRedirect={Logout} />}
+              />
+            </Routes>
+          </div>
+        </div>
+      </MessageProvider>
     </AuthContextProvider>
   );
 };

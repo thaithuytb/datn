@@ -1,24 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import socketIOClient, { Socket } from "socket.io-client";
 import gardenApi from "../../api/garden";
 import { Garden } from "../../types/garden.type";
 import { Menu, Modal } from "antd";
-import {
-  CloseOutlined,
-  ExclamationCircleFilled,
-  LaptopOutlined,
-  NotificationOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import SubMenu from "antd/es/menu/SubMenu";
-import {
-  Link,
-  Navigate,
-  NavigateFunction,
-  useNavigate,
-} from "react-router-dom";
+import { CloseOutlined, ExclamationCircleFilled } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import { MenuItem, listSidebar } from "../../routes/routeSidebar";
-import { AuthContext } from "../../contexts/authContext";
+import { AuthContext } from "../../contexts/AuthContext";
+
 const { confirm } = Modal;
 // export default function SidebarLayout() {
 // const [gardens, setGardens] = useState<Garden[] | []>([]);
