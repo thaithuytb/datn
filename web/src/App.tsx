@@ -28,12 +28,12 @@ const App = () => {
             <ProtectedRoute componentRedirect={HeaderLayout} />
           )}
           <div className={url !== "/login" ? "app_content" : ""}>
-            <div className="app_contentSidebarLayout">
+            <div className="">
               {url !== "/login" && (
                 <ProtectedRoute componentRedirect={SidebarLayout} />
               )}
             </div>
-            <div className="">
+            <div className="content">
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />

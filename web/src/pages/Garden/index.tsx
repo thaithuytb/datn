@@ -58,7 +58,7 @@ export default function Garden() {
             <p>Số người tham gia: {gardenDetail.users.length} </p>
           </header>
           <div className="GardenBody">
-            <h3>Danh Sách thiết bị</h3>
+            <h3>Danh sách thiết bị</h3>
             <GardenDevicesTable
               columns={columns}
               devices={gardenDetail.devices}

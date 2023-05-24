@@ -40,3 +40,7 @@
 .app_content {
   display: flex;
 }
+
+.content {
+  flex: 1;
+}
