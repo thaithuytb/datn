@@ -4,6 +4,7 @@
 	background-color: rgb(149, 200, 230);
 	border-bottom: 1px solid #e2dbdb;
 	height: 70px;
+	padding: 25px !important;
 }
 
 .header_left {
@@ -29,4 +30,55 @@
 
 .header_right div:last-child {
 	margin-left: 5px;
+}
+
+/* css thông báo */
+.custom-dropdown {
+	border: 1px solid rgb(180, 179, 179);
+	border-radius: 8px;
+	overflow-y: auto;
+	max-height: 90vh;
+	width: 450px;
+}
+
+.custom-dropdown::-webkit-scrollbar {
+	width: 3px;
+}
+
+.custom-dropdown::-webkit-scrollbar-track {
+	background-color: #f1f1f1;
+}
+
+.custom-dropdown::-webkit-scrollbar-thumb {
+	background-color: #e3e3e3;
+	border-radius: 4px;
+}
+
+.custom-dropdown::-webkit-scrollbar-thumb:hover {
+	background-color: #aaaaaa;
+	cursor: pointer;
+}
+
+:where(.css-dev-only-do-not-override-15rg2km).ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item:hover {
+	background-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+.slectNotification {
+	padding: 0.3rem 0.8rem;
+	border: none;
+	border-radius: 20px;
+}
+
+.slectNotification:hover {
+	cursor: pointer;
+	background-color: rgb(149, 200, 230);
+	color: white;
+}
+
+.custom-dropdownPrivate {
+	border: 1px solid rgb(180, 179, 179);
+	border-radius: 8px;
+	overflow-y: auto;
+	max-height: 90vh;
+	width: 350px;
 }
