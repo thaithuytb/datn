@@ -7,10 +7,10 @@ class GardenApi {
     return axiosClient.get(url) as unknown as ApiResponse;
   }
 
-  // getGardenById(dto: { id: string }) {
-  //   const url = `/gardens/${dto.id}`;
-  //   return axiosClient.get(url);
-  // }
+  getGardenById(dto: { id: string }) {
+    const url = `/gardens/${dto.id}`;
+    return axiosClient.get(url) as unknown as ApiResponse;
+  }
 
   static registerAuthApi() {
     return new GardenApi();

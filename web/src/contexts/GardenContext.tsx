@@ -5,17 +5,12 @@ interface PropsGardenContext {
   children: ReactNode;
 }
 
-const gardenInformationDefault: IGardenInformation = {
-  gardens: null,
-};
-
-interface IGardenInformation {
-  gardens: null | any; //TODO: Garden | null
-}
-
 interface IGardenContext {
-  gardenInformation: IGardenInformation;
+  gardens: any[];
+  gardenDetail: any;
+  // gardenDetailId: string;
   getGardens: () => void;
+  getGardenById: (id: string) => void;
 }
 
 export const GardenContext = createContext<IGardenContext | undefined>(
@@ -23,18 +18,27 @@ export const GardenContext = createContext<IGardenContext | undefined>(
 );
 
 const GardenContextProvider: React.FC<PropsGardenContext> = ({ children }) => {
-  const [gardenInformation, setGardenInformation] =
-    useState<IGardenInformation>(gardenInformationDefault);
+  const [gardens, setGardens] = useState([]);
+  const [gardenDetail, setGardenDetail] = useState(null);
 
   const getGardens = async () => {
     const gardenApi = GardenApi.registerAuthApi();
     try {
       const res = await gardenApi.getGardens();
       if (res.success) {
-        setGardenInformation({
-          ...gardenInformation,
-          gardens: res.data,
-        });
+        setGardens(res.data);
+      }
+    } catch (error: any) {
+      throw error;
+    }
+  };
+
+  const getGardenById = async (id: string) => {
+    const gardenApi = GardenApi.registerAuthApi();
+    try {
+      const res = await gardenApi.getGardenById({ id });
+      if (res.success) {
+        setGardenDetail(res.data);
       }
     } catch (error: any) {
       throw error;
@@ -42,8 +46,10 @@ const GardenContextProvider: React.FC<PropsGardenContext> = ({ children }) => {
   };
 
   const data = {
-    gardenInformation,
+    gardens,
+    gardenDetail,
     getGardens,
+    getGardenById,
   };
 
   useEffect(() => {

@@ -78,7 +78,7 @@ export default function SidebarLayout() {
   const [listSidebar, setListSidebar] = useState<MenuItem[]>(listSidebarInit);
 
   useEffect(() => {
-    const gardens = gardenContext?.gardenInformation.gardens;
+    const gardens = gardenContext?.gardens;
     if (gardens?.length) {
       setListSidebar([
         {
@@ -96,7 +96,7 @@ export default function SidebarLayout() {
       setListSidebar(listSidebarInit);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gardenContext?.gardenInformation.gardens]);
+  }, [gardenContext?.gardens]);
 
   const items: any = listSidebar.map((item: MenuItem) => {
     return {
