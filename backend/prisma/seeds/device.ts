@@ -19,5 +19,46 @@ export async function createDevices(prisma: PrismaClient, garden: Garden) {
     },
   });
 
+  await prisma.device.createMany({
+    data: [
+      {
+        status: 'new',
+        ip: 'humi_sensor_1',
+        type: DeviceTypeEnum.HUMISENSOR,
+        gardenId: garden.id,
+      },
+      {
+        status: 'new',
+        ip: 'light_sensor_1',
+        type: DeviceTypeEnum.LIGHTSENSOR,
+        gardenId: garden.id,
+      },
+      {
+        status: 'new',
+        ip: 'temp_air_sensor_1',
+        type: DeviceTypeEnum.TEMPAIRSENSOR,
+        gardenId: garden.id,
+      },
+      {
+        status: 'new',
+        ip: 'lamp_sensor_1',
+        type: DeviceTypeEnum.LAMP,
+        gardenId: garden.id,
+      },
+      {
+        status: 'new',
+        ip: 'lamp_pump_1',
+        type: DeviceTypeEnum.PUMP,
+        gardenId: garden.id,
+      },
+      {
+        status: 'new',
+        ip: 'nebulizer_pump_1',
+        type: DeviceTypeEnum.NEBULIZER,
+        gardenId: garden.id,
+      },
+    ],
+  });
+
   return [fan_1, fan_2];
 }

@@ -1,0 +1,14 @@
+.garden {
+	padding: 10px 25px;
+	display: flex;
+	/* justify-content: space-between; */
+	width: 70%;
+}
+
+.garden_header p {
+	padding-left: 15px;
+}
+
+.garden .garden_header {
+	min-width: 300px;
+}

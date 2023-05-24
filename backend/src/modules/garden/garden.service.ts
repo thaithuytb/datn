@@ -64,6 +64,7 @@ export class GardenService {
       : {};
     query.select = {
       id: true,
+      name: true,
     };
     const gardens = await this.gardenRepository.getGardens(query);
     return responseSuccess(200, gardens);

@@ -16,5 +16,8 @@ export class AuthModule implements NestModule {
     consumer
       .apply(verifyTokenMiddleware)
       .forRoutes('api/v1/auth/update-information');
+    consumer
+      .apply(verifyTokenMiddleware)
+      .forRoutes('api/v1/auth/verify-token');
   }
 }

@@ -1,0 +1,15 @@
+.Avatar {
+	position: relative;
+}
+
+.avatar_circle {
+	display: block;
+	border-radius: 50%;
+	overflow: hidden;
+	border: 1px solid #25c8f1;
+}
+.avatar_circle img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}

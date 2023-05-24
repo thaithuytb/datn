@@ -1,17 +1,20 @@
+import { ApiResponse } from "./auth";
 import axiosClient from "./axiosClient";
 
 class GardenApi {
   getGardens() {
-    //http://localhost:7000/sample?status=true&name=999999
-    // const url = "/gardens";
-    return axiosClient.get("sample?status=true&name=999999");
+    const url = "/gardens";
+    return axiosClient.get(url) as unknown as ApiResponse;
   }
 
   getGardenById(dto: { id: string }) {
     const url = `/gardens/${dto.id}`;
-    return axiosClient.get(url);
+    return axiosClient.get(url) as unknown as ApiResponse;
+  }
+
+  static registerAuthApi() {
+    return new GardenApi();
   }
 }
-const gardenApi = new GardenApi();
 
-export default gardenApi;
+export default GardenApi;

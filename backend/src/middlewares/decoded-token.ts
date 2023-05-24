@@ -12,7 +12,7 @@ export class verifyTokenMiddleware implements NestMiddleware {
 
     const token =
       authHeader &&
-      authHeader.split(' ')[0] === 'bearer' &&
+      authHeader.split(' ')[0] === 'Bearer' &&
       authHeader.split(' ')[1];
     if (!token) {
       return res.status(401).json({
