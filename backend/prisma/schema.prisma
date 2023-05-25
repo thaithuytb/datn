@@ -44,6 +44,8 @@ model Device {
   updatedAt DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   gardenId  Int            @map("garden_id")
   garden    Garden         @relation(fields: [gardenId], references: [id], onDelete: Cascade)
+  threshold Float?
+  otherThreshold Float?  @map("other_threshold")
 
   @@map("devices")
 }
@@ -51,15 +53,14 @@ model Device {
 model TempAirData {
   id                   Int      @id @default(autoincrement())
   temp                 Float
-  tempThreshold        Float?   @map("temp_threshold")
   airHumidity          Float    @map("air_humidity")
-  airHumidityThreshold Float?   @map("air_humidity_threshold")
   createdAt            DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt            DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   gardenId             Int      @map("garden_id")
   deviceId             Int      @map("device_id")
 
   @@index([deviceId])
+  @@index([deviceId, createdAt])
   @@index([gardenId, deviceId])
   @@map("temp_air_datas")
 }
@@ -67,13 +68,13 @@ model TempAirData {
 model HumiData {
   id        Int      @id @default(autoincrement())
   value     Float
-  threshold Float?
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   gardenId  Int      @map("garden_id")
   deviceId  Int      @map("device_id")
 
   @@index([deviceId])
+  @@index([deviceId, createdAt])
   @@index([gardenId, deviceId])
   @@map("humi_datas")
 }
@@ -81,13 +82,13 @@ model HumiData {
 model LightData {
   id        Int      @id @default(autoincrement())
   value     Float
-  threshold Float?
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   gardenId  Int      @map("garden_id")
   deviceId  Int      @map("device_id")
 
   @@index([deviceId])
+  @@index([deviceId, createdAt])
   @@index([gardenId, deviceId])
   @@map("light_data")
 }
@@ -95,13 +96,14 @@ model LightData {
 model FanData {
   id        Int      @id @default(autoincrement())
   value     Float?
-  status    Boolean
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   gardenId  Int      @map("garden_id")
   deviceId  Int      @map("device_id")
+  status    Boolean
 
   @@index([deviceId])
+  @@index([deviceId, createdAt])
   @@index([gardenId, deviceId])
   @@map("fan_datas")
 }
@@ -109,13 +111,14 @@ model FanData {
 model PumpData {
   id        Int      @id @default(autoincrement())
   value     Float?
-  status    Boolean
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   gardenId  Int      @map("garden_id")
   deviceId  Int      @map("device_id")
+  status    Boolean
 
   @@index([deviceId])
+  @@index([deviceId, createdAt])
   @@index([gardenId, deviceId])
   @@map("pump_datas")
 }
@@ -130,6 +133,7 @@ model NebulizerData {
   deviceId  Int      @map("device_id")
 
   @@index([deviceId])
+  @@index([deviceId, createdAt])
   @@index([gardenId, deviceId])
   @@map("nebulizer_datas")
 }
@@ -143,6 +147,7 @@ model LampData {
   deviceId  Int      @map("device_id")
 
   @@index([deviceId])
+  @@index([deviceId, createdAt])
   @@index([gardenId, deviceId])
   @@map("lamp_datas")
 }
@@ -173,7 +178,7 @@ model GardensOnUsers {
 
   @@id([userId, gardenId])
   @@index([gardenId], map: "gardensOnUsers_garden_id_fkey")
-  @@map("gardensOnUsers")
+  @@map("gardens_on_users")
 }
 
 model Notification {
@@ -199,7 +204,7 @@ model NotificationsOnUsers {
 
   @@id([userId, notificationId])
   @@index([notificationId], map: "notificationsOnUsers_notification_id_fkey")
-  @@map("notificationsOnUsers")
+  @@map("notifications_on_users")
 }
 
 enum Role {
