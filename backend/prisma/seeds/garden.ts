@@ -13,8 +13,8 @@ export async function createGarden(prisma: PrismaClient) {
   });
   await prisma.garden.create({
     data: {
-      name: 'garden_2',
-      address: 'Vườn ngô',
+      name: 'Vườn ngô',
+      address: 'Thanh Xuân, Hà Nội',
       width: 40,
       length: 40,
       landArea: 1600,
