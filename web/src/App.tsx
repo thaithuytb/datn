@@ -13,8 +13,8 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import AuthContextProvider from "./contexts/AuthContext";
 import MessageContextProvider from "./contexts/MessageContext";
-import History from "./pages/Garden/History";
 import GardenContextProvider from "./contexts/GardenContext";
+import StatusDevices from "./pages/StatusDevices";
 
 const App = () => {
   const location = useLocation();
@@ -43,8 +43,10 @@ const App = () => {
                     element={<ProtectedRoute componentRedirect={Garden} />}
                   />
                   <Route
-                    path="/garden/:gardenId/:id"
-                    element={<ProtectedRoute componentRedirect={History} />}
+                    path="/garden/:gardenId/status"
+                    element={
+                      <ProtectedRoute componentRedirect={StatusDevices} />
+                    }
                   />
                 </Route>
                 <Route

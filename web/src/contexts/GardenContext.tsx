@@ -52,11 +52,6 @@ const GardenContextProvider: React.FC<PropsGardenContext> = ({ children }) => {
     getGardenById,
   };
 
-  useEffect(() => {
-    getGardens();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <GardenContext.Provider value={data}>{children}</GardenContext.Provider>
   );

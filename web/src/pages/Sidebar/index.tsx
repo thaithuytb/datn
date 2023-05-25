@@ -98,6 +98,11 @@ export default function SidebarLayout() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gardenContext?.gardens]);
 
+  useEffect(() => {
+    gardenContext?.getGardens();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const items: any = listSidebar.map((item: MenuItem) => {
     return {
       key: item.key,

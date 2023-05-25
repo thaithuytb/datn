@@ -4,6 +4,7 @@ import { ColumnsType } from "antd/es/table";
 import { useContext, useEffect } from "react";
 import GardenDevicesTable from "../../components/GardenDevicesTable";
 import { GardenContext } from "../../contexts/GardenContext";
+import { Link } from "react-router-dom";
 
 export interface ColumnNameDeviceGarden {
   stt?: number;
@@ -23,7 +24,6 @@ const columns: ColumnsType<ColumnNameDeviceGarden> = [
     title: "Tên thiết bị",
     dataIndex: "name",
     key: "2",
-    align: "center",
   },
   {
     title: "Số lượng",
@@ -52,13 +52,32 @@ export default function Garden() {
         <>
           <header className="garden_header">
             <h3>Thông tin khu vườn</h3>
-            <p>Diện tích: {gardenDetail.landArea}</p>
-            <p>Chiều cao: {gardenDetail.hight} </p>
-            <p>Địa chỉ: {gardenDetail.address} </p>
-            <p>Số người tham gia: {gardenDetail.users.length} </p>
+            <p>
+              <span>Diện tích</span>
+              <span>{gardenDetail.landArea}m²</span>
+            </p>
+            <p>
+              <span>Chiều cao</span>
+              <span>{gardenDetail.hight}m</span>
+            </p>
+            <p>
+              <span>Địa chỉ</span>
+              <span>{gardenDetail.address} </span>
+            </p>
+            <p>
+              <span>Số thiết bị</span>
+              <span>{gardenDetail.devices.length} </span>
+            </p>
+            <p>
+              <span>Số người tham gia</span>
+              <span>{gardenDetail.users.length} </span>
+            </p>
           </header>
-          <div className="GardenBody">
-            <h3>Danh sách thiết bị</h3>
+          <div className="garden_list_device">
+            <h3>
+              Danh sách thiết bị{" "}
+              <Link to={`status`}>{" >>"}Trạng thái thiết bị</Link>
+            </h3>
             <GardenDevicesTable
               columns={columns}
               devices={gardenDetail.devices}
