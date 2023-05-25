@@ -11,18 +11,18 @@ export async function createUsers(prisma: PrismaClient, garden: Garden) {
       email: 'admin@admin.com',
       password: hashPW,
       role: Role.ADMIN,
-      address: 'Thai Binh',
+      address: 'Thái Bình',
       gender: Gender.MALE,
     },
   });
   await prisma.user.create({
     data: {
-      fullName: 'ngo quang thai'.toUpperCase(),
+      fullName: 'Ngô Quang Thái'.toUpperCase(),
       phoneNumber: '0384560432',
       email: 'ngoquangthai@gmail.com',
       password: hashPW,
       role: Role.USER,
-      address: 'Ha Noi',
+      address: 'Thái Bình',
       gender: Gender.MALE,
       gardens: {
         create: {
@@ -34,12 +34,46 @@ export async function createUsers(prisma: PrismaClient, garden: Garden) {
 
   await prisma.user.create({
     data: {
-      fullName: 'pham thanh hai'.toUpperCase(),
+      fullName: 'Nguyễn Văn A'.toUpperCase(),
+      phoneNumber: '0384560431',
+      email: 'ngo@gmail.com',
+      password: hashPW,
+      role: Role.USER,
+      address: 'Thái Bình',
+      gender: Gender.MALE,
+      gardens: {
+        create: {
+          gardenId: garden.id,
+        },
+      } as Prisma.GardensOnUsersCreateNestedManyWithoutUserInput,
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      fullName: 'Nguyễn Văn B'.toUpperCase(),
+      phoneNumber: '0384560430',
+      email: 'thai@gmail.com',
+      password: hashPW,
+      role: Role.USER,
+      address: 'Thái Bình',
+      gender: Gender.MALE,
+      gardens: {
+        create: {
+          gardenId: garden.id,
+        },
+      } as Prisma.GardensOnUsersCreateNestedManyWithoutUserInput,
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      fullName: 'Phạm Thanh Hải'.toUpperCase(),
       phoneNumber: '0384560432',
       email: 'phamthanhhai@gmail.com',
       password: hashPW,
       role: Role.USER,
-      address: 'Ho CHi Minh',
+      address: 'Hà Nội',
       gender: Gender.MALE,
       gardens: {
         create: {

@@ -6,7 +6,7 @@ export async function createFanDatas(
   devices: Device[],
 ) {
   const promiseList = [];
-  for (let i = 1; i < 50; ++i) {
+  for (let i = 1; i < 100; ++i) {
     promiseList.push(
       prisma.fanData.create({
         data: {
