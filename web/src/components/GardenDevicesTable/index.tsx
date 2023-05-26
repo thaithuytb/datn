@@ -1,7 +1,7 @@
 import { Table } from "antd";
-import { ColumnNameDeviceGarden } from "../../pages/Garden";
 import { ColumnsType } from "antd/es/table";
 import { Device } from "../../types/device.type";
+import { ColumnNameDeviceGarden } from "../../pages/ListDevice";
 
 interface PropsGardenDevicesTable {
   columns: ColumnsType<ColumnNameDeviceGarden>;

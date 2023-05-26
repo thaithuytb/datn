@@ -32,21 +32,3 @@
 	font-size: 18px;
 	margin-bottom: 5px;
 }
-
-.garden_list_device h3 {
-	color: #777;
-	font-size: 20px;
-	font-weight: 500;
-}
-
-.garden_list_device h3 a {
-	color: rgb(162, 205, 233);
-	text-decoration: none;
-	font-weight: 400;
-	font-size: 18px;
-	font-style: italic;
-}
-
-.table_style_column {
-	border: 1px solid #d6d2d2;
-}

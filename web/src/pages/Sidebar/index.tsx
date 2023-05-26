@@ -83,25 +83,23 @@ export default function SidebarLayout() {
       setListSidebar([
         {
           ...listSidebar[0],
-          url: `garden/${gardens[0].id}`,
+        },
+        {
+          ...listSidebar[1],
+          url: `garden/${gardens[1].id}`,
           children: gardens.map((garden: any) => ({
             titleSidebar: garden.name,
             key: `${garden.id}`,
             url: `garden/${garden.id}`,
           })),
         },
-        ...listSidebarInit.slice(1),
+        ...listSidebarInit.slice(2),
       ]);
     } else {
       setListSidebar(listSidebarInit);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gardenContext?.gardens]);
-
-  useEffect(() => {
-    gardenContext?.getGardens();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const items: any = listSidebar.map((item: MenuItem) => {
     return {
@@ -122,9 +120,9 @@ export default function SidebarLayout() {
 
   const showLogoutModal = () => {
     confirm({
-      title: "Bạn có chắc chắn rời đi và không gặp lại:((((",
+      title: "Bạn có chắc muốn thoát đăng nhập  ",
       icon: <ExclamationCircleFilled />,
-      okText: "Đăng xuất:((",
+      okText: "Đăng xuất =((",
       closeIcon: <CloseOutlined />,
       cancelText: "Ở lại",
       onOk() {
@@ -168,6 +166,9 @@ export default function SidebarLayout() {
       style={{ width: 256 }}
       mode="inline"
       theme={"light"}
+      defaultSelectedKeys={["home"]}
+      // defaultOpenKeys={["sub1"]}
+      // defaultChecked={true}
       onClick={listItemSidebar}
       items={items}
     />

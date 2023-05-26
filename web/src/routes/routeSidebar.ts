@@ -7,7 +7,12 @@ export interface MenuItem {
 
 export const listSidebarInit: MenuItem[] = [
   {
-    titleSidebar: "Quản lý vườn",
+    titleSidebar: "Trang chủ",
+    key: "home",
+    url: "home",
+  },
+  {
+    titleSidebar: "Quản lý khu vườn",
     key: "garden",
     url: "garden",
     children: [],
@@ -33,6 +38,18 @@ export const listSidebarInit: MenuItem[] = [
     titleSidebar: "Quản lý thiết bị",
     key: "management-device",
     url: "management-device",
+    children: [
+      {
+        titleSidebar: "Danh sách thiết bị",
+        url: "list-device",
+        key: "list-device",
+      },
+      {
+        titleSidebar: "Trạng thái thiết bị",
+        url: "status-devices",
+        key: "status-devices",
+      },
+    ],
   },
   {
     titleSidebar: "Thông tin cá nhân",
