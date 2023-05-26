@@ -103,9 +103,6 @@ void handleLoraString() {
       
       loraWrite(object);
     }
-
-    Serial.println("Sensor send:" + device + String(value));
-    // send sensor value mqtt
     return;
   }
 }

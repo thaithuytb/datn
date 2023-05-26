@@ -5,12 +5,16 @@
 			"path": "controller"
 		},
 		{
+			"name": "gateway",
+			"path": "gateway"
+		},
+		{
 			"name": "sensor",
 			"path": "sensor"
 		},
 		{
-			"name": "gateway",
-			"path": "gateway"
+			"name": "gate_control",
+			"path": "gate_control"
 		},
 		{
 			"name": "backend",

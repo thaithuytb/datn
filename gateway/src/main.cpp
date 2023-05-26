@@ -12,6 +12,19 @@ String string = "";
 
 bool isLoraBusy = false;
 
+void activeDevice(String device, String value){
+  String object = R"rawliteral(
+  ${
+    "sender": "gateway",
+    "receiver": "controller"
+  )rawliteral" + 
+  String(",device: ") + device +
+  String(",value: ") + 30 
+  + String("}#");
+
+  loraWrite(object);
+}
+
 void setup() {
   Serial.begin(115200);
 
@@ -26,18 +39,6 @@ void loop() {
     loraRead();
   }
 
-  String object = R"rawliteral(
-  ${
-    "sender": "controller",
-    "receiver": "gateway",
-    "value": 30
-  }#
-  )rawliteral";
-
-  loraWrite(object);
-
-  delay(10000);
-
   // reconnectMQTTHandle(topics);
 }
 
@@ -49,17 +50,18 @@ void handleLoraString() {
     return;
   }
 
-  if (doc["sender"] != "sensor") {
+  if (doc["sender"] == "sensor") {
+    String device = doc["device"];
     float value = doc["value"].as<float>();
-    Serial.println("Sensor send:" + String(value));
+    Serial.println("Sensor "+ device + " send:" + String(value));
     // send sensor value mqtt
     return;
   }
 
-  if (doc["sender"] != "controller") {
-    float device = doc["device"];
+  if (doc["sender"] == "controller") {
+    String device = doc["device"];
     float value = doc["value"].as<float>();
-    Serial.println("Controller " + String(device) + " send:" + String(value));
+    Serial.println("Controller " + device + " send:" + String(value));
     // send controller status
     return;
   }
