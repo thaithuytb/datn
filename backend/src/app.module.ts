@@ -6,9 +6,10 @@ import { RepositoryModule } from './repositories/repository.module';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { FanDataModule } from './modules/fan-data/fan-data.module';
 import { GardenModule } from './modules/garden/garden.module';
-import { FanSocketModule } from './socket/fan/fan.socket.module';
+import { SocketModule } from './socket/socket.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { NotificationModule } from './modules/notification/notification.module';
+import { DeviceModule } from './modules/device/device.module';
 
 @Module({
   imports: [
@@ -24,9 +25,10 @@ import { NotificationModule } from './modules/notification/notification.module';
     SampleModule,
     FanDataModule,
     GardenModule,
-    FanSocketModule,
+    SocketModule,
     AuthModule,
     NotificationModule,
+    DeviceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

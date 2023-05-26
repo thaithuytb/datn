@@ -3,9 +3,10 @@ import * as mqtt from 'mqtt';
 import { newTopicJWT } from '../common/setJwtMqtt';
 import { uuid } from 'uuidv4';
 import { Redis } from 'ioredis';
-import { FanGateway } from '../socket/fan/fan.socket.gateway';
+import { SocketGateway } from '../socket/socket.gateway';
+import { convertData } from '../modules/device/device.service';
 
-export async function subscribeMqtt(fanGateway: FanGateway) {
+export async function subscribeMqtt(fanGateway: SocketGateway) {
   const prisma = new PrismaClient();
 
   const redis = new Redis({
@@ -39,28 +40,16 @@ export async function subscribeMqtt(fanGateway: FanGateway) {
 
   client.on('message', async function (topic, message) {
     const parseMessage = JSON.parse(message.toString() as unknown as string);
-    if (parseMessage['from'] === 'web') {
-      console.log('message from web');
-      return;
-    }
-
-    if (!parseMessage['gardenName']) {
-      return console.log('error: gardenName is required');
-    }
-
-    const garden = await prisma.garden.findFirst({
-      where: {
-        name: parseMessage['gardenName'],
-      },
-    });
-    if (!garden) {
-      return console.log('error: garden not found');
-    }
-    const gardenId = garden.id;
+    //TEST
+    // if (parseMessage['from'] === 'web') {
+    //   console.log('message from web');
+    //   return;
+    // }
 
     const device = await prisma.device.findFirst({
       where: {
         ip: parseMessage['ip'],
+        id: parseInt(parseMessage['deviceId']),
       },
     });
 
@@ -68,17 +57,18 @@ export async function subscribeMqtt(fanGateway: FanGateway) {
       return console.log('error: garden not found');
     }
     const deviceId = device.id;
-    //check topic here
+    console.log(device);
+    // check topic here
     switch (topic.slice(15)) {
-      case '/sample': {
-        await prisma.sample.create({
-          data: {
-            name: message.toString(),
-            status: false,
-          },
-        });
-        break;
-      }
+      // case '/sample': {
+      //   await prisma.sample.create({
+      //     data: {
+      //       name: message.toString(),
+      //       status: false,
+      //     },
+      //   });
+      //   break;
+      // }
       case '/sensor': {
         switch (parseMessage['data']['sensorName']) {
           case 'temp_air': {
@@ -124,27 +114,15 @@ export async function subscribeMqtt(fanGateway: FanGateway) {
         break;
       }
       case '/actuator': {
-        switch (parseMessage['data']['actuatorName']) {
-          case 'fan': {
-            const data = await prisma.fanData.create({
-              data: {
-                value: parseMessage['data']['value'],
-                status: parseMessage['data']['status'],
-                deviceId,
-                gardenId,
-              },
-            });
-            if (data) {
-              fanGateway.server.emit('newFanStatus', data);
-            }
-            break;
-          }
-          default: {
-            console.log(
-              'error: no name in /actuator ',
-              parseMessage['data']['actuatorName'],
-            );
-          }
+        const data = await prisma[convertData[device.type]].create({
+          data: {
+            status: parseMessage['status'],
+            deviceId,
+            gardenId: device.gardenId,
+          },
+        });
+        if (data) {
+          fanGateway.server.emit('newActuator', data);
         }
         break;
       }

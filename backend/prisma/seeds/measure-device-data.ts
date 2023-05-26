@@ -8,21 +8,21 @@ export async function createMeasureDeviceData(
 
   const deviceIdLight = await prisma.device.findFirst({
     where: {
-      type: 'LIGHTSENSOR'
-    }
-  })
+      type: 'LIGHTSENSOR',
+    },
+  });
 
   const deviceIdHumi = await prisma.device.findFirst({
     where: {
-      type: 'HUMISENSOR'
-    }
-  })
+      type: 'HUMISENSOR',
+    },
+  });
 
   const deviceIdTempAir = await prisma.device.findFirst({
     where: {
-      type: 'TEMPAIRSENSOR'
-    }
-  })
+      type: 'TEMPAIRSENSOR',
+    },
+  });
 
   for (let i = 1; i < 150; ++i) {
     promiseList.push(

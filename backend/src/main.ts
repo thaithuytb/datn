@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { subscribeMqtt } from './mqtt/subscribe';
 import { ValidationPipe } from '@nestjs/common';
-import { FanGateway } from './socket/fan/fan.socket.gateway';
+import { SocketGateway } from './socket/socket.gateway';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,7 +10,7 @@ async function bootstrap() {
   app.enableCors();
   await app.listen(process.env.PORT || 7000);
 
-  const fanGateway = app.get(FanGateway);
+  const fanGateway = app.get(SocketGateway);
   await subscribeMqtt(fanGateway);
 }
 bootstrap();

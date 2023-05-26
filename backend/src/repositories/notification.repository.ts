@@ -14,16 +14,22 @@ export class NotificationRepository implements INotificationRepository {
     return this.prisma.notificationsOnUsers.findMany(args);
   }
 
-  async createNotification(dto: CreateNotificationDto, prisma: PrismaTransactional = this.prisma) {
+  async createNotification(
+    dto: CreateNotificationDto,
+    prisma: PrismaTransactional = this.prisma,
+  ) {
     return prisma.notification.create({
-      data: CreateNotificationDto.transform(dto)
-    })
+      data: CreateNotificationDto.transform(dto),
+    });
   }
 
-  async createNotificationsOnUsers(args: Prisma.NotificationsOnUsersCreateManyInput[], prisma: PrismaTransactional = this.prisma): Promise<{ count: number}> {
+  async createNotificationsOnUsers(
+    args: Prisma.NotificationsOnUsersCreateManyInput[],
+    prisma: PrismaTransactional = this.prisma,
+  ): Promise<{ count: number }> {
     return prisma.notificationsOnUsers.createMany({
-      data: args
-    })
+      data: args,
+    });
   }
 }
 
@@ -31,6 +37,12 @@ export interface INotificationRepository {
   getNotifications(
     args: Prisma.NotificationsOnUsersFindManyArgs,
   ): Promise<NotificationsOnUsers[]>;
-  createNotification(dto: CreateNotificationDto, prisma: PrismaTransactional): Promise<Notification>
-  createNotificationsOnUsers(args: Prisma.NotificationsOnUsersCreateManyInput[], prisma: PrismaTransactional): Promise<{ count: number}>
+  createNotification(
+    dto: CreateNotificationDto,
+    prisma: PrismaTransactional,
+  ): Promise<Notification>;
+  createNotificationsOnUsers(
+    args: Prisma.NotificationsOnUsersCreateManyInput[],
+    prisma: PrismaTransactional,
+  ): Promise<{ count: number }>;
 }
