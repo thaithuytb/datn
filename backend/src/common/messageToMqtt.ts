@@ -1,11 +1,9 @@
-export function messageToMqtt<T extends { gardenName: string; ip: string }>(
+export function messageToMqtt<T extends { ip: string; type: any }>(
   data: T,
 ): string {
-  const { gardenName, ip, ...spreadData } = data;
+  const { type, ...spreadData } = data;
   return JSON.stringify({
     from: 'web', // command to test
-    data: spreadData,
-    gardenName,
-    ip,
+    ...spreadData,
   });
 }

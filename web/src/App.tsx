@@ -13,8 +13,10 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import AuthContextProvider from "./contexts/AuthContext";
 import MessageContextProvider from "./contexts/MessageContext";
-import History from "./pages/Garden/History";
 import GardenContextProvider from "./contexts/GardenContext";
+import StatusDevices from "./pages/StatusDevices";
+import ListDevice from "./pages/ListDevice";
+import DeviceContextProvider from "./contexts/DeviceContext";
 
 const App = () => {
   const location = useLocation();
@@ -24,56 +26,94 @@ const App = () => {
     <AuthContextProvider>
       <MessageContextProvider>
         <GardenContextProvider>
-          {url !== "/login" && (
-            <ProtectedRoute componentRedirect={HeaderLayout} />
-          )}
-          <div className={url !== "/login" ? "app_content" : ""}>
-            <div className="">
-              {url !== "/login" && (
-                <ProtectedRoute componentRedirect={SidebarLayout} />
-              )}
-            </div>
-            <div className="content">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route>
+          <DeviceContextProvider>
+            {url !== "/login" && <HeaderLayout />}
+            <div className={url !== "/login" ? "app_content" : ""}>
+              <div className="">{url !== "/login" && <SidebarLayout />}</div>
+              <div className="content">
+                <Routes>
+                  <Route path="/login" element={<Login />} />
                   <Route
-                    path="/garden/:gardenId"
-                    element={<ProtectedRoute componentRedirect={Garden} />}
+                    path="/home"
+                    element={<ProtectedRoute componentRedirect={Home} />}
+                  />
+                  <Route>
+                    <Route
+                      path="/garden/:gardenId"
+                      element={<ProtectedRoute componentRedirect={Garden} />}
+                    />
+                    <Route
+                      path="/garden/:gardenId/status"
+                      element={
+                        <ProtectedRoute componentRedirect={StatusDevices} />
+                      }
+                    />
+                  </Route>
+                  <Route>
+                    <Route
+                      path="/garden/:gardenId"
+                      element={<ProtectedRoute componentRedirect={Garden} />}
+                    />
+                    <Route
+                      path="/garden/:gardenId/status"
+                      element={
+                        <ProtectedRoute componentRedirect={StatusDevices} />
+                      }
+                    />
+                  </Route>
+                  <Route
+                    path="/management-worker"
+                    element={<AdminRoute componentRedirect={NotFound} />}
+                  />
+                  <Route>
+                    <Route
+                      path="/list-device/:gardenId"
+                      element={
+                        <ProtectedRoute componentRedirect={ListDevice} />
+                      }
+                    />
+                    <Route
+                      path="/list-device"
+                      element={
+                        <ProtectedRoute componentRedirect={ListDevice} />
+                      }
+                    />
+                  </Route>
+                  <Route>
+                    <Route
+                      path="/status-devices/:gardenId"
+                      element={
+                        <ProtectedRoute componentRedirect={StatusDevices} />
+                      }
+                    />
+                    <Route
+                      path="/status-devices"
+                      element={
+                        <ProtectedRoute componentRedirect={StatusDevices} />
+                      }
+                    />
+                  </Route>
+                  <Route
+                    path="/personal-information"
+                    element={
+                      <ProtectedRoute componentRedirect={PersonalInformation} />
+                    }
                   />
                   <Route
-                    path="/garden/:gardenId/:id"
-                    element={<ProtectedRoute componentRedirect={History} />}
+                    path="/change-password"
+                    element={
+                      <ProtectedRoute componentRedirect={ChangePassword} />
+                    }
                   />
-                </Route>
-                <Route
-                  path="/management-worker/*"
-                  element={<AdminRoute componentRedirect={NotFound} />}
-                />
-                <Route
-                  path="/management-device/*"
-                  element={<AdminRoute componentRedirect={NotFound} />}
-                />
-                <Route
-                  path="/personal-information"
-                  element={
-                    <ProtectedRoute componentRedirect={PersonalInformation} />
-                  }
-                />
-                <Route
-                  path="/change-password"
-                  element={
-                    <ProtectedRoute componentRedirect={ChangePassword} />
-                  }
-                />
-                <Route
-                  path="/logout"
-                  element={<ProtectedRoute componentRedirect={Logout} />}
-                />
-              </Routes>
+                  <Route
+                    path="/logout"
+                    element={<ProtectedRoute componentRedirect={Logout} />}
+                  />
+                  <Route path="/*" element={<NotFound />} />
+                </Routes>
+              </div>
             </div>
-          </div>
+          </DeviceContextProvider>
         </GardenContextProvider>
       </MessageContextProvider>
     </AuthContextProvider>

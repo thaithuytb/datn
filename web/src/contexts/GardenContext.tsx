@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useEffect, useState } from "react";
+import { createContext, ReactNode, useState } from "react";
 import GardenApi from "../api/garden";
 
 interface PropsGardenContext {
@@ -51,11 +51,6 @@ const GardenContextProvider: React.FC<PropsGardenContext> = ({ children }) => {
     getGardens,
     getGardenById,
   };
-
-  useEffect(() => {
-    getGardens();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <GardenContext.Provider value={data}>{children}</GardenContext.Provider>

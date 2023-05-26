@@ -1,24 +1,11 @@
 import { Table } from "antd";
-import { ColumnNameDeviceGarden } from "../../pages/Garden";
 import { ColumnsType } from "antd/es/table";
-
-const enum DeviceTypeEnum {
-  FAN = "FAN",
-  LAMP = "LAMP",
-  NEBULIZER = "NEBULIZER",
-  PUMP = "PUMP",
-  LIGHTSENSOR = "LIGHTSENSOR",
-  HUMISENSOR = "HUMISENSOR",
-  TEMPAIRSENSOR = "TEMPAIRSENSOR",
-}
+import { Device } from "../../types/device.type";
+import { ColumnNameDeviceGarden } from "../../pages/ListDevice";
 
 interface PropsGardenDevicesTable {
   columns: ColumnsType<ColumnNameDeviceGarden>;
-  devices: {
-    id: number;
-    ip: string;
-    type: DeviceTypeEnum;
-  }[];
+  devices: Device[];
 }
 
 const GardenDevicesTable: React.FC<PropsGardenDevicesTable> = ({
@@ -76,8 +63,12 @@ const GardenDevicesTable: React.FC<PropsGardenDevicesTable> = ({
     <div>
       <Table
         columns={columns}
-        dataSource={rows.map((row, index) => ({ stt: ++index, ...row }))}
+        dataSource={rows.map((row, index) => ({
+          stt: ++index,
+          ...row,
+        }))}
         pagination={false}
+        bordered={true}
       />
     </div>
   );

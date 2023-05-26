@@ -5,7 +5,7 @@ import { Garden } from "../../types/garden.type";
 import { Menu, Modal } from "antd";
 import { CloseOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { MenuItem, listSidebarInit } from "../../routes/routeSidebar";
+import { MenuItem, listSidebarInit } from "./routeSidebar";
 import { AuthContext } from "../../contexts/AuthContext";
 import { GardenContext } from "../../contexts/GardenContext";
 
@@ -73,32 +73,7 @@ const { confirm } = Modal;
 
 export default function SidebarLayout() {
   const authContext = useContext(AuthContext);
-  const gardenContext = useContext(GardenContext);
-
-  const [listSidebar, setListSidebar] = useState<MenuItem[]>(listSidebarInit);
-
-  useEffect(() => {
-    const gardens = gardenContext?.gardens;
-    if (gardens?.length) {
-      setListSidebar([
-        {
-          ...listSidebar[0],
-          url: `garden/${gardens[0].id}`,
-          children: gardens.map((garden: any) => ({
-            titleSidebar: garden.name,
-            key: `${garden.id}`,
-            url: `garden/${garden.id}`,
-          })),
-        },
-        ...listSidebarInit.slice(1),
-      ]);
-    } else {
-      setListSidebar(listSidebarInit);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gardenContext?.gardens]);
-
-  const items: any = listSidebar.map((item: MenuItem) => {
+  const items: any = listSidebarInit.map((item: MenuItem) => {
     return {
       key: item.key,
       label: item.titleSidebar,
@@ -117,9 +92,9 @@ export default function SidebarLayout() {
 
   const showLogoutModal = () => {
     confirm({
-      title: "Bạn có chắc chắn rời đi và không gặp lại:((((",
+      title: "Bạn có chắc muốn thoát đăng nhập  ",
       icon: <ExclamationCircleFilled />,
-      okText: "Đăng xuất:((",
+      okText: "Đăng xuất =((",
       closeIcon: <CloseOutlined />,
       cancelText: "Ở lại",
       onOk() {
@@ -136,7 +111,7 @@ export default function SidebarLayout() {
 
   const listItemSidebar = ({ key }: { key: string }) => {
     const itemActive: MenuItem[] = [];
-    for (const item of listSidebar) {
+    for (const item of listSidebarInit) {
       if (item.key === key) {
         itemActive.push(item);
       }
@@ -163,6 +138,9 @@ export default function SidebarLayout() {
       style={{ width: 256 }}
       mode="inline"
       theme={"light"}
+      defaultSelectedKeys={["home"]}
+      // defaultOpenKeys={["sub1"]}
+      // defaultChecked={true}
       onClick={listItemSidebar}
       items={items}
     />

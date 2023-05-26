@@ -1,0 +1,30 @@
+.list_device {
+	padding: 10px 15px;
+}
+
+.list_device_select {
+	display: flex;
+	border-bottom: 1px solid #999;
+	padding: 20px 0px;
+	font-size: 25px;
+	margin-bottom: 20px;
+}
+
+.list_device_select div:first-child {
+	padding-right	: 10px;
+}
+
+.list_device_detail_title {
+	font-size: 20px;
+	font-weight: 500;
+	padding: 10px 0;
+}
+
+.list_device_detail_title span {
+	cursor: pointer;
+	color: rgb(47, 111, 128);
+	text-decoration: none;
+	font-weight: 400;
+	font-size: 18px;
+	font-style: italic;
+}

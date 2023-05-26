@@ -18,8 +18,9 @@ export default function Login() {
   const navigate = useNavigate();
 
   if (authContext?.authInformation.isAuthenticated) {
-    return <Navigate to="/" />;
+    return <Navigate to="/home" />;
   }
+
   const { email, password } = informationUserLogin;
 
   const onChangeSetInformationUserLogin = (
@@ -50,7 +51,7 @@ export default function Login() {
       try {
         await authContext?.login({ email, password });
         messageContext?.success("Đăng nhập thành công");
-        return navigate("/");
+        return navigate("/home");
       } catch (error: any) {
         messageContext?.error(error?.message);
       }

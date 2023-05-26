@@ -4,34 +4,7 @@ import { ColumnsType } from "antd/es/table";
 import { useContext, useEffect } from "react";
 import GardenDevicesTable from "../../components/GardenDevicesTable";
 import { GardenContext } from "../../contexts/GardenContext";
-
-export interface ColumnNameDeviceGarden {
-  stt?: number;
-  name: string;
-  quantity: number;
-  key: string | number;
-}
-
-const columns: ColumnsType<ColumnNameDeviceGarden> = [
-  {
-    title: "STT",
-    dataIndex: "stt",
-    key: "1",
-    align: "center",
-  },
-  {
-    title: "Tên thiết bị",
-    dataIndex: "name",
-    key: "2",
-    align: "center",
-  },
-  {
-    title: "Số lượng",
-    dataIndex: "quantity",
-    key: "3",
-    align: "center",
-  },
-];
+import { Link } from "react-router-dom";
 
 export default function Garden() {
   const gardenContext = useContext(GardenContext);
@@ -39,31 +12,33 @@ export default function Garden() {
 
   const gardenDetail = gardenContext?.gardenDetail;
 
-  useEffect(() => {
-    if (gardenId) {
-      gardenContext?.getGardenById(gardenId);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gardenId]);
-
   return (
     <div className="garden">
       {gardenDetail && (
         <>
           <header className="garden_header">
             <h3>Thông tin khu vườn</h3>
-            <p>Diện tích: {gardenDetail.landArea}</p>
-            <p>Chiều cao: {gardenDetail.hight} </p>
-            <p>Địa chỉ: {gardenDetail.address} </p>
-            <p>Số người tham gia: {gardenDetail.users.length} </p>
+            <p>
+              <span>Diện tích</span>
+              <span>{gardenDetail.landArea}m²</span>
+            </p>
+            <p>
+              <span>Chiều cao</span>
+              <span>{gardenDetail.hight}m</span>
+            </p>
+            <p>
+              <span>Địa chỉ</span>
+              <span>{gardenDetail.address} </span>
+            </p>
+            <p>
+              <span>Số thiết bị</span>
+              <span>{gardenDetail.devices.length} </span>
+            </p>
+            <p>
+              <span>Số người tham gia</span>
+              <span>{gardenDetail.users.length} </span>
+            </p>
           </header>
-          <div className="GardenBody">
-            <h3>Danh sách thiết bị</h3>
-            <GardenDevicesTable
-              columns={columns}
-              devices={gardenDetail.devices}
-            />
-          </div>
         </>
       )}
     </div>

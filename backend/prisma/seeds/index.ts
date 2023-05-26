@@ -3,9 +3,9 @@ import { createSample } from './sample';
 import { createGarden } from './garden';
 import { createUsers } from './user';
 import { createDevices } from './device';
-import { createFanDatas } from './fan-data';
 import { createNotifications } from './notification';
 import { createMeasureDeviceData } from './measure-device-data';
+import { createActuatorsDatas } from './actuators-data';
 
 export const prismaForSeed = new PrismaClient();
 
@@ -14,7 +14,7 @@ export const createResources = async (prisma: PrismaClient) => {
   const garden = await createGarden(prisma);
   await createUsers(prisma, garden);
   const devices = await createDevices(prisma, garden);
-  await createFanDatas(prisma, garden, devices);
+  await createActuatorsDatas(prisma, garden, devices);
   await createNotifications(prisma);
   await createMeasureDeviceData(prisma, garden);
 };

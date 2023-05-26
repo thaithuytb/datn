@@ -22,7 +22,6 @@ export class verifyTokenMiddleware implements NestMiddleware {
     }
 
     const decode = await this.authService.verifyToken(token).catch((e) => {
-      console.log(e.name);
       if (e.name === 'JsonWebTokenError') {
         return res.status(401).json({
           statusCode: 401,

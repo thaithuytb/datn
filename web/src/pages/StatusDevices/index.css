@@ -1,0 +1,18 @@
+.status_devices {
+	padding: 15px 25px;
+}
+
+.status_devices_present_table, .status_devices_present_table th, .status_devices_present_table td {
+	border: 1px solid #999;
+	border-collapse: collapse;
+	padding: 7px;
+}
+
+.control_device {
+	cursor: pointer;
+	padding: 4px;
+	background-color: rgb(184, 223, 238);
+	border: 1px solid #999;
+	min-width: 100px;
+	border-radius: 4px;
+}
