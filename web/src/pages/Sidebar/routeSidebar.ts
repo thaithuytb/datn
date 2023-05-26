@@ -15,19 +15,6 @@ export const listSidebarInit: MenuItem[] = [
     titleSidebar: "Quản lý khu vườn",
     key: "garden",
     url: "garden",
-    children: [],
-    // children: [
-    //   {
-    //     titleSidebar: "Khu vườn Thái Bình",
-    //     key: "2",
-    //     url: "garden/2",
-    //   },
-    //   {
-    //     titleSidebar: "Khu vườn Hà Nội",
-    //     key: "3",
-    //     url: "garden/3",
-    //   },
-    // ],
   },
   {
     titleSidebar: "Quản lý nhân viên",

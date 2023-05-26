@@ -4,4 +4,5 @@ export interface Device {
   id: number;
   ip: string;
   type: DeviceTypeEnum;
+  valueDevice?: any;
 }

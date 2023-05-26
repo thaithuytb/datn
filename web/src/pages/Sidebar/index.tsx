@@ -5,7 +5,7 @@ import { Garden } from "../../types/garden.type";
 import { Menu, Modal } from "antd";
 import { CloseOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { MenuItem, listSidebarInit } from "../../routes/routeSidebar";
+import { MenuItem, listSidebarInit } from "./routeSidebar";
 import { AuthContext } from "../../contexts/AuthContext";
 import { GardenContext } from "../../contexts/GardenContext";
 
@@ -73,35 +73,7 @@ const { confirm } = Modal;
 
 export default function SidebarLayout() {
   const authContext = useContext(AuthContext);
-  const gardenContext = useContext(GardenContext);
-
-  const [listSidebar, setListSidebar] = useState<MenuItem[]>(listSidebarInit);
-
-  useEffect(() => {
-    const gardens = gardenContext?.gardens;
-    if (gardens?.length) {
-      setListSidebar([
-        {
-          ...listSidebar[0],
-        },
-        {
-          ...listSidebar[1],
-          url: `garden/${gardens[1].id}`,
-          children: gardens.map((garden: any) => ({
-            titleSidebar: garden.name,
-            key: `${garden.id}`,
-            url: `garden/${garden.id}`,
-          })),
-        },
-        ...listSidebarInit.slice(2),
-      ]);
-    } else {
-      setListSidebar(listSidebarInit);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gardenContext?.gardens]);
-
-  const items: any = listSidebar.map((item: MenuItem) => {
+  const items: any = listSidebarInit.map((item: MenuItem) => {
     return {
       key: item.key,
       label: item.titleSidebar,
@@ -139,7 +111,7 @@ export default function SidebarLayout() {
 
   const listItemSidebar = ({ key }: { key: string }) => {
     const itemActive: MenuItem[] = [];
-    for (const item of listSidebar) {
+    for (const item of listSidebarInit) {
       if (item.key === key) {
         itemActive.push(item);
       }
