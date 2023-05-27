@@ -9,6 +9,7 @@ interface PropsDeviceContext {
 interface IDeviceContext {
   devices: any[];
   getDevicesByGardenId: (gardenId: string) => void;
+  setDevices: any;
 }
 
 export const DeviceContext = createContext<IDeviceContext | undefined>(
@@ -35,6 +36,7 @@ const DeviceContextProvider: React.FC<PropsDeviceContext> = ({ children }) => {
   const data = {
     devices,
     getDevicesByGardenId,
+    setDevices,
   };
 
   return (

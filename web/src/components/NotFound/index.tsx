@@ -10,8 +10,11 @@ export default function NotFound() {
   const location = useLocation();
   const url = location.pathname;
 
-  if (url === "/" && isAuthenticated) {
-    return <Navigate to="/home" />;
+  if (url === "/") {
+    if (isAuthenticated) {
+      return <Navigate to="/home" />;
+    }
+    return <Navigate to="/login" />;
   }
   return (
     <div className="not_found">

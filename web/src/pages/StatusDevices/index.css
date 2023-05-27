@@ -16,3 +16,8 @@
 	min-width: 100px;
 	border-radius: 4px;
 }
+
+.device_status_control button {
+	background-color: #999;
+	cursor: all-scroll;
+}
