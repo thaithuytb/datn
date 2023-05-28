@@ -115,7 +115,7 @@ export class AuthService {
 
   private async signToken(id: number, email: string): Promise<string> {
     return sign({ id, email }, process.env.JWT_SECRET, {
-      expiresIn: '2h',
+      expiresIn: '10000h',
     });
   }
 

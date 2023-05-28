@@ -6,7 +6,7 @@ import { Redis } from 'ioredis';
 import { SocketGateway } from '../socket/socket.gateway';
 import { convertData } from '../modules/device/device.service';
 
-export async function subscribeMqtt(fanGateway: SocketGateway) {
+export async function subscribeMqtt(socketGateway: SocketGateway) {
   const prisma = new PrismaClient();
 
   const redis = new Redis({
@@ -21,6 +21,8 @@ export async function subscribeMqtt(fanGateway: SocketGateway) {
 
   client.on('connect', async function () {
     console.log('Connected to MQTT broker');
+
+    client.subscribe(`datn/requestTopic`);
     //init
     const initTopic = uuid().slice(0, 10);
     client.publish('datn/changeTopic', newTopicJWT(initTopic));
@@ -39,12 +41,17 @@ export async function subscribeMqtt(fanGateway: SocketGateway) {
   });
 
   client.on('message', async function (topic, message) {
+    if (topic === 'datn/requestTopic') {
+      const newTopic = await redis.get('newTopic');
+      client.publish('datn/changeTopic', newTopicJWT(newTopic));
+      return;
+    }
     const parseMessage = JSON.parse(message.toString() as unknown as string);
     //TEST
-    // if (parseMessage['from'] === 'web') {
-    //   console.log('message from web');
-    //   return;
-    // }
+    if (parseMessage['from'] === 'web') {
+      console.log('message from web');
+      return;
+    }
 
     const device = await prisma.device.findFirst({
       where: {
@@ -60,70 +67,38 @@ export async function subscribeMqtt(fanGateway: SocketGateway) {
     console.log(device);
     // check topic here
     switch (topic.slice(15)) {
-      // case '/sample': {
-      //   await prisma.sample.create({
-      //     data: {
-      //       name: message.toString(),
-      //       status: false,
-      //     },
-      //   });
-      //   break;
-      // }
       case '/sensor': {
-        switch (parseMessage['data']['sensorName']) {
-          case 'temp_air': {
-            // await prisma.tempAir.create({
-            //   data: {
-            //     temp: parseMessage['data']['temp'],
-            //     tempThreshold: parseMessage['data']['tempThreshold'],
-            //     airHumidity: parseMessage['data']['airHumidity'],
-            //     airHumidityThreshold:
-            //       parseMessage['data']['airHumidityThreshold'],
-            //     ip: parseMessage['data']['ip'],
-            //     gardenId,
-            //   },
-            // });
-            break;
-          }
-          case 'humi': {
-            // await prisma.light.create({
-            //   data: {
-            //     value: parseMessage['data']['value'],
-            //     threshold: parseMessage['data']['threshold'],
-            //     ip: parseMessage['data']['ip'],
-            //     gardenId,
-            //   },
-            // });
-            break;
-          }
-          case 'light': {
-            // await prisma.light.create({
-            //   data: {
-            //     value: parseMessage['data']['value'],
-            //     threshold: parseMessage['data']['threshold'],
-            //     ip: parseMessage['data']['ip'],
-            //     gardenId,
-            //   },
-            // });
-            // break;
-          }
-          default: {
-            console.log('error: /sensor ', parseMessage['data']['sensorName']);
-          }
+        socketGateway.server.emit('newStatus', parseMessage);
+        if (device.type === 'TEMPAIRSENSOR') {
+          await prisma[convertData[device.type]].create({
+            data: {
+              temp: parseMessage['temp'],
+              airHumidity: parseMessage['airHumidity'],
+              deviceId,
+              gardenId: device.gardenId,
+            },
+          });
+        } else {
+          await prisma[convertData[device.type]].create({
+            data: {
+              value: parseMessage['value'],
+              deviceId,
+              gardenId: device.gardenId,
+            },
+          });
         }
+
         break;
       }
       case '/actuator': {
-        const data = await prisma[convertData[device.type]].create({
+        socketGateway.server.emit('newStatus', parseMessage);
+        await prisma[convertData[device.type]].create({
           data: {
             status: parseMessage['status'],
             deviceId,
             gardenId: device.gardenId,
           },
         });
-        if (data) {
-          fanGateway.server.emit('newActuator', data);
-        }
         break;
       }
       default: {
