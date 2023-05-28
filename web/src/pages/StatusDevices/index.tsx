@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { DeviceContext } from "../../contexts/DeviceContext";
 import socketIOClient, { Socket } from "socket.io-client";
 import DeviceApi from "../../api/device";
+import { MessageContext } from "../../contexts/MessageContext";
 
 const convertTypeDevice = (type: DeviceTypeEnum) => {
   switch (type) {
@@ -22,6 +23,7 @@ const convertTypeDevice = (type: DeviceTypeEnum) => {
 };
 
 export default function StatusDevices() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [socket, setSocket] = useState<Socket | null>(null);
   const [message, setMessage] = useState<any>(null);
   const navigate = useNavigate();
@@ -31,6 +33,7 @@ export default function StatusDevices() {
   const setDevices = deviceContext?.setDevices;
   const getDevicesByGardenId = deviceContext?.getDevicesByGardenId;
   const gardens = gardenContext?.gardens;
+  const messageContext = useContext(MessageContext);
 
   const { gardenId } = useParams();
 
@@ -40,9 +43,10 @@ export default function StatusDevices() {
       process.env.SERVER_WEB_SOCKET || "http://localhost:7000/device"
     );
     setSocket(socket);
-    socket.on("newActuator", (data) => {
-      console.log({ data });
+    socket.on("newStatus", (data) => {
       setMessage(data);
+      console.log({ data });
+      messageContext?.success("Cập nhập trạng thái mới thành công !!!");
     });
     return () => {
       socket.disconnect();
@@ -105,8 +109,6 @@ export default function StatusDevices() {
     }
   };
 
-  console.log("aaaaa");
-
   return (
     <>
       {gardens && devices && (
@@ -122,96 +124,127 @@ export default function StatusDevices() {
             </select>
           </div>
           <div className="status_devices_present">
-            <p>{">> "}Trạng thái hiện tại của thiết bị</p>
-            <table className="status_devices_present_table">
-              <tbody>
-                <tr>
-                  <th>Stt</th>
-                  <th>Thiết bị</th>
-                  <th>Trạng thái</th>
-                  <th>Trạng thái/giá trị đo</th>
-                  <th>Điều khiển thiết bị</th>
-                </tr>
-                {devices.map((device: Device, index: number) => {
-                  let value;
-                  let controlDevice;
-                  if (device.type === "TEMPAIRSENSOR") {
-                    value = (
-                      <>
-                        <p>Nhiet do: {device.valueDevice?.temp?.toFixed(2)}</p>
-                        <p>
-                          Do am: {device.valueDevice?.airHumidity?.toFixed(2)}
-                        </p>
-                      </>
-                    );
-                    controlDevice = (
-                      <button
-                        className="control_device"
-                        onClick={() => changeStatusDevice(device)}
-                      >
-                        Do gia tri moi
-                      </button>
-                    );
-                  } else {
-                    value = device.valueDevice?.value
-                      ? device.valueDevice?.value?.toFixed(2)
-                      : device.valueDevice?.status
-                      ? "Bật"
-                      : "Tắt";
-                    controlDevice = device.valueDevice?.value ? (
-                      <button
-                        className="control_device"
-                        onClick={() => changeStatusDevice(device)}
-                      >
-                        Do gia tri moi
-                      </button>
-                    ) : device.valueDevice?.status ? (
-                      <button
-                        className="control_device"
-                        onClick={() => changeStatusDevice(device)}
-                      >
-                        Tắt
-                      </button>
-                    ) : (
-                      <button
-                        className="control_device"
-                        onClick={() => changeStatusDevice(device)}
-                      >
-                        Bật
-                      </button>
-                    );
-                  }
+            <div>
+              <p>{">> "}Trạng thái hiện tại của thiết bị</p>
+              <table className="status_devices_present_table">
+                <tbody>
+                  <tr>
+                    <th>Stt</th>
+                    <th>Thiết bị</th>
+                    <th>Trạng thái</th>
+                    <th>Trạng thái/giá trị đo</th>
+                    <th>Điều khiển thiết bị</th>
+                  </tr>
+                  {devices.map((device: Device, index: number) => {
+                    let value;
+                    let controlDevice;
+                    if (device.type === "TEMPAIRSENSOR") {
+                      value = (
+                        <>
+                          <p>
+                            Nhiệt độ: {device.valueDevice?.temp?.toFixed(2)}
+                          </p>
+                          <p>
+                            Độ ẩm: {device.valueDevice?.airHumidity?.toFixed(2)}
+                          </p>
+                        </>
+                      );
+                      controlDevice = (
+                        <button
+                          className="control_device"
+                          onClick={() => changeStatusDevice(device)}
+                        >
+                          Đo giá trị mới
+                        </button>
+                      );
+                    } else {
+                      value = device.valueDevice?.value
+                        ? device.valueDevice?.value?.toFixed(2)
+                        : device.valueDevice?.status
+                        ? "Bật"
+                        : "Tắt";
+                      controlDevice = device.valueDevice?.value ? (
+                        <button
+                          className="control_device"
+                          onClick={() => changeStatusDevice(device)}
+                        >
+                          Đo giá trị mới
+                        </button>
+                      ) : device.valueDevice?.status ? (
+                        <button
+                          className="control_device"
+                          onClick={() => changeStatusDevice(device)}
+                        >
+                          Tắt
+                        </button>
+                      ) : (
+                        <button
+                          className="control_device"
+                          onClick={() => changeStatusDevice(device)}
+                        >
+                          Bật
+                        </button>
+                      );
+                    }
 
-                  return (
-                    <tr key={device.id}>
-                      <td style={{ textAlign: "center" }}>{++index}</td>
-                      <td>
-                        {convertDeviceType[device.type].name} ({device.ip})
-                      </td>
-                      <td>
-                        {device.status ? "Đang hoạt động" : "Không hoạt động"}
-                      </td>
-                      <td
-                        className={device.type}
-                        style={{ textAlign: "center" }}
-                      >
-                        {value}
-                      </td>
-                      <td
-                        className={
-                          device.status
-                            ? `${device.status}`
-                            : `${device.status} device_status_control`
-                        }
-                        style={{ textAlign: "center" }}
-                      >
-                        {controlDevice}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                    if (!device.status) {
+                      value = "Không có dữ liệu";
+                      controlDevice = "Không có dữ liệu";
+                    }
+
+                    return (
+                      <tr key={device.id}>
+                        <td style={{ textAlign: "center" }}>{++index}</td>
+                        <td>
+                          {convertDeviceType[device.type].name} ({device.ip})
+                        </td>
+                        <td className={device.status ? "" : "device_no_action"}>
+                          {device.status ? "Đang hoạt động" : "Không hoạt động"}
+                        </td>
+                        <td
+                          className={
+                            device.status
+                              ? `${device.type}`
+                              : `${device.type} device_no_action`
+                          }
+                          style={{ textAlign: "center" }}
+                        >
+                          {value}
+                        </td>
+                        <td
+                          className={
+                            device.status
+                              ? `${device.status}`
+                              : `${device.status} device_status_control device_no_action`
+                          }
+                          style={{ textAlign: "center" }}
+                        >
+                          {controlDevice}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="devices_control_gen">
+              <div>
+                <p>{">> "}Điều khiển chung</p>
+                <div>
+                  <span>Bật tất cả các thiết bị chấp hành:</span>
+                  <button>Gửi</button>
+                </div>
+                <div>
+                  <span>Tắt tất cả các thiết bị chấp hành:</span>
+                  <button>Gửi</button>
+                </div>
+                <div>
+                  <span>Đo giá chị mới tất cả các cảm biến:</span>
+                  <button>Gửi</button>
+                </div>
+              </div>
+              <div>{">> "}Ngưỡng thiết bi</div>
+            </div>
           </div>
           <div className="history_DeviceDetail"></div>
         </div>
