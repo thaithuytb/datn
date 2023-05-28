@@ -109,19 +109,41 @@ export default function StatusDevices() {
     }
   };
 
+  const garden = gardens?.find((garden) => garden.id.toString() === gardenId);
+
   return (
     <>
       {gardens && devices && (
         <div className="status_devices">
           <div className="list_device_select">
-            <div>Khu vườn</div>
-            <select onChange={selectGarden}>
-              {gardens.map((garden) => (
-                <option key={garden.id} value={garden.id}>
-                  {garden.name}
-                </option>
-              ))}
-            </select>
+            <div className="list_device_select_name">
+              <div className="list_device_select_title">Khu vườn</div>
+              <select onChange={selectGarden}>
+                {gardens.map((garden) => (
+                  <option key={garden.id} value={garden.id}>
+                    {garden.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="list_device_select_regime">
+              <div className="list_device_select_title">
+                Chế độ chăm sóc hiện tại của khu vườn:
+                <span style={{ color: "blue" }}>
+                  {garden && garden.isAuto ? "auto" : "manual>"}
+                </span>
+              </div>
+            </div>
+            <div className="list_device_select_regime_change">
+              <div className="list_device_select_title">
+                Thay đổi chế độ:
+                <button style={{ color: "blue", cursor: "pointer" }}>
+                  {garden && garden.isAuto
+                    ? "Chuyển sang manual"
+                    : "Chuyển sang auto>"}
+                </button>
+              </div>
+            </div>
           </div>
           <div className="status_devices_present">
             <div>
@@ -227,7 +249,7 @@ export default function StatusDevices() {
                 </tbody>
               </table>
             </div>
-            <div className="devices_control_gen">
+            {/* <div className="devices_control_gen">
               <div>
                 <p>{">> "}Điều khiển chung</p>
                 <div>
@@ -244,7 +266,7 @@ export default function StatusDevices() {
                 </div>
               </div>
               <div>{">> "}Ngưỡng thiết bi</div>
-            </div>
+            </div> */}
           </div>
           <div className="history_DeviceDetail"></div>
         </div>

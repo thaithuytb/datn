@@ -5,6 +5,7 @@ import { uuid } from 'uuidv4';
 import { Redis } from 'ioredis';
 import { SocketGateway } from '../socket/socket.gateway';
 import { convertData } from '../modules/device/device.service';
+import { ParseBoolPipe } from '@nestjs/common';
 
 export async function subscribeMqtt(socketGateway: SocketGateway) {
   const prisma = new PrismaClient();
@@ -47,10 +48,30 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
       return;
     }
     const parseMessage = JSON.parse(message.toString() as unknown as string);
-    //TEST
     if (parseMessage['from'] === 'web') {
-      console.log('message from web');
-      return;
+      //TEST
+      return console.log('message from web');
+    }
+
+    if (topic.slice(15) === '/regime') {
+      const garden = await prisma.garden.findFirst({
+        where: {
+          id: parseInt(parseMessage['gardenId']),
+        },
+      });
+
+      if (!garden) {
+        return console.log('error: garden not found');
+      }
+
+      return prisma.garden.update({
+        where: {
+          id: garden.id,
+        },
+        data: {
+          isAuto: parseInt(parseMessage['isAuto']) ? true : false,
+        },
+      });
     }
 
     const device = await prisma.device.findFirst({
@@ -70,7 +91,7 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
       case '/sensor': {
         socketGateway.server.emit('newStatus', parseMessage);
         if (device.type === 'TEMPAIRSENSOR') {
-          await prisma[convertData[device.type]].create({
+          return prisma[convertData[device.type]].create({
             data: {
               temp: parseMessage['temp'],
               airHumidity: parseMessage['airHumidity'],
@@ -79,7 +100,7 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
             },
           });
         } else {
-          await prisma[convertData[device.type]].create({
+          return prisma[convertData[device.type]].create({
             data: {
               value: parseMessage['value'],
               deviceId,
@@ -87,19 +108,16 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
             },
           });
         }
-
-        break;
       }
       case '/actuator': {
         socketGateway.server.emit('newStatus', parseMessage);
-        await prisma[convertData[device.type]].create({
+        return prisma[convertData[device.type]].create({
           data: {
             status: parseMessage['status'],
             deviceId,
             gardenId: device.gardenId,
           },
         });
-        break;
       }
       default: {
         console.log('topic', topic);

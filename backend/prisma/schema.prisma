@@ -171,7 +171,8 @@ model Garden {
   name        String           @unique
   address     String
   width       Int?
-  length      Int?
+  length      Int? 
+  isAuto      Boolean          @default(true)
   hight       Int?
   landArea    Int              @map("land_area")
   createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamp(3)

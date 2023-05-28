@@ -5,5 +5,6 @@ export interface Device {
   ip: string;
   status: boolean;
   type: DeviceTypeEnum;
+  garden: any;
   valueDevice?: any;
 }
