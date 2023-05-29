@@ -25,9 +25,6 @@ export class GardenController {
     dto: ChangeStatusGardenDto,
     @Param('gardenId', ParseIntPipe) gardenId: number,
   ) {
-    if (req.user.role === Role.ADMIN) {
-      return this.gardenService.getGardens({});
-    }
     return this.gardenService.changeStatusGarden(dto, gardenId);
   }
 
