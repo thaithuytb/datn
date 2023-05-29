@@ -8,13 +8,16 @@ class DeviceApi {
     return axiosClient.get(url) as unknown as ApiResponse;
   }
 
-  changeDeviceStatus(dto: {
-    status?: boolean;
-    ip: string;
-    deviceId: number;
-    type: DeviceTypeEnum;
-  }) {
-    const url = `/devices/change-device`;
+  changeDeviceStatus(
+    dto: {
+      status?: boolean;
+      ip: string;
+      deviceId: number;
+      type: DeviceTypeEnum;
+    },
+    gardenId: string
+  ) {
+    const url = `/devices/change-device/${gardenId}`;
     return axiosClient.post(url, { dto });
   }
 

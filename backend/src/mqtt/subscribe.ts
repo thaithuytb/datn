@@ -5,7 +5,6 @@ import { uuid } from 'uuidv4';
 import { Redis } from 'ioredis';
 import { SocketGateway } from '../socket/socket.gateway';
 import { convertData } from '../modules/device/device.service';
-import { ParseBoolPipe } from '@nestjs/common';
 
 export async function subscribeMqtt(socketGateway: SocketGateway) {
   const prisma = new PrismaClient();
@@ -49,7 +48,7 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
     }
     const parseMessage = JSON.parse(message.toString() as unknown as string);
     if (parseMessage['from'] === 'web') {
-      //TEST
+      console.log({ parseMessage });
       return console.log('message from web');
     }
 

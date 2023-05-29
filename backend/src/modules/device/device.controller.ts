@@ -16,7 +16,7 @@ import { ChangeDeviceStatusDto } from './dto/device.dto';
 export class DeviceController {
   constructor(private readonly deviceService: DeviceService) {}
 
-  @Post('/change-device')
+  @Post('/change-device/:gardenId')
   public changeFanStatus(
     @Body('dto')
     dto: ChangeDeviceStatusDto,

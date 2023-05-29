@@ -89,23 +89,29 @@ export default function StatusDevices() {
   };
 
   const changeStatusDevice = (device: Device) => {
-    if (!device.status) {
+    if (!device.status || !gardenId) {
       return;
     }
     const deviceApi = DeviceApi.registerDeviceApi();
     if (convertTypeDevice(device.type) === "actuator") {
-      deviceApi.changeDeviceStatus({
-        status: !device.valueDevice.status,
-        ip: device.ip,
-        deviceId: device.id,
-        type: device.type,
-      });
+      deviceApi.changeDeviceStatus(
+        {
+          status: !device.valueDevice.status,
+          ip: device.ip,
+          deviceId: device.id,
+          type: device.type,
+        },
+        gardenId
+      );
     } else {
-      deviceApi.changeDeviceStatus({
-        ip: device.ip,
-        deviceId: device.id,
-        type: device.type,
-      });
+      deviceApi.changeDeviceStatus(
+        {
+          ip: device.ip,
+          deviceId: device.id,
+          type: device.type,
+        },
+        gardenId
+      );
     }
   };
 
