@@ -13,4 +13,8 @@ export class PublicMqttService {
     console.log(`topic: ${topic}, message: ${message}`);
     this.client.publish(topic, message);
   }
+
+  test() {
+    this.client.publish('datn/requestTopic', JSON.stringify({ gardenId: 1 }));
+  }
 }

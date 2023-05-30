@@ -50,33 +50,19 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
     if (topic === 'datn/requestTopic') {
       const newTopic = await redis.get('newTopic');
       client.publish('datn/changeTopic', newTopicJWT(newTopic));
-      setTimeout(() => {
+      setTimeout(async () => {
         const gardenId = parseMessage['gardenId'];
-        client.publish('datn/statusDevice', newTopicJWT(newTopic));
+
+        const statusDevice = await getStatusDevicesByGardenId(prisma, gardenId);
+        console.log({ statusDevice });
+        client.publish('datn/statusDevice', JSON.stringify(statusDevice));
       }, 2000);
       return;
     }
 
     if (topic.slice(15) === '/regime') {
       socketGateway.server.emit('newStatusGarden', parseMessage);
-      const garden = await prisma.garden.findFirst({
-        where: {
-          id: parseInt(parseMessage['gardenId']),
-        },
-      });
-
-      if (!garden) {
-        return console.log('error: garden not found');
-      }
-
-      return prisma.garden.update({
-        where: {
-          id: garden.id,
-        },
-        data: {
-          isAuto: parseInt(parseMessage['isAuto']) ? true : false,
-        },
-      });
+      return updateStatusGarden(prisma, parseMessage);
     }
 
     const device = await prisma.device.findFirst({
@@ -131,3 +117,60 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
     }
   });
 }
+
+const getStatusDevicesByGardenId = async (
+  prisma: PrismaClient,
+  gardenId: number,
+) => {
+  const devices = await prisma.device.findMany({
+    where: {
+      gardenId,
+      status: true,
+    },
+  });
+
+  const promiseList = devices.map(async (device) => {
+    if (device.threshold) {
+      return {
+        deviceId: device.id,
+        ip: device.ip,
+        threshold: device.threshold,
+        otherThreshold: device.otherThreshold,
+      };
+    }
+    const valueDevice = await prisma[convertData[device.type]].findFirst({
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 1,
+    });
+    return {
+      deviceId: device.id,
+      ip: device.ip,
+      status: valueDevice.status,
+    };
+  });
+
+  return await Promise.all([...promiseList]);
+};
+
+const updateStatusGarden = async (prisma: PrismaClient, parseMessage: any) => {
+  const garden = await prisma.garden.findFirst({
+    where: {
+      id: parseInt(parseMessage['gardenId']),
+    },
+  });
+
+  if (!garden) {
+    return console.log('error: garden not found');
+  }
+
+  return prisma.garden.update({
+    where: {
+      id: garden.id,
+    },
+    data: {
+      isAuto: parseInt(parseMessage['isAuto']) ? true : false,
+    },
+  });
+};
