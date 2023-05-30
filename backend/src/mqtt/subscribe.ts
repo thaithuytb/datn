@@ -41,18 +41,24 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
   });
 
   client.on('message', async function (topic, message) {
+    const parseMessage = JSON.parse(message.toString() as unknown as string);
+    // if (parseMessage['from'] === 'web') {
+    //   console.log({ parseMessage });
+    //   return console.log('message from web');
+    // }
+
     if (topic === 'datn/requestTopic') {
       const newTopic = await redis.get('newTopic');
       client.publish('datn/changeTopic', newTopicJWT(newTopic));
+      setTimeout(() => {
+        const gardenId = parseMessage['gardenId'];
+        client.publish('datn/statusDevice', newTopicJWT(newTopic));
+      }, 2000);
       return;
-    }
-    const parseMessage = JSON.parse(message.toString() as unknown as string);
-    if (parseMessage['from'] === 'web') {
-      console.log({ parseMessage });
-      return console.log('message from web');
     }
 
     if (topic.slice(15) === '/regime') {
+      socketGateway.server.emit('newStatusGarden', parseMessage);
       const garden = await prisma.garden.findFirst({
         where: {
           id: parseInt(parseMessage['gardenId']),

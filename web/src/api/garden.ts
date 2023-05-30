@@ -12,6 +12,14 @@ class GardenApi {
     return axiosClient.get(url) as unknown as ApiResponse;
   }
 
+  changeStatusGarden(dto: {
+    id: string;
+    req: { isAuto: boolean; time: string };
+  }) {
+    const url = `/gardens/${dto.id}/regime`;
+    return axiosClient.post(url, { dto: dto.req }) as unknown as ApiResponse;
+  }
+
   static registerAuthApi() {
     return new GardenApi();
   }

@@ -8,6 +8,10 @@ import { DeviceContext } from "../../contexts/DeviceContext";
 import socketIOClient, { Socket } from "socket.io-client";
 import DeviceApi from "../../api/device";
 import { MessageContext } from "../../contexts/MessageContext";
+import { DatePicker, Modal, TimePicker } from "antd";
+import dayjs from "dayjs";
+import moment from "moment";
+import GardenApi from "../../api/garden";
 
 const convertTypeDevice = (type: DeviceTypeEnum) => {
   switch (type) {
@@ -33,6 +37,7 @@ export default function StatusDevices() {
   const setDevices = deviceContext?.setDevices;
   const getDevicesByGardenId = deviceContext?.getDevicesByGardenId;
   const gardens = gardenContext?.gardens;
+  const setGardens = gardenContext?.setGardens;
   const messageContext = useContext(MessageContext);
 
   const { gardenId } = useParams();
@@ -48,6 +53,23 @@ export default function StatusDevices() {
       console.log({ data });
       messageContext?.success("Cập nhập trạng thái mới thành công !!!");
     });
+
+    socket.on("newStatusGarden", (data) => {
+      if (data) {
+        const newGardens = gardens?.map((garden) => {
+          if (garden.id === data.gardenId) {
+            return {
+              ...garden,
+              isAuto: data.isAuto,
+            };
+          }
+          return garden;
+        });
+        setGardens(newGardens);
+      }
+      messageContext?.success("Cập nhập trạng thái mới thành công !!!");
+    });
+
     return () => {
       socket.disconnect();
     };
@@ -103,22 +125,150 @@ export default function StatusDevices() {
         },
         gardenId
       );
-    } else {
-      deviceApi.changeDeviceStatus(
-        {
-          ip: device.ip,
-          deviceId: device.id,
-          type: device.type,
-        },
-        gardenId
-      );
     }
   };
 
   const garden = gardens?.find((garden) => garden.id.toString() === gardenId);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState<string>("00:00");
+  const currentHour = moment().format("HH:mm");
+  const currentDate = moment().format("DD-MM-YYYY");
+  const [date, setDate] = useState(currentDate);
+  const [hour, setHour] = useState(currentHour);
+  const hourFormat = "HH:mm";
+  const dateFormat = "DD-MM-YYYY";
+
+  const changeDate = (date: any, dateString: any) => {
+    setDate(dateString);
+  };
+  const changeHour = (time: any, timeString: any) => {
+    setHour(timeString);
+  };
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = async () => {
+    const isAuto = garden && !garden.isAuto;
+    if (!date || !hour) {
+      console.log("check time");
+    } else {
+      const [day, month] = date.split("-");
+
+      // Xóa số 0 ở đầu ngày và tháng nếu có
+      const formattedDay = parseInt(day, 10).toString();
+      const formattedMonth = parseInt(month, 10).toString();
+      const formattedDate = `${formattedDay}-${formattedMonth}`;
+
+      const dto = {
+        id: `${gardenId}`,
+        req: {
+          isAuto,
+          time: `${formattedDate} ${hour}`,
+        },
+      };
+      try {
+        const gardenApi = GardenApi.registerAuthApi();
+        const res = await gardenApi.changeStatusGarden(dto);
+        console.log(res);
+        setIsModalOpen(false);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+  const changeMode = () => {
+    showModal();
+  };
+
+  const duration = () => {
+    // const startTime = `${currentDate} ${currentHour}`;
+    // console.log({ startTime });
+    // const endTime = `${date} ${hour}`;
+    // console.log({ endTime });
+
+    // console.log(2851080000 / (3600 * 24));
+
+    // const dateTimeFormat = "DD-MM-YYYY HH:mm";
+
+    // const startMoment = moment(startTime, dateTimeFormat);
+    // const endMoment = moment(endTime, dateTimeFormat);
+
+    // const duration = moment.duration(endMoment.diff(startMoment));
+    // const days = duration.days();
+    // const hours = duration.hours();
+    // const minutes = duration.minutes();
+    // console.log({ duration });
+    // return `${hours}:${minutes}`;
+    return "truong tinh";
+  };
+
+  useEffect(() => {
+    setTimeRemaining(duration());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hour, date]);
   return (
     <>
+      <Modal
+        title="Xac nhan chuyen che do cham soc cua khu vuon sang ...."
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        {garden && !garden.isAuto ? (
+          ""
+        ) : (
+          <>
+            <div>
+              Thời gian hiện tại<br></br>
+              {currentDate} {currentHour}
+            </div>
+            <div style={{ marginTop: "1.3rem" }}>Thời gian quay lại auto</div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: "0rem",
+              }}
+            >
+              <div>
+                Ngay
+                <DatePicker
+                  defaultValue={dayjs(currentDate, dateFormat)}
+                  format={dateFormat}
+                  onChange={changeDate}
+                />
+              </div>
+              <div style={{ margin: "0 1rem" }}>
+                Gio
+                <TimePicker
+                  defaultValue={dayjs(currentHour, hourFormat)}
+                  format={hourFormat}
+                  onChange={changeHour}
+                />
+              </div>
+              <div>
+                So gio
+                <div
+                  style={{
+                    width: "100px",
+                    border: "1px solid #d9d9d9",
+                    borderRadius: "6px",
+                    padding: "4px 11px 4px",
+                  }}
+                >
+                  {timeRemaining}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+      </Modal>
       {gardens && devices && (
         <div className="status_devices">
           <div className="list_device_select">
@@ -143,7 +293,10 @@ export default function StatusDevices() {
             <div className="list_device_select_regime_change">
               <div className="list_device_select_title">
                 Thay đổi chế độ:
-                <button style={{ color: "blue", cursor: "pointer" }}>
+                <button
+                  style={{ color: "blue", cursor: "pointer" }}
+                  onClick={changeMode}
+                >
                   {garden && garden.isAuto
                     ? "Chuyển sang manual"
                     : "Chuyển sang auto>"}
@@ -161,7 +314,9 @@ export default function StatusDevices() {
                     <th>Thiết bị</th>
                     <th>Trạng thái</th>
                     <th>Trạng thái/giá trị đo</th>
-                    <th>Điều khiển thiết bị</th>
+                    {garden && !garden.isAuto ? (
+                      <th>Điều khiển thiết bị</th>
+                    ) : null}
                   </tr>
                   {devices.map((device: Device, index: number) => {
                     let value;
@@ -177,14 +332,6 @@ export default function StatusDevices() {
                           </p>
                         </>
                       );
-                      controlDevice = (
-                        <button
-                          className="control_device"
-                          onClick={() => changeStatusDevice(device)}
-                        >
-                          Đo giá trị mới
-                        </button>
-                      );
                     } else {
                       value = device.valueDevice?.value
                         ? device.valueDevice?.value?.toFixed(2)
@@ -192,12 +339,7 @@ export default function StatusDevices() {
                         ? "Bật"
                         : "Tắt";
                       controlDevice = device.valueDevice?.value ? (
-                        <button
-                          className="control_device"
-                          onClick={() => changeStatusDevice(device)}
-                        >
-                          Đo giá trị mới
-                        </button>
+                        <></>
                       ) : device.valueDevice?.status ? (
                         <button
                           className="control_device"
@@ -239,42 +381,25 @@ export default function StatusDevices() {
                         >
                           {value}
                         </td>
-                        <td
-                          className={
-                            device.status
-                              ? `${device.status}`
-                              : `${device.status} device_status_control device_no_action`
-                          }
-                          style={{ textAlign: "center" }}
-                        >
-                          {controlDevice}
-                        </td>
+                        {garden && !garden.isAuto ? (
+                          <td
+                            className={
+                              device.status
+                                ? `${device.status}`
+                                : `${device.status} device_status_control device_no_action`
+                            }
+                            style={{ textAlign: "center" }}
+                          >
+                            {controlDevice}
+                          </td>
+                        ) : null}
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
             </div>
-            {/* <div className="devices_control_gen">
-              <div>
-                <p>{">> "}Điều khiển chung</p>
-                <div>
-                  <span>Bật tất cả các thiết bị chấp hành:</span>
-                  <button>Gửi</button>
-                </div>
-                <div>
-                  <span>Tắt tất cả các thiết bị chấp hành:</span>
-                  <button>Gửi</button>
-                </div>
-                <div>
-                  <span>Đo giá chị mới tất cả các cảm biến:</span>
-                  <button>Gửi</button>
-                </div>
-              </div>
-              <div>{">> "}Ngưỡng thiết bi</div>
-            </div> */}
           </div>
-          <div className="history_DeviceDetail"></div>
         </div>
       )}
     </>

@@ -8,6 +8,7 @@ interface PropsGardenContext {
 interface IGardenContext {
   gardens: any[];
   gardenDetail: any;
+  setGardens: any;
   // gardenDetailId: string;
   getGardens: () => void;
   getGardenById: (id: string) => void;
@@ -50,6 +51,7 @@ const GardenContextProvider: React.FC<PropsGardenContext> = ({ children }) => {
     gardenDetail,
     getGardens,
     getGardenById,
+    setGardens,
   };
 
   return (
