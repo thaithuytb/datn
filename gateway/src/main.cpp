@@ -29,7 +29,7 @@ void setup() {
   Serial.begin(115200);
 
   initLora();
-  // initMQTT();
+  initMQTT();
 }
 
 void loop() {
@@ -39,7 +39,7 @@ void loop() {
     loraRead();
   }
 
-  // reconnectMQTTHandle(topics);
+  reconnectMQTTHandle(topics);
 }
 
 void handleLoraString() {

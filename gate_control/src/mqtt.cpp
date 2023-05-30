@@ -5,9 +5,12 @@
 #include <Crypto.h>
 #include <SHA512.h>
 #include <ArduinoJson.h>
+#include <array>
 
-const char* ssid = "Azuby";
-const char* password = "desolator";
+const char* ssid = "12345689";
+const char* password = "12345689";
+
+bool isValidUUID = false;
 
 float temp = 0;
 float air = 0;
@@ -82,8 +85,13 @@ void reconnect(String topic[]) {
       
       client.setCallback(callback);
 
-      for(int i = 0; i < topic->length(); i++) {
+      for(int i = 0; i < 1; i++) {
+        Serial.println(topic[i]);
         client.subscribe(topic[i].c_str());
+      }
+      
+      if (!isValidUUID) {
+        client.publish("datn/requestTopic", "send");
       }
     } else {
       Serial.print("failed, rc=");
@@ -92,6 +100,18 @@ void reconnect(String topic[]) {
       
       delay(5000);
     }
+  }
+}
+
+void unSubscribe(String topic[]) {
+  for(int i = 0; i < topicCount; i++) {
+    client.unsubscribe(topic[i].c_str());
+  }
+}
+
+void subscribe(String topic[]) {
+  for(int i = 0; i < topicCount; i++) {
+    client.subscribe(topic[i].c_str());
   }
 }
 
@@ -108,13 +128,10 @@ void reconnectMQTTHandle(String topic[]) {
   client.loop();
 
   mqttAction();
+}
 
-  // String object = R"rawliteral(
-  //   {"data":{"actuatorName":"fan","status":false,"ip":"test_1"},"gardenName":"name_1"}
-  // )rawliteral";
-
-  // client.publish(actuatorTopic, (char *)object.c_str());
-
+void mqttSend(String topic, String json) {
+  client.publish((char *)topic.c_str(), (char *)json.c_str());
 }
 
 String encodeJWT(String object) {

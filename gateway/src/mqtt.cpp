@@ -6,8 +6,8 @@
 #include <SHA512.h>
 #include <ArduinoJson.h>
 
-const char* ssid = "Azuby";
-const char* password = "desolator";
+const char* ssid = "12345689";
+const char* password = "12345689";
 
 void setup_wifi() {
     delay(10);
