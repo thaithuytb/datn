@@ -17,4 +17,12 @@ export class UpdateInformationDto {
   @IsOptional()
   @IsEnum(Gender)
   gender?: Gender;
+
+  @IsOptional()
+  @IsString()
+  password?: string;
+
+  @IsOptional()
+  @IsString()
+  newPassword?: string;
 }

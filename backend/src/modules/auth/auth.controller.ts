@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { LoginType, UserResponseDetailType } from './models/auth.model';
@@ -6,6 +14,7 @@ import { RegisterDto } from './dto/register.dto';
 import { RoleAdminGuard } from '../../guards/roleAdminGuard';
 import { UpdateInformationDto } from './dto/auth.dto';
 import { responseSuccess } from '../../common/responseSuccess';
+import { User } from '@prisma/client';
 
 @Controller('api/v1/auth')
 export class AuthController {
@@ -40,6 +49,6 @@ export class AuthController {
     @Req() req: any,
     @Body('dto') dto: UpdateInformationDto,
   ): Promise<UserResponseDetailType> {
-    return this.authService.updateInformation(req.user.id, dto);
+    return this.authService.updateInformation(req.user as User, dto);
   }
 }
