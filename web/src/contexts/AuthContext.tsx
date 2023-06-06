@@ -23,6 +23,7 @@ interface IAuthContext {
   authInformation: IAuthInformation;
   login: (dto: IInformationUserLogin) => void;
   logout: () => void;
+  setAuthInformation: any;
 }
 
 export const AuthContext = createContext<IAuthContext | undefined>(undefined);
@@ -90,6 +91,7 @@ const AuthContextProvider: React.FC<PropsAuthContext> = ({ children }) => {
     authInformation,
     login,
     logout,
+    setAuthInformation,
   };
 
   return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;

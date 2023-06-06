@@ -21,6 +21,20 @@ class AuthApi {
     return axiosClient.get(url) as unknown as ApiResponse;
   }
 
+  updateUnformation(dto: {
+    password?: string;
+    newPassword?: string;
+    fullName?: string;
+    phoneNumber?: string;
+    address?: string;
+  }) {
+    const url = "/auth/update-information";
+    // validation
+    return axiosClient.patch(url, {
+      dto: { ...dto },
+    }) as unknown as ApiResponse;
+  }
+
   static registerAuthApi() {
     return new AuthApi();
   }

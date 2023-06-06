@@ -54,22 +54,6 @@ export default function StatusDevices() {
       messageContext?.success("Cập nhập trạng thái mới thành công !!!");
     });
 
-    socket.on("newStatusGarden", (data) => {
-      if (data) {
-        const newGardens = gardens?.map((garden) => {
-          if (garden.id === data.gardenId) {
-            return {
-              ...garden,
-              isAuto: data.isAuto,
-            };
-          }
-          return garden;
-        });
-        setGardens(newGardens);
-      }
-      messageContext?.success("Cập nhập trạng thái mới thành công !!!");
-    });
-
     return () => {
       socket.disconnect();
     };
@@ -125,33 +109,69 @@ export default function StatusDevices() {
         },
         gardenId
       );
+    } else {
+      deviceApi.changeDeviceStatus(
+        {
+          ip: device.ip,
+          deviceId: device.id,
+          type: device.type,
+        },
+        gardenId
+      );
     }
   };
 
   const garden = gardens?.find((garden) => garden.id.toString() === gardenId);
-
+  // console.log(gardens)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<string>("00:00");
-  const currentHour = moment().format("HH:mm");
+  const currentTime = moment().format("HH:mm");
   const currentDate = moment().format("DD-MM-YYYY");
   const [date, setDate] = useState(currentDate);
-  const [hour, setHour] = useState(currentHour);
-  const hourFormat = "HH:mm";
+  const [time, setTime] = useState(currentTime);
+  const timeFormat = "HH:mm";
   const dateFormat = "DD-MM-YYYY";
 
   const changeDate = (date: any, dateString: any) => {
     setDate(dateString);
   };
-  const changeHour = (time: any, timeString: any) => {
-    setHour(timeString);
+  const changeTime = (time: any, timeString: any) => {
+    setTime(timeString);
   };
   const showModal = () => {
     setIsModalOpen(true);
   };
 
+  //nhận lại socket
+  useEffect(() => {
+    const socket = socketIOClient(
+      process.env.SERVER_WEB_SOCKET || "http://localhost:7000/device"
+    );
+    socket.on("newStatusGarden", (data) => {
+      if (data) {
+        const newgardens = gardens?.map((garden) => {
+          if (garden.id === data.gardenId) {
+            return {
+              ...garden,
+              isAuto: data.isAuto,
+            };
+          }
+          return garden;
+        });
+        setGardens(newgardens);
+      }
+      messageContext?.success("Cập nhập trạng thái mới thành công !!!");
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gardens]);
+
   const handleOk = async () => {
     const isAuto = garden && !garden.isAuto;
-    if (!date || !hour) {
+    if (!date || !time) {
       console.log("check time");
     } else {
       const [day, month] = date.split("-");
@@ -165,14 +185,14 @@ export default function StatusDevices() {
         id: `${gardenId}`,
         req: {
           isAuto,
-          time: `${formattedDate} ${hour}`,
+          time: `${formattedDate} ${time}`,
         },
       };
       try {
         const gardenApi = GardenApi.registerAuthApi();
-        const res = await gardenApi.changeStatusGarden(dto);
-        console.log(res);
+        await gardenApi.changeStatusGarden(dto);
         setIsModalOpen(false);
+        setTimeRemaining("00:00");
       } catch (error) {
         console.log(error);
       }
@@ -180,6 +200,7 @@ export default function StatusDevices() {
   };
 
   const handleCancel = () => {
+    setTimeRemaining("00:00");
     setIsModalOpen(false);
   };
   const changeMode = () => {
@@ -187,35 +208,28 @@ export default function StatusDevices() {
   };
 
   const duration = () => {
-    // const startTime = `${currentDate} ${currentHour}`;
-    // console.log({ startTime });
-    // const endTime = `${date} ${hour}`;
-    // console.log({ endTime });
+    const startTime = `${currentDate} ${currentTime}`;
+    const endTime = `${date} ${time}`;
+    const dateTimeFormat = "DD-MM-YYYY HH:mm";
 
-    // console.log(2851080000 / (3600 * 24));
+    const startMoment = moment(startTime, dateTimeFormat);
+    const endMoment = moment(endTime, dateTimeFormat);
 
-    // const dateTimeFormat = "DD-MM-YYYY HH:mm";
+    const newTime = moment.duration(endMoment.diff(startMoment));
+    const totalMinutes = newTime.asMinutes();
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
 
-    // const startMoment = moment(startTime, dateTimeFormat);
-    // const endMoment = moment(endTime, dateTimeFormat);
-
-    // const duration = moment.duration(endMoment.diff(startMoment));
-    // const days = duration.days();
-    // const hours = duration.hours();
-    // const minutes = duration.minutes();
-    // console.log({ duration });
-    // return `${hours}:${minutes}`;
-    return "truong tinh";
+    return `${hours}:${minutes}`;
   };
-
   useEffect(() => {
     setTimeRemaining(duration());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hour, date]);
+  }, [time, date]);
   return (
     <>
       <Modal
-        title="Xac nhan chuyen che do cham soc cua khu vuon sang ...."
+        title="Bạn muốn chuyển chế độ!!!"
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -226,7 +240,7 @@ export default function StatusDevices() {
           <>
             <div>
               Thời gian hiện tại<br></br>
-              {currentDate} {currentHour}
+              {currentDate} {currentTime}
             </div>
             <div style={{ marginTop: "1.3rem" }}>Thời gian quay lại auto</div>
             <div
@@ -237,7 +251,7 @@ export default function StatusDevices() {
               }}
             >
               <div>
-                Ngay
+                Date
                 <DatePicker
                   defaultValue={dayjs(currentDate, dateFormat)}
                   format={dateFormat}
@@ -245,15 +259,15 @@ export default function StatusDevices() {
                 />
               </div>
               <div style={{ margin: "0 1rem" }}>
-                Gio
+                Time
                 <TimePicker
-                  defaultValue={dayjs(currentHour, hourFormat)}
-                  format={hourFormat}
-                  onChange={changeHour}
+                  defaultValue={dayjs(currentTime, timeFormat)}
+                  format={timeFormat}
+                  onChange={changeTime}
                 />
               </div>
               <div>
-                So gio
+                Duration
                 <div
                   style={{
                     width: "100px",
@@ -301,6 +315,11 @@ export default function StatusDevices() {
                     ? "Chuyển sang manual"
                     : "Chuyển sang auto>"}
                 </button>
+                {/* <span>
+                  {garden && !garden.isAuto
+                    ? `còn lại ${timeRemaining}`
+                    : ""}
+                </span> */}
               </div>
             </div>
           </div>
@@ -332,6 +351,14 @@ export default function StatusDevices() {
                           </p>
                         </>
                       );
+                      controlDevice = (
+                        <button
+                          className="control_device"
+                          onClick={() => changeStatusDevice(device)}
+                        >
+                          Đo giá trị mới
+                        </button>
+                      );
                     } else {
                       value = device.valueDevice?.value
                         ? device.valueDevice?.value?.toFixed(2)
@@ -339,7 +366,12 @@ export default function StatusDevices() {
                         ? "Bật"
                         : "Tắt";
                       controlDevice = device.valueDevice?.value ? (
-                        <></>
+                        <button
+                          className="control_device"
+                          onClick={() => changeStatusDevice(device)}
+                        >
+                          Đo giá trị mới
+                        </button>
                       ) : device.valueDevice?.status ? (
                         <button
                           className="control_device"
@@ -399,7 +431,26 @@ export default function StatusDevices() {
                 </tbody>
               </table>
             </div>
+            {/* <div className="devices_control_gen">
+              <div>
+                <p>{">> "}Điều khiển chung</p>
+                <div>
+                  <span>Bật tất cả các thiết bị chấp hành:</span>
+                  <button>Gửi</button>
+                </div>
+                <div>
+                  <span>Tắt tất cả các thiết bị chấp hành:</span>
+                  <button>Gửi</button>
+                </div>
+                <div>
+                  <span>Đo giá chị mới tất cả các cảm biến:</span>
+                  <button>Gửi</button>
+                </div>
+              </div>
+              <div>{">> "}Ngưỡng thiết bi</div>
+            </div> */}
           </div>
+          <div className="history_DeviceDetail"></div>
         </div>
       )}
     </>
