@@ -130,12 +130,12 @@ const getStatusDevicesByGardenId = async (
   });
 
   const promiseList = devices.map(async (device) => {
-    if (device.threshold) {
+    if (device.lowThreshold && device.highThreshold) {
       return {
         deviceId: device.id,
         ip: device.ip,
-        threshold: device.threshold,
-        otherThreshold: device.otherThreshold,
+        lowThreshold: JSON.parse(device.lowThreshold.toString()),
+        highThreshold: JSON.parse(device.highThreshold.toString()),
       };
     }
     const valueDevice = await prisma[convertData[device.type]].findFirst({

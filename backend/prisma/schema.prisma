@@ -44,8 +44,8 @@ model Device {
   updatedAt      DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   gardenId       Int            @map("garden_id")
   garden         Garden         @relation(fields: [gardenId], references: [id], onDelete: Cascade)
-  threshold      Float?
-  otherThreshold Float?         @map("other_threshold")
+  lowThreshold   String?        @map("low_threshold")
+  highThreshold  String?         @map("high_threshold")
   tempAirDatas   TempAirData[]
   humiDatas      HumiData[]
   lightDatas     LightData[]
