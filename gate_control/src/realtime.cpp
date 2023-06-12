@@ -15,7 +15,13 @@ void initRealTime() {
 }
 
 bool isTimeUp() {
-    String str = myRTC.getDate() + "-" + myRTC.getMonth(century) + String(" ") + myRTC.getHour(h12Flag, pmFlag) + ":" + myRTC.getMinute() + ":" + myRTC.getSecond();
-
+    String str = String(myRTC.getDate()) + "-" + String(myRTC.getMonth(century)) + String(" ") + String(myRTC.getHour(h12Flag, pmFlag)) + ":" + String(myRTC.getMinute());
+    
     return str == timeStr;
+}
+
+String getTime() {
+    String str = String(myRTC.getDate()) + "-" + String(myRTC.getMonth(century)) + String(" ") + String(myRTC.getHour(h12Flag, pmFlag)) + ":" + String(myRTC.getMinute());
+
+    return str;
 }

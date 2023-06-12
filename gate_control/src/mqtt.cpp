@@ -7,8 +7,11 @@
 #include <ArduinoJson.h>
 #include <array>
 
-const char* ssid = "12345689";
-const char* password = "12345689";
+const char* ssid = "12345689\0";
+const char* password = "12345689\0";
+
+// const char* ssid = "Tang 2\0";
+// const char* password = "long12345\0";
 
 bool isValidUUID = false;
 
@@ -17,10 +20,10 @@ float air = 0;
 float humi = 0;
 float light = 0;
 
-float tempThresh = 40;
-float airThresh = 40;
-float humiThresh = 40;
-float lightThresh = 1000;
+float tempThresh[10] = {40};
+float airThresh[10] = {40};
+float humiThresh[10] = {40};
+float lightThresh[10] = {4000};
 
 void setup_wifi() {
     delay(10);
@@ -54,12 +57,11 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   for (int i=0;i<length;i++) {
     mes[i] = (char)payload[i];
-    Serial.print((char)payload[i]);
+    // Serial.print((char)payload[i]);
   }
   mes[length] = '\0';
 
-  Serial.println();
-  Serial.println(mes);
+  // Serial.println(mes);
 
   jwt.allocateJWTMemory();
   jwt.decodeJWT(mes);
@@ -85,13 +87,14 @@ void reconnect(String topic[]) {
       
       client.setCallback(callback);
 
-      for(int i = 0; i < 1; i++) {
-        Serial.println(topic[i]);
+      for(int i = 0; i < topicCount; i++) {
         client.subscribe(topic[i].c_str());
+        Serial.println(String("This: " + topic[i]).c_str());
       }
       
+      Serial.println(1);
       if (!isValidUUID) {
-        client.publish("datn/requestTopic", "send");
+        client.publish("datn/requestTopic", "{}");
       }
     } else {
       Serial.print("failed, rc=");
@@ -112,7 +115,12 @@ void unSubscribe(String topic[]) {
 void subscribe(String topic[]) {
   for(int i = 0; i < topicCount; i++) {
     client.subscribe(topic[i].c_str());
+    Serial.println(String("This: " + topic[i]).c_str());
   }
+}
+
+void publish(String topic, String str) { 
+  client.publish(topic.c_str(), str.c_str());
 }
 
 void initMQTT() {

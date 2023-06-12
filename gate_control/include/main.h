@@ -13,10 +13,10 @@
 #define CURTAIN_PIN 32
 #define LAMP_PIN 27
 
+// #define MIST_IP "mist"
 #define FAN_IP "fan_1_1"
 #define PUMP_IP "pump_1_1"
-// #define MIST_IP "mist"
-// #define CURTAIN_IP "curtain"
+#define CURTAIN_IP "curtain_1_1"
 #define LAMP_IP "lamp_1_1"
 
 #define sen_temp_air_IP "temp_air_sensor_1_1"

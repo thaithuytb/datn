@@ -34,5 +34,5 @@ void lampToggle(int pin) {
 
 void lampOn(int pin, bool on) {
     pinMode(pin, OUTPUT);
-    digitalWrite(pin, on ? HIGH : LOW);
+    digitalWrite(pin, on ? LOW : HIGH);
 }

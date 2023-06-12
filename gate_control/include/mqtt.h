@@ -16,6 +16,7 @@ void mqttCallback(String topic, DynamicJsonDocument doc, DynamicJsonDocument doc
 void resetTopic(String topic[]);
 void unSubscribe(String topic[]);
 void subscribe(String topic[]);
+void publish(String topic, String str);
 
 String encodeJWT(String object);
 
