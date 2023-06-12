@@ -221,22 +221,12 @@ const getGarden = async (prisma: PrismaClient, gardenId: number) => {
 };
 
 const updateStatusGarden = async (prisma: PrismaClient, parseMessage: any) => {
-  const garden = await getGarden(prisma, parseInt(parseMessage['gardenId']));
-
-  if (!garden) {
-    return console.log(
-      `error: garden not found with topic: /regime. Data: ${JSON.stringify(
-        parseMessage,
-      )}`,
-    );
-  }
-
   return prisma.garden.update({
     where: {
-      id: garden.id,
+      id: parseMessage.gardenId,
     },
     data: {
-      isAuto: parseInt(parseMessage['isAuto']) ? true : false,
+      isAuto: parseMessage['isAuto'] ? true : false,
     },
   });
 };
