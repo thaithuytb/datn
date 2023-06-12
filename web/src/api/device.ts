@@ -21,6 +21,16 @@ class DeviceApi {
     return axiosClient.post(url, { dto });
   }
 
+  changeThreshold(dto: {
+    deviceId: any;
+    ip: any;
+    lowerThreshold: any;
+    highThreshold: any;
+  }) {
+    const url = `/gardens/change-threshold`;
+    return axiosClient.post(url, { dto: dto }) as unknown as ApiResponse;
+  }
+
   static registerDeviceApi() {
     return new DeviceApi();
   }

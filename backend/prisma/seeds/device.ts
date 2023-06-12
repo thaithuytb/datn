@@ -35,7 +35,7 @@ export async function createDevices(prisma: PrismaClient, garden: Garden) {
         gardenId: garden.id,
       },
       {
-        ip: 'temp_air_sensor_1',
+        ip: 'temp_air_sensor_1_1',
         lowThreshold: JSON.stringify([25, 70]),
         highThreshold: JSON.stringify([45, 90]),
         type: DeviceTypeEnum.TEMPAIRSENSOR,
@@ -47,13 +47,13 @@ export async function createDevices(prisma: PrismaClient, garden: Garden) {
         gardenId: garden.id,
       },
       {
-        ip: 'pump_1',
+        ip: 'pump_1_1',
         type: DeviceTypeEnum.PUMP,
         gardenId: garden.id,
       },
       {
         status: false,
-        ip: 'nebulizer_pump_1',
+        ip: 'nebulizer_pump_1_1',
         type: DeviceTypeEnum.NEBULIZER,
         gardenId: garden.id,
       },

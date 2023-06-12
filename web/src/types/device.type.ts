@@ -7,4 +7,6 @@ export interface Device {
   type: DeviceTypeEnum;
   garden: any;
   valueDevice?: any;
+  lowThreshold?: any;
+  highThreshold?: any;
 }

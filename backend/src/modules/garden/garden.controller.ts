@@ -20,7 +20,6 @@ export class GardenController {
   @UseGuards(RoleGardenGuard)
   @Post('/:gardenId/regime')
   async changeStatusGarden(
-    @Req() req: any,
     @Body('dto')
     dto: ChangeStatusGardenDto,
     @Param('gardenId', ParseIntPipe) gardenId: number,

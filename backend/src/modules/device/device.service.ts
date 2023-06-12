@@ -3,7 +3,7 @@ import { DeviceTypeEnum, Prisma } from '@prisma/client';
 import { responseSuccess } from 'src/common/responseSuccess';
 import { DeviceRepository } from '../../repositories/device.repository';
 import { PrismaService } from '../../infrastructures/dao/prisma.service';
-import { ChangeDeviceStatusDto } from './dto/device.dto';
+import { ChangeDeviceStatusDto, ChangeThresholdDto } from './dto/device.dto';
 import { PublicMqttService } from '../../mqtt/publish';
 import { Redis } from 'ioredis';
 import { messageToMqtt } from '../../common/messageToMqtt';
@@ -88,6 +88,21 @@ export class DeviceService {
     if (topic) {
       this.mqttService.sendMessage(
         `datn/${topic}/${convertTypeDevice(dto.type)}`,
+        messageToMqtt({
+          ...dto,
+        }),
+      );
+      return true;
+    }
+    //TODO: need handle case topic is null
+    return false;
+  }
+
+  async changeThreshold(dto: ChangeThresholdDto) {
+    const topic = await this.redis.get('newTopic');
+    if (topic) {
+      this.mqttService.sendMessage(
+        `datn/${topic}/threshold`,
         messageToMqtt({
           ...dto,
         }),

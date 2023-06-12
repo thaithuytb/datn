@@ -12,6 +12,7 @@ import { DatePicker, Modal, TimePicker } from "antd";
 import dayjs from "dayjs";
 import moment from "moment";
 import GardenApi from "../../api/garden";
+import Threshold from "./Threshold";
 
 const convertTypeDevice = (type: DeviceTypeEnum) => {
   switch (type) {
@@ -69,6 +70,7 @@ export default function StatusDevices() {
 
   useEffect(() => {
     if (devices && message) {
+      console.log("aaaaaaaaaaaaaaaaaa");
       const newDevices = devices.map((device: Device) => {
         if (device.id === message.deviceId) {
           return {
@@ -450,7 +452,13 @@ export default function StatusDevices() {
               <div>{">> "}Ngưỡng thiết bi</div>
             </div> */}
           </div>
-          <div className="history_DeviceDetail"></div>
+          <div className="threshold_DeviceDetail">
+            <p>{">> "}Xét ngưỡng cho cảm biến</p>
+            {devices.map((device: Device, index: number) => {
+              if (device.highThreshold)
+                return <Threshold key={index} device={device} />;
+            })}
+          </div>
         </div>
       )}
     </>
