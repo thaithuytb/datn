@@ -9,6 +9,7 @@ export class GetGardensDto {
 export class ChangeStatusGardenDto {
   @IsBoolean()
   isAuto: boolean;
+  @IsOptional()
   @IsString()
   time?: string;
 }

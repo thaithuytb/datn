@@ -60,26 +60,39 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
 
     if (topic.slice(15) === '/initStatusDevice') {
       const gardenId = parseMessage['gardenId'];
-      const statusDevices = await getStatusDevicesByGardenId(prisma, gardenId);
-      const newTopic = await redis.get('newTopic');
-      for (const statusDevice of statusDevices) {
-        if (!statusDevice.lowThreshold && !statusDevice.highThreshold) {
+      const garden = await getGarden(prisma, gardenId);
+      if (garden) {
+        const statusDevices = await getStatusDevicesByGardenId(
+          prisma,
+          garden.id,
+        );
+        const newTopic = await redis.get('newTopic');
+        client.publish(
+          `datn/${newTopic}/regime`,
+          JSON.stringify({
+            from: 'web',
+            isAuto: garden.isAuto,
+          }),
+        );
+        for (const statusDevice of statusDevices) {
+          if (!statusDevice.lowThreshold && !statusDevice.highThreshold) {
+            client.publish(
+              `datn/${newTopic}/actuator`,
+              JSON.stringify({
+                from: 'web',
+                ...statusDevice,
+              }),
+            );
+            continue;
+          }
           client.publish(
-            `datn/${newTopic}/actuator`,
+            `datn/${newTopic}/threshold`,
             JSON.stringify({
               from: 'web',
               ...statusDevice,
             }),
           );
-          continue;
         }
-        client.publish(
-          `datn/${newTopic}/threshold`,
-          JSON.stringify({
-            from: 'web',
-            ...statusDevice,
-          }),
-        );
       }
       return;
     }
@@ -105,31 +118,37 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
         },
       });
       if (!device) {
-        return console.log('error: garden not found');
+        return console.log(
+          `error: device not found with topic: /sensor || /actuator. Data: ${JSON.stringify(
+            parseMessage,
+          )}`,
+        );
       }
       const deviceId = device.id;
       console.log(device);
       // check topic here
       switch (topic.slice(15)) {
         case '/sensor': {
-          socketGateway.server.emit('newStatus', parseMessage);
+          // socketGateway.server.emit('newStatus', parseMessage);
           if (device.type === 'TEMPAIRSENSOR') {
-            return prisma[convertData[device.type]].create({
-              data: {
-                temp: parseMessage['temp'],
-                airHumidity: parseMessage['airHumidity'],
-                deviceId,
-                gardenId: device.gardenId,
-              },
-            });
+            return console.log({ sensor: parseMessage });
+            // return prisma[convertData[device.type]].create({
+            //   data: {
+            //     temp: parseMessage['temp'],
+            //     airHumidity: parseMessage['airHumidity'],
+            //     deviceId,
+            //     gardenId: device.gardenId,
+            //   },
+            // });
           } else {
-            return prisma[convertData[device.type]].create({
-              data: {
-                value: parseMessage['value'],
-                deviceId,
-                gardenId: device.gardenId,
-              },
-            });
+            return console.log({ sensor: parseMessage });
+            // return prisma[convertData[device.type]].create({
+            // data: {
+            //   value: parseMessage['value'],
+            //   deviceId,
+            //   gardenId: device.gardenId,
+            // },
+            // });
           }
         }
         case '/actuator': {
@@ -187,15 +206,29 @@ const getStatusDevicesByGardenId = async (
   return await Promise.all([...promiseList]);
 };
 
-const updateStatusGarden = async (prisma: PrismaClient, parseMessage: any) => {
+const getGarden = async (prisma: PrismaClient, gardenId: number) => {
   const garden = await prisma.garden.findFirst({
     where: {
-      id: parseInt(parseMessage['gardenId']),
+      id: gardenId,
     },
   });
 
   if (!garden) {
-    return console.log('error: garden not found');
+    return console.log(`error: garden not found`);
+  }
+
+  return garden;
+};
+
+const updateStatusGarden = async (prisma: PrismaClient, parseMessage: any) => {
+  const garden = await getGarden(prisma, parseInt(parseMessage['gardenId']));
+
+  if (!garden) {
+    return console.log(
+      `error: garden not found with topic: /regime. Data: ${JSON.stringify(
+        parseMessage,
+      )}`,
+    );
   }
 
   return prisma.garden.update({
@@ -216,7 +249,11 @@ const updateThreshold = async (prisma: PrismaClient, parseMessage: any) => {
   });
 
   if (!device) {
-    return console.log('error: garden not found');
+    return console.log(
+      `error: device not found with topic: /threshold. Data: ${JSON.stringify(
+        parseMessage,
+      )}`,
+    );
   }
 
   return prisma.device.update({

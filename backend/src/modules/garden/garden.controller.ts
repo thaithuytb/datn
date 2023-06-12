@@ -24,6 +24,7 @@ export class GardenController {
     dto: ChangeStatusGardenDto,
     @Param('gardenId', ParseIntPipe) gardenId: number,
   ) {
+    console.log({ dto });
     return this.gardenService.changeStatusGarden(dto, gardenId);
   }
 

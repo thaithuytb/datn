@@ -30,7 +30,7 @@ const convertTypeDevice = (type: DeviceTypeEnum) => {
 export default function StatusDevices() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [message, setMessage] = useState<any>(null);
+  const [newStatusActuator, setNewStatusActuator] = useState<any>(null);
   const navigate = useNavigate();
   const deviceContext = useContext(DeviceContext);
   const gardenContext = useContext(GardenContext);
@@ -50,7 +50,7 @@ export default function StatusDevices() {
     );
     setSocket(socket);
     socket.on("newStatus", (data) => {
-      setMessage(data);
+      setNewStatusActuator(data);
       console.log({ data });
       messageContext?.success("Cập nhập trạng thái mới thành công !!!");
     });
@@ -69,13 +69,12 @@ export default function StatusDevices() {
   }, [gardenId]);
 
   useEffect(() => {
-    if (devices && message) {
-      console.log("aaaaaaaaaaaaaaaaaa");
+    if (devices && newStatusActuator) {
       const newDevices = devices.map((device: Device) => {
-        if (device.id === message.deviceId) {
+        if (device.ip === newStatusActuator.ip) {
           return {
             ...device,
-            valueDevice: message,
+            valueDevice: newStatusActuator,
           };
         }
         return device;
@@ -83,7 +82,7 @@ export default function StatusDevices() {
       setDevices(newDevices);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [message]);
+  }, [newStatusActuator]);
 
   useEffect(() => {
     if (gardens?.length) {
@@ -151,7 +150,7 @@ export default function StatusDevices() {
     );
     socket.on("newStatusGarden", (data) => {
       if (data) {
-        const newgardens = gardens?.map((garden) => {
+        const newStatusGardens = gardens?.map((garden) => {
           if (garden.id === data.gardenId) {
             return {
               ...garden,
@@ -160,7 +159,7 @@ export default function StatusDevices() {
           }
           return garden;
         });
-        setGardens(newgardens);
+        setGardens(newStatusGardens);
       }
       messageContext?.success("Cập nhập trạng thái mới thành công !!!");
     });
@@ -172,24 +171,32 @@ export default function StatusDevices() {
   }, [gardens]);
 
   const handleOk = async () => {
-    const isAuto = garden && !garden.isAuto;
     if (!date || !time) {
+      //TODO: why is console???
       console.log("check time");
     } else {
-      const [day, month] = date.split("-");
-
-      // Xóa số 0 ở đầu ngày và tháng nếu có
-      const formattedDay = parseInt(day, 10).toString();
-      const formattedMonth = parseInt(month, 10).toString();
-      const formattedDate = `${formattedDay}-${formattedMonth}`;
-
-      const dto = {
-        id: `${gardenId}`,
-        req: {
-          isAuto,
-          time: `${formattedDate} ${time}`,
-        },
-      };
+      const isAuto = garden && !garden.isAuto;
+      let dto;
+      if (isAuto || (!isAuto && timeRemaining === "00:00")) {
+        dto = {
+          id: `${gardenId}`,
+          body: {
+            isAuto,
+          },
+        };
+      } else {
+        const [day, month] = date.split("-");
+        const formattedDay = parseInt(day, 10).toString();
+        const formattedMonth = parseInt(month, 10).toString();
+        const formattedDate = `${formattedDay}-${formattedMonth}`;
+        dto = {
+          id: `${gardenId}`,
+          body: {
+            isAuto,
+            time: `${formattedDate} ${time}`,
+          },
+        };
+      }
       try {
         const gardenApi = GardenApi.registerAuthApi();
         await gardenApi.changeStatusGarden(dto);

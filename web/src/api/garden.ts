@@ -14,10 +14,10 @@ class GardenApi {
 
   changeStatusGarden(dto: {
     id: string;
-    req: { isAuto: boolean; time: string };
+    body: { isAuto: boolean; time?: string };
   }) {
     const url = `/gardens/${dto.id}/regime`;
-    return axiosClient.post(url, { dto: dto.req }) as unknown as ApiResponse;
+    return axiosClient.post(url, { dto: dto.body }) as unknown as ApiResponse;
   }
 
   static registerAuthApi() {
