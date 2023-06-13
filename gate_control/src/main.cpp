@@ -1,11 +1,9 @@
-#include <controller.h>
-#include <lora.h>
-#include <mqtt.h>
 #include <main.h>
-#include <automatic.h>
-#include <Arduino.h>
-#include <ArduinoJson.h>
-#include <realtime.h>
+
+#include <actuator.h>
+#include <changeTopic.h>
+#include <regime.h>
+#include <threshold.h>
 
 String string = "";
 
@@ -26,10 +24,6 @@ String trueTopics[] = {
 };
 
 int topicCount = 4;
-
-String ip[] = {
-
-};
 
 bool controlMode = false;
 
@@ -139,6 +133,7 @@ void loraCallback(char c) {
   string = string + c;
 }
 
+// called loop
 void mqttAction() {
   if (timeTick > 20000) {
     Serial.print(temp);
@@ -151,211 +146,6 @@ void mqttAction() {
   }
   if (timeTick > 20000) {
     Serial.print(light);
-  }
-}
-
-void __changeTopic(String topic, DynamicJsonDocument doc, DynamicJsonDocument docJWT) {
-  // changeTopic
-  generateTopics();
-  unSubscribe(trueTopics);
-  uuid = docJWT["newTopic"].as<String>();
-  generateTopics();
-  subscribe(trueTopics);
-  isValidUUID = true;
-
-  Serial.println(docJWT.as<String>());
-
-  myRTC.setMonth(docJWT["month"].as<byte>());
-  myRTC.setDate(docJWT["day"].as<byte>());
-  myRTC.setHour(docJWT["hour"].as<byte>());
-  myRTC.setMinute(docJWT["minute"].as<byte>());
-
-  Serial.println(getTime());
-
-  delay(2000);
-
-  publish("datn/" + uuid + "/initStatusDevice", "{ \"gardenId\": 1 }");
-  Serial.println("This: " + String("datn/" + uuid + "/initStatusDevice") + String("{ \"gardenId\": 1 }"));
-
-  Serial.println(uuid);
-}
-
-void __actuator(String topic, DynamicJsonDocument doc, DynamicJsonDocument docJWT) {
-  // actuator
-  String from = doc["from"].as<String>();
-
-  if (from != "web" || !controlMode) {
-    return;
-  }
-
-  bool status = doc["status"].as<bool>();
-  String device = doc["ip"].as<String>();
-
-  if (device == FAN_IP) {
-    bool status = doc["status"].as<bool>();
-    fanSpeed(FAN_PIN, status ? 1 : 0);
-
-    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (status ? String("true") : String("false")) + ", \"gardenId\": 1" + "}";
-    mqttSend(topic, json);
-    Serial.println(json); 
-    Serial.println(topic); 
-
-    Serial.print("fan: ");
-    Serial.println(status);
-  }
-  if (device == PUMP_IP) {
-    bool status = doc["status"].as<bool>();
-    pumpStrength(PUMP_PIN, status ? 1 : 0);
-
-    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (status ? String("true") : String("false")) + ", \"gardenId\": 1" + "}";
-    mqttSend(topic, json);
-    Serial.println(json); 
-    Serial.println(topic); 
-
-    Serial.print("pump: ");
-    Serial.println(status);
-  }
-  if (device == CURTAIN_IP) {
-    bool status = doc["status"].as<bool>();
-    curtainOpen(CURTAIN_PIN, status ? 1 : 0);
-
-    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (status ? String("true") : String("false")) + ", \"gardenId\": 1" + "}";
-    mqttSend(topic, json);
-    Serial.println(json); 
-    Serial.println(topic); 
-
-    Serial.print("curtain: ");
-    Serial.println(status);
-  }
-  if (device == LAMP_IP) {
-    bool status = doc["status"].as<bool>();
-    lampOn(LAMP_PIN, status ? 1 : 0);
-
-    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (status ? String("true") : String("false")) + ", \"gardenId\": 1" + "}";
-    mqttSend(topic, json);
-    Serial.println(json); 
-    Serial.println(topic); 
-
-    Serial.print("lamp: ");
-    Serial.println(status);
-  }
-}
-
-void __regime(String topic, DynamicJsonDocument doc, DynamicJsonDocument docJWT) {
-  String from = doc["from"].as<String>();
-
-  if (from != "web") {
-    return;
-  }
-
-  bool isAuto = doc["isAuto"].as<bool>();
-
-  controlMode = !isAuto;
-
-  if (controlMode) { 
-    timeStr = doc["time"].as<String>();
-
-    fanSpeed(FAN_PIN, 0);
-    pumpStrength(PUMP_PIN, 0);
-    curtainOpen(CURTAIN_PIN, 0);
-    lampOn(LAMP_PIN, false);
-
-    String devices[4] = { FAN_IP, PUMP_IP, CURTAIN_IP, LAMP_IP };
-
-    for(int i = 0; i < 4; i++) {
-      String json = "{ \"ip\": \"" + devices[i] + "\", \"status\": false, \"gardenId\": 1" + "}";
-      mqttSend(trueTopics[1], json);
-      Serial.println(json); 
-      Serial.println(topic); 
-    }
-  }
-
-  String json = "{ \"isAuto\": " + (controlMode ? String("false") : String("true")) + ", \"gardenId\": 1" + "}";
-  mqttSend(topic, json);
-  Serial.println(json); 
-  Serial.println(topic); 
-}
-
-void __threshold(String topic, DynamicJsonDocument doc, DynamicJsonDocument docJWT) {
-  // statusDevice
-  String from = doc["from"].as<String>();
-
-  if (from != "web") {
-    return;
-  }
-
-  String device = doc["ip"].as<String>();
-  
-  // sensor update
-  if (device == sen_temp_air_IP) {
-    JsonArray lowThreshold = doc["lowThreshold"].as<JsonArray>();
-    JsonArray highThreshold = doc["highThreshold"].as<JsonArray>();
-    
-    tempThresh[0] = lowThreshold[0].as<float>();
-    tempThresh[1] = highThreshold[0].as<float>();
-    airThresh[0] = lowThreshold[1].as<float>();
-    airThresh[1] = highThreshold[1].as<float>();
-
-    String json = "{ \"ip\": \"" + device + 
-                  "\", \"lowThreshold\": " + "[" + String(tempThresh[0]) + "," + String(airThresh[0]) + "]" + 
-                  ", \"highThreshold\": " + "[" + String(tempThresh[1]) + "," + String(airThresh[1]) + "]" + 
-                   + ", \"gardenId\": 1"
-                    "}";
-    mqttSend(topic, json);
-    Serial.println(json); 
-    Serial.println(topic); 
-
-    Serial.println("tempThresh");
-    Serial.print(tempThresh[0]);
-    Serial.print("-");
-    Serial.println(tempThresh[1]);
-    
-    Serial.println("airThresh");
-    Serial.print(airThresh[0]);
-    Serial.print("-");
-    Serial.println(airThresh[1]);
-  }
-  if (device == sen_humi_IP) {
-    JsonArray lowThreshold = doc["lowThreshold"].as<JsonArray>();
-    JsonArray highThreshold = doc["highThreshold"].as<JsonArray>();
-
-    humiThresh[0] = lowThreshold[0].as<float>();
-    humiThresh[1] = highThreshold[0].as<float>();
-
-    String json = "{ \"ip\": \"" + device + 
-                  "\", \"lowThreshold\": " + "[" + String(humiThresh[0]) + "]" + 
-                  ", \"highThreshold\": " + "[" + String(humiThresh[1]) + "]" + 
-                   + ", \"gardenId\": 1"
-                    "}";
-    mqttSend(topic, json);
-    Serial.println(json); 
-    Serial.println(topic); 
-
-    Serial.println("humiThresh");
-    Serial.print(humiThresh[0]);
-    Serial.print("-");
-    Serial.println(humiThresh[1]);
-  }
-  if (device == sen_light_IP) {
-    JsonArray lowThreshold = doc["lowThreshold"].as<JsonArray>();
-    JsonArray highThreshold = doc["highThreshold"].as<JsonArray>();
-
-    lightThresh[0] = lowThreshold[0].as<float>();
-    lightThresh[1] = highThreshold[0].as<float>();
-  
-    String json = "{ \"ip\": \"" + device + 
-                  "\", \"lowThreshold\": " + "[" + String(lightThresh[0]) + "]" + 
-                  ", \"highThreshold\": " + "[" + String(lightThresh[1]) + "]" + 
-                   + ", \"gardenId\": 1"
-                    "}";
-    mqttSend(topic, json);
-    Serial.println(json); 
-    Serial.println(topic); 
-
-    Serial.println("lightThresh");
-    Serial.print(lightThresh[0]);
-    Serial.print("-");
-    Serial.println(lightThresh[1]);
   }
 }
 

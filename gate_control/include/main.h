@@ -2,6 +2,13 @@
 #define MAIN_h
 
 #include <Arduino.h>
+#include <controller.h>
+#include <lora.h>
+#include <mqtt.h>
+#include <automatic.h>
+#include <Arduino.h>
+#include <ArduinoJson.h>
+#include <realtime.h>
 
 #define DHT_PIN 25
 #define LIGHT_PIN 26
@@ -23,7 +30,17 @@
 #define sen_humi_IP "humi_sensor_1_1"
 #define sen_light_IP "light_sensor_1_1"
 
-extern String ip[];
 extern bool controlMode;
+
+extern String string;
+extern String uuid;
+extern String topics[];
+extern String trueTopics[];
+
+extern int topicCount;
+extern bool isLoraBusy;
+extern float timeTick;
+
+void generateTopics();
 
 #endif
