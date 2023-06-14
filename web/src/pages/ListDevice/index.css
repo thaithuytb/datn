@@ -22,9 +22,9 @@
 
 .list_device_detail_title span {
 	cursor: pointer;
-	color: rgb(47, 111, 128);
+	color: #1677ff;
 	text-decoration: none;
 	font-weight: 400;
-	font-size: 18px;
+	font-size: 16px;
 	font-style: italic;
 }

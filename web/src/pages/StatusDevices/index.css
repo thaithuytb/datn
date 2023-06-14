@@ -8,6 +8,10 @@
 	padding: 7px;
 }
 
+.status_devices_present {
+	display: flex;
+	justify-content: space-between;
+}
 .control_device {
 	cursor: pointer;
 	padding: 4px;
@@ -16,3 +20,64 @@
 	min-width: 100px;
 	border-radius: 4px;
 }
+
+.control_device:hover {
+	background-color: rgb(99, 188, 223);
+}
+
+.device_status_control button {
+	background-color: #cec9c9;
+	cursor: all-scroll;
+}
+
+.device_no_action {
+	color: #999;
+}
+
+.devices_control_gen {
+	flex: 1;
+	margin-left: 15px;
+}
+
+.devices_control_gen div:first-child div {
+	display: flex;
+	justify-content: start;
+	align-items: center;
+	padding: 2px;
+}
+
+.devices_control_gen div:first-child div span {
+	min-width: 250px;
+}
+
+.devices_control_gen div:first-child div button {
+	cursor: pointer;
+	background-color: rgb(184, 223, 238);
+	border: 1px solid #999;
+	border-radius: 1px;
+	padding: 4px;
+}
+
+.devices_control_gen div:first-child div button:hover {
+	background-color: rgb(99, 188, 223);
+}
+.list_device_select {
+	display: flex;
+	flex-direction: column;
+}
+
+.list_device_select_name {
+	display: flex;
+}
+
+.list_device_select_title {
+	font-weight: 400;
+	font-size: 18px;
+}
+
+.list_device_select_title span, .list_device_select_title button {
+	/* border: none; */
+	margin-left: 7px;
+}
+
+/* newStatusGarden */

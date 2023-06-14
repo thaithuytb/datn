@@ -3,10 +3,8 @@ import {
   Controller,
   Get,
   Param,
-  ParseBoolPipe,
   ParseIntPipe,
   Post,
-  Query,
 } from '@nestjs/common';
 import { SampleService } from './sample.service';
 import { CreateSampleDto } from './dto/sample.dto';
@@ -20,35 +18,8 @@ export class SampleController {
   ) {}
 
   @Get('publish')
-  public publish(@Query('topic') topic: string): void {
-    this.mqttService.sendMessage(
-      topic,
-      'thaidz' + (Math.random() * 100).toString(),
-    );
-  }
-
-  @Get()
-  async getSamples(
-    @Query('status', ParseBoolPipe) status = true,
-    @Query('name') name = '',
-  ) {
-    // setTimeout(() => {
-    //   console.log('c');
-    //   return this.sampleService.getSamples({
-    //     name,
-    //     status,
-    //   });
-    // }, 5000);
-
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve('testtttttttttttttttttttttttttttttttttt');
-      }, 60000 * 3);
-    });
-    // return this.sampleService.getSamples({
-    //   name,
-    //   status,
-    // });
+  public publish(): void {
+    this.mqttService.test();
   }
 
   @Get(':id')

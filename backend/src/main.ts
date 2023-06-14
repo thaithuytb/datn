@@ -10,7 +10,7 @@ async function bootstrap() {
   app.enableCors();
   await app.listen(process.env.PORT || 7000);
 
-  const fanGateway = app.get(SocketGateway);
-  await subscribeMqtt(fanGateway);
+  const socketGateway = app.get(SocketGateway);
+  await subscribeMqtt(socketGateway);
 }
 bootstrap();

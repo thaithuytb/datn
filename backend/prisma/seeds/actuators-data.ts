@@ -32,7 +32,7 @@ export async function createActuatorsDatas(
 
   for (let i = 1; i < 2; ++i) {
     promiseList.push(
-      prisma.nebulizerData.create({
+      prisma.lampData.create({
         data: {
           status: Math.random() > 0.5 ? true : false,
           gardenId: garden.id,

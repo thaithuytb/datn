@@ -44,3 +44,10 @@
 .content {
   flex: 1;
 }
+.form_left {
+  margin: 1rem;
+}
+
+.form_left :where(.css-dev-only-do-not-override-15rg2km).ant-form-item .ant-form-item-label {
+  text-align: left;
+}
