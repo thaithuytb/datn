@@ -1,9 +1,26 @@
-import { Garden, User } from '@prisma/client';
+import { Garden, GardensOnUsers, RoleGarden, User } from '@prisma/client';
 
 export interface LoginType {
   statusCode: number;
   success: boolean;
   data: Login;
+}
+
+export interface GardenRoleAndUsersType {
+  statusCode: number;
+  success: boolean;
+  data: GardenRoleAndUsers[];
+}
+
+export interface GardenRoleAndUsers {
+  role: RoleGarden;
+  user: User;
+}
+
+export interface GardensOnUsersType {
+  statusCode: number;
+  success: boolean;
+  data: GardensOnUsers;
 }
 
 export interface Login {

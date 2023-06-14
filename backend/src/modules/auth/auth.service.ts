@@ -5,6 +5,8 @@ import { sign, verify } from 'jsonwebtoken';
 import * as argon2 from 'argon2';
 import { responseSuccess } from '../../common/responseSuccess';
 import {
+  GardenRoleAndUsersType,
+  GardensOnUsersType,
   LoginType,
   UserDetail,
   UserResponseDetail,
@@ -14,6 +16,7 @@ import { RegisterDto } from './dto/register.dto';
 import { uuid } from 'uuidv4';
 import { Prisma, User } from '@prisma/client';
 import { UpdateInformationDto } from './dto/auth.dto';
+import { UpsertGardensOnUsers } from './dto/gardensOnUsers.dto';
 
 @Injectable()
 export class AuthService {
@@ -102,13 +105,8 @@ export class AuthService {
           password: hashedPassword,
         },
       });
-      const token = await this.signToken(newUser.id, newUser.email);
 
       return responseSuccess(200, UserResponseDetail.transform(newUser));
-      // return responseSuccess(200, {
-      //   user: UserResponseDetail.transform(newUser),
-      //   token,
-      // });
     }
     const newUser = await this.authRepository.updateInformation({
       where: {
@@ -148,5 +146,27 @@ export class AuthService {
 
   async verifyToken(token: string) {
     return verify(token, process.env.JWT_SECRET);
+  }
+
+  async getGardenRoleAndUsersByGardenId(
+    gardenId: number,
+  ): Promise<GardenRoleAndUsersType> {
+    const result = await this.authRepository.getGardenRoleAndUsersByGardenId(
+      gardenId,
+    );
+    return responseSuccess(
+      200,
+      result.map((rt) => ({
+        ...rt,
+        user: UserResponseDetail.transform(rt.user) as User,
+      })),
+    );
+  }
+
+  async upsertGardensOnUsers(
+    dto: UpsertGardensOnUsers,
+  ): Promise<GardensOnUsersType> {
+    const result = await this.authRepository.upsertGardenOnUser(dto);
+    return responseSuccess(201, result);
   }
 }
