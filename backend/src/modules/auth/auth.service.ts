@@ -66,9 +66,12 @@ export class AuthService {
     const hashedPassword = await argon2.hash(dto.password);
 
     const newUser = await this.authRepository.createUser({
-      fullName: uuid(),
       email: dto.email,
       password: hashedPassword,
+      fullName: dto.fullName ? dto.fullName : uuid(),
+      phoneNumber: dto.phoneNumber,
+      gender: dto.gender,
+      address: dto.address,
     });
 
     const token = await this.signToken(newUser.id, newUser.email);

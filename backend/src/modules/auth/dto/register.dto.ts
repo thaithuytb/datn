@@ -1,6 +1,10 @@
+import { Gender } from '@prisma/client';
 import {
   IsEmail,
+  IsEnum,
   IsNotEmpty,
+  IsOptional,
+  IsString,
   MinLength,
   registerDecorator,
   ValidationArguments,
@@ -46,4 +50,20 @@ export class RegisterDto {
   @IsNotEmpty()
   @Match('password')
   confirmPassword: string;
+
+  @IsOptional()
+  @IsString()
+  fullName?: string;
+
+  @IsOptional()
+  @IsString()
+  phoneNumber?: string;
+
+  @IsOptional()
+  @IsString()
+  address?: string;
+
+  @IsOptional()
+  @IsEnum(Gender)
+  gender?: Gender;
 }

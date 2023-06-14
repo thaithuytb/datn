@@ -53,7 +53,7 @@ export async function createDevices(prisma: PrismaClient, garden: Garden) {
       },
       {
         status: false,
-        ip: 'nebulizer_pump_1_1',
+        ip: 'nebulizer_1_1',
         type: DeviceTypeEnum.NEBULIZER,
         gardenId: garden.id,
       },

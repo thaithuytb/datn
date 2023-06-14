@@ -224,6 +224,7 @@ model NotificationsOnUsers {
 
 enum Role {
   USER
+  MANAGER
   ADMIN
 }
 
