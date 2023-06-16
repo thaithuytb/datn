@@ -5,7 +5,8 @@ import { BellFilled } from "@ant-design/icons";
 import { Header } from "antd/es/layout/layout";
 import type { MenuProps } from "antd";
 import Avatar from "../../components/Avatar";
-import React from "react";
+import React, { useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const listNoti = [
   {
@@ -104,7 +105,13 @@ const items2: MenuProps["items"] = [
   },
 ];
 const { useToken } = theme;
+
+
 export default function HeaderLayout() {
+
+  const authContext = useContext(AuthContext)
+
+  const name = authContext?.authInformation?.user?.fullName || "user"
   let count = 0
   listNoti.map(noti => {
     if (noti.status !== true) {
@@ -126,10 +133,16 @@ export default function HeaderLayout() {
   return (
     <Header className="header">
       <div className="header_left">
-        <h2>Quản lý khu vườn</h2>
+        <img style={{ width: "38px", height: "auto", marginRight: "0.5rem" }}
+          src="https://upload.wikimedia.org/wikipedia/vi/thumb/e/ef/Logo_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_B%C3%A1ch_Khoa_H%C3%A0_N%E1%BB%99i.svg/1200px-Logo_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_B%C3%A1ch_Khoa_H%C3%A0_N%E1%BB%99i.svg.png" alt="" />
+        <h2>Đại học bách khoa hà nội</h2>
       </div>
 
       <div className="header_right">
+        <h3>
+          Xin chào {name}
+        </h3>
+
         <div>
           <Dropdown
             overlayClassName="custom-dropdown"

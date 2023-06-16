@@ -1,21 +1,27 @@
 .header {
 	display: flex;
 	justify-content: space-between;
-	background-color: rgb(149, 200, 230);
+	background-color: #17ccf9;
 	border-bottom: 1px solid #e2dbdb;
-	height: 70px;
-	padding: 25px !important;
+	height: 10vh;
+	padding: 10px !important;
+	margin-bottom: 0.5rem;
+	position: fixed;
+	top: 0;
+	width: 100%;
 }
 
 .header_left {
 	display: flex;
 	align-items: center;
+	color: white;
 }
 
 .header_right {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	color: white;
 }
 
 .header_right div {

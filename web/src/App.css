@@ -39,10 +39,13 @@
 
 .app_content {
   display: flex;
+  margin-top: 10vh;
 }
 
 .content {
   flex: 1;
+  max-height: 90vh;
+  overflow: auto;
 }
 .form_left {
   margin: 1rem;
@@ -50,4 +53,12 @@
 
 .form_left :where(.css-dev-only-do-not-override-15rg2km).ant-form-item .ant-form-item-label {
   text-align: left;
+}
+
+.SidebarLayout{
+  height: 90vh;
+}
+
+.SidebarLayout > ul {
+  height: 100%;
 }
