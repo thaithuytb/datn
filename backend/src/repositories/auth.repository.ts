@@ -38,6 +38,8 @@ export class AuthRepository implements IAuthRepository {
 
   async getGardenRoleAndUsersByGardenId(
     gardenId: number,
+    page: number,
+    limit: number,
   ): Promise<GardenRoleAndUsers[]> {
     return this.prisma.gardensOnUsers.findMany({
       where: {
@@ -48,6 +50,32 @@ export class AuthRepository implements IAuthRepository {
         user: true,
       },
       distinct: 'userId',
+      take: limit,
+      skip: (page - 1) * limit,
+    });
+  }
+
+  async getCountGardenRoleAndUsersByGardenId(
+    gardenId: number,
+  ): Promise<number> {
+    return this.prisma.gardensOnUsers.count({
+      where: {
+        gardenId,
+      },
+    });
+  }
+
+  async getUsersByName(name: string): Promise<User[]> {
+    return this.prisma.user.findMany({
+      where: {
+        fullName: {
+          contains: name ? `%${name}%` : '%',
+        },
+      },
+      orderBy: {
+        id: 'desc',
+      },
+      take: 7,
     });
   }
 
@@ -78,5 +106,7 @@ export interface IAuthRepository {
   getUserIdsInGardensOnUsers(gardenId?: number): Promise<{ userId: number }[]>;
   getGardenRoleAndUsersByGardenId(
     gardenId: number,
+    page: number,
+    limit: number,
   ): Promise<GardenRoleAndUsers[]>;
 }

@@ -49,13 +49,16 @@ class AuthApi {
   }
 
   //getUser garden byID
-  getUsersByGardenId(dto: { gardenId: number }) {
-    const url = `/auth/users/${dto.gardenId}`;
+  getUsersByGardenId(dto: { gardenId: number, page?: number }) {
+    let url = `/auth/users/${dto.gardenId}`;
+    if (dto.page) {
+      url = `/auth/users/${dto.gardenId}?page=${dto.page}`;
+    }
     // validation
     return axiosClient.get(url) as unknown as ApiResponse;
   }
 
-  //getUser garden byID
+  //upsert garden byID
   upsertGardensOnUser(dto: {
     gardenId?: number;
     userId?: number;
@@ -66,6 +69,15 @@ class AuthApi {
     return axiosClient.post(url, {
       dto: { ...dto },
     }) as unknown as ApiResponse;
+  }
+
+  getListUser(dto: { name?: string }) {
+    let url = `/auth/users`;
+    if (dto.name) {
+      url = `/auth/users?name=${dto.name}`;
+    }
+    // validation
+    return axiosClient.get(url) as unknown as ApiResponse;
   }
 
   static registerAuthApi() {

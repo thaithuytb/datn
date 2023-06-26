@@ -2,26 +2,18 @@ import "./index.css";
 import { useContext, useEffect, useState } from "react";
 import { GardenContext } from "../../contexts/GardenContext";
 import { Device } from "../../types/device.type";
-import { DeviceTypeEnum } from "../../types/enum.type";
+import { DeviceTypeEnum, convertDeviceType } from "../../types/enum.type";
 import { useNavigate, useParams } from "react-router-dom";
 import { DeviceContext } from "../../contexts/DeviceContext";
 import socketIOClient, { Socket } from "socket.io-client";
 import DeviceApi from "../../api/device";
 import { MessageContext } from "../../contexts/MessageContext";
-import { DatePicker, Empty, Modal, Select, SelectProps, Table, TimePicker } from "antd";
+import { DatePicker, Empty, Modal, Select, SelectProps, TimePicker } from "antd";
 import dayjs from "dayjs";
 import moment from "moment";
 import GardenApi from "../../api/garden";
 import Threshold from "./Threshold";
-import { ColumnsType } from "antd/es/table";
 
-interface DataType {
-  stt: any;
-  ip: string;
-  status: any;
-  type: string;
-  device: Device
-}
 interface IViewEmpty {
   selectGarden: any
   itemsOption: any
@@ -203,7 +195,8 @@ const ViewEmpty: React.FC<IViewEmpty> = ({ selectGarden, itemsOption }) => {
       description={
         <div>
           Chọn khu vườn
-          <br /> <br />
+          <br />
+          <br />
           <Select
             id="garden-select"
             style={{ width: 200 }}
@@ -242,7 +235,6 @@ export default function StatusDevices() {
   const timeFormat = "HH:mm";
   const dateFormat = "DD-MM-YYYY";
   const [garden, setGarden] = useState<any>()
-  const [dataTable, setDatatable] = useState<any>()
 
   useEffect(() => {
     //lấy toàn bộ khu vườn
@@ -266,12 +258,12 @@ export default function StatusDevices() {
   //refreshtUrl
   useEffect(() => {
     const newGarden = gardens?.find(value => value.id === Number(gardenId))
+    console.log(newGarden)
     if (newGarden) {
       setGarden({
         id: newGarden?.id,
         value: newGarden?.name,
         label: newGarden?.name,
-        isAuto: newGarden.isAuto
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -316,9 +308,7 @@ export default function StatusDevices() {
   const selectGarden = (value: any, item: any) => {
     const garden = gardens?.find((garden) => garden.id === item.id);
     if (garden) {
-      setGarden({
-        ...item, isAuto: garden.isAuto
-      });
+      setGarden(item);
       navigate(`/status-devices/${item.id}`);
     } else {
       // setLisUser([]);
@@ -390,101 +380,7 @@ export default function StatusDevices() {
     }
   };
 
-  //data table
-  let columns: ColumnsType<DataType> = [
-    {
-      title: "Stt",
-      dataIndex: "stt",
-      width: 10,
-      align: "center"
-    },
-    {
-      title: "Thiết bị",
-      dataIndex: "ip",
-      align: "center"
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: "status",
-      align: "center"
-    },
-    {
-      title: "Trạng thái/giá trị đo",
-      dataIndex: "type",
-      align: "center"
-    },
-  ];
-  console.log(garden)
-  columns = garden && !garden.isAuto ?
-    [
-      ...columns,
-      {
-        title: "Điều khiển thiết bị",
-        dataIndex: "",
-        align: "center",
-        render: (_, record) =>
-          dataTable.length > 0 ? (
-            record.device.type === "TEMPAIRSENSOR" ? <button
-              className="control_device"
-              onClick={() => changeStatusDevice(record.device)}
-            >
-              Đo giá trị mới
-            </button>
-              :
-              record.device.valueDevice?.value ? (
-                <button
-                  className="control_device"
-                  onClick={() => changeStatusDevice(record.device)}
-                >
-                  Đo giá trị mới
-                </button>
-              ) : record.device.valueDevice?.status ? (
-                <button
-                  className="control_device"
-                  onClick={() => changeStatusDevice(record.device)}
-                >
-                  Tắt
-                </button>
-              ) : (
-                <button
-                  className="control_device"
-                  onClick={() => changeStatusDevice(record.device)}
-                >
-                  Bật
-                </button>
-              )
-          ) : null,
-      }
-    ]
-    :
-    columns
 
-  useEffect(() => {
-    const newData = devices?.map((device, index: number) => ({
-      stt: index + 1,
-      ip: device.ip,
-      status: device.status ? "Đang hoạt động" : "Không hoạt động",
-      type: device.type === "TEMPAIRSENSOR" ?
-        <>
-          <p>
-            Nhiệt độ: {device.valueDevice?.temp?.toFixed(2)}
-          </p>
-          <p>
-            Độ ẩm: {device.valueDevice?.airHumidity?.toFixed(2)}
-          </p>
-        </>
-        :
-        (
-          device.valueDevice?.value
-            ? device.valueDevice?.value?.toFixed(2)
-            : device.valueDevice?.status ? "Bật" : "Tắt"
-        ),
-      device
-    }))
-
-    setDatatable(newData)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [devices])
   return (
     <>
       {
@@ -548,15 +444,117 @@ export default function StatusDevices() {
                 </div>
 
                 {/* bảng trạng thái thiết bị */}
-                <div>
-                  <h3>{">> "}Trạng thái hiện tại của thiết bị</h3>
-                  {/* phần bảng */}
-                  <Table
-                    pagination={false}
-                    columns={columns}
-                    dataSource={dataTable}
-                    bordered={true}
-                  />
+                <div className="status_devices_present">
+                  <div>
+                    <h3>{">> "}Trạng thái hiện tại của thiết bị</h3>
+                    {/* phần bảng */}
+                    <table className="status_devices_present_table">
+                      <tbody>
+                        {/* hàng tiêu đề của cột */}
+                        <tr>
+                          <th>Stt</th>
+                          <th>Thiết bị</th>
+                          <th>Trạng thái</th>
+                          <th>Trạng thái/giá trị đo</th>
+                          {garden && !garden.isAuto ? (
+                            <th>Điều khiển thiết bị</th>
+                          ) : null}
+                        </tr>
+                        {/* -------------- */}
+                        {devices.map((device: Device, index: number) => {
+                          let value;
+                          let controlDevice;
+                          if (device.type === "TEMPAIRSENSOR") {
+                            value = (
+                              <>
+                                <p>
+                                  Nhiệt độ: {device.valueDevice?.temp?.toFixed(2)}
+                                </p>
+                                <p>
+                                  Độ ẩm: {device.valueDevice?.airHumidity?.toFixed(2)}
+                                </p>
+                              </>
+                            );
+                            controlDevice = (
+                              <button
+                                className="control_device"
+                                onClick={() => changeStatusDevice(device)}
+                              >
+                                Đo giá trị mới
+                              </button>
+                            );
+                          } else {
+                            value = device.valueDevice?.value
+                              ? device.valueDevice?.value?.toFixed(2)
+                              : device.valueDevice?.status
+                                ? "Bật"
+                                : "Tắt";
+                            controlDevice = device.valueDevice?.value ? (
+                              <button
+                                className="control_device"
+                                onClick={() => changeStatusDevice(device)}
+                              >
+                                Đo giá trị mới
+                              </button>
+                            ) : device.valueDevice?.status ? (
+                              <button
+                                className="control_device"
+                                onClick={() => changeStatusDevice(device)}
+                              >
+                                Tắt
+                              </button>
+                            ) : (
+                              <button
+                                className="control_device"
+                                onClick={() => changeStatusDevice(device)}
+                              >
+                                Bật
+                              </button>
+                            );
+                          }
+
+                          if (!device.status) {
+                            value = "Không có dữ liệu";
+                            controlDevice = "Không có dữ liệu";
+                          }
+
+                          return (
+                            <tr key={device.id}>
+                              <td style={{ textAlign: "center" }}>{++index}</td>
+                              <td>
+                                {convertDeviceType[device.type].name} ({device.ip})
+                              </td>
+                              <td className={device.status ? "" : "device_no_action"}>
+                                {device.status ? "Đang hoạt động" : "Không hoạt động"}
+                              </td>
+                              <td
+                                className={
+                                  device.status
+                                    ? `${device.type}`
+                                    : `${device.type} device_no_action`
+                                }
+                                style={{ textAlign: "center" }}
+                              >
+                                {value}
+                              </td>
+                              {garden && !garden.isAuto ? (
+                                <td
+                                  className={
+                                    device.status
+                                      ? `${device.status}`
+                                      : `${device.status} device_status_control device_no_action`
+                                  }
+                                  style={{ textAlign: "center" }}
+                                >
+                                  {controlDevice}
+                                </td>
+                              ) : null}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
 
                 {/* ---------------- */}

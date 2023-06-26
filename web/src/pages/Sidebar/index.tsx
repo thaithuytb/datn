@@ -41,7 +41,7 @@ export default function SidebarLayout() {
         navigate("/login");
         authContext?.logout();
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
 
@@ -73,7 +73,7 @@ export default function SidebarLayout() {
     <Menu
       style={{ width: 256 }}
       mode="inline"
-      theme={"light"}
+      // theme={"light"}
       defaultSelectedKeys={["home"]}
       // defaultOpenKeys={["sub1"]}
       // defaultChecked={true}

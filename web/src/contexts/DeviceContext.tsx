@@ -19,7 +19,6 @@ export const DeviceContext = createContext<IDeviceContext | undefined>(
 const DeviceContextProvider: React.FC<PropsDeviceContext> = ({ children }) => {
   const messageContext = useContext(MessageContext);
   const [devices, setDevices] = useState([]);
-
   const getDevicesByGardenId = async (gardenId: string) => {
     const deviceApi = DeviceApi.registerDeviceApi();
     try {

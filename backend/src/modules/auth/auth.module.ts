@@ -21,5 +21,6 @@ export class AuthModule implements NestModule {
     consumer
       .apply(verifyTokenMiddleware)
       .forRoutes('api/v1/auth/upsert-gardens-on-users');
+    consumer.apply(verifyTokenMiddleware).forRoutes('api/v1/auth/users');
   }
 }

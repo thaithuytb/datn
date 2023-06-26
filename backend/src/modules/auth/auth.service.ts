@@ -150,17 +150,23 @@ export class AuthService {
 
   async getGardenRoleAndUsersByGardenId(
     gardenId: number,
+    page: number,
+    limit: number,
   ): Promise<GardenRoleAndUsersType> {
+    const countRecords =
+      await this.authRepository.getCountGardenRoleAndUsersByGardenId(gardenId);
     const result = await this.authRepository.getGardenRoleAndUsersByGardenId(
       gardenId,
+      page,
+      limit,
     );
-    return responseSuccess(
-      200,
-      result.map((rt) => ({
+    return responseSuccess(200, {
+      totalRecords: countRecords,
+      users: result.map((rt) => ({
         ...rt,
         user: UserResponseDetail.transform(rt.user) as User,
       })),
-    );
+    });
   }
 
   async upsertGardensOnUsers(
@@ -168,5 +174,10 @@ export class AuthService {
   ): Promise<GardensOnUsersType> {
     const result = await this.authRepository.upsertGardenOnUser(dto);
     return responseSuccess(201, result);
+  }
+
+  async getUsersByName(name: string) {
+    const users = await this.authRepository.getUsersByName(name);
+    return responseSuccess(200, users);
   }
 }

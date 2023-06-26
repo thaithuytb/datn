@@ -7,7 +7,7 @@ import type { MenuProps } from "antd";
 import Avatar from "../../components/Avatar";
 import React, { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
-
+import { colorHeader } from "../../types/variableMain";
 const listNoti = [
   {
     id: 0,
@@ -67,7 +67,7 @@ function ItemNotification(props: any) {
       <Link to={url} style={{ color: "black" }}>
         <h5 style={{ margin: "0" }}>{title}</h5>
         <div>{content}</div>
-        <div style={{ fontSize: "0.7rem", color: "rgb(149, 200, 230)" }}>11/11/2001</div>
+        <div style={{ fontSize: "0.7rem", color: `${colorHeader}` }}>11/11/2001</div>
       </Link>
       {!status && <div style={{ display: 'flex', alignItems: "center", color: "rgb(149, 200, 230)" }}>o</div>}
     </div>

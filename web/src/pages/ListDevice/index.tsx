@@ -4,6 +4,7 @@ import { GardenContext } from "../../contexts/GardenContext";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import GardenDevicesTable from "../../components/GardenDevicesTable";
 import { ColumnsType } from "antd/es/table";
+import { Select } from "antd";
 
 export interface ColumnNameDeviceGarden {
   stt?: number;
@@ -38,6 +39,9 @@ export default function ListDevice() {
   const gardenContext = useContext(GardenContext);
   const gardenDetail = gardenContext?.gardenDetail;
   const gardens = gardenContext?.gardens;
+  console.log(gardens)
+
+  // danh sách khu vườn--------------------------
 
   useEffect(() => {
     if (gardenId) {
@@ -58,37 +62,31 @@ export default function ListDevice() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const selectGarden = (e: React.FormEvent) => {
-    navigate(`/list-device/${(e.target as any).value}`);
-  };
-
-  const redirectToStatusDevices = () => {
-    navigate("/status-devices");
+  const selectGarden = () => {
   };
 
   return (
     <div className="list_device">
-      <div className="list_device_select">
-        <div>Khu vườn</div>
-        <select onChange={selectGarden}>
-          {gardens ? (
-            gardens.map((garden) => (
-              <option key={garden.id} value={garden.id}>
-                {garden.name}
-              </option>
-            ))
-          ) : (
-            <option>__Null__</option>
-          )}
-        </select>
-      </div>
+      <header>
+        <label>Danh sách thiết bị theo khu vườn: </label>
+        <Select
+          style={{ width: 200 }}
+          // defaultValue={}
+          onChange={selectGarden}
+          options={[
+            {
+              value: "Tất cả",
+              label: "Tất cả"
+            },
+          ]}
+          placeholder={"Chọn khu vườn"}
+        />
+      </header>
+
       {gardenId && gardenDetail && (
         <div className="list_device_detail">
           <div className="list_device_detail_title">
-            Danh sách thiết bị{" "}
-            <span onClick={redirectToStatusDevices}>
-              {" >>"}Trạng thái thiết bị
-            </span>
+            Danh sách thiết bị
           </div>
           <GardenDevicesTable
             columns={columns}
