@@ -30,7 +30,7 @@ export default function PersonalInformation() {
         ...authContext?.authInformation,
         user: { ...res.data },
       });
-      messageContext?.success("thay thành công");
+      messageContext?.success("Cập nhật thông tin cá nhân thành công !!!");
     } catch (error: any) {
       messageContext?.error(error?.message);
     }

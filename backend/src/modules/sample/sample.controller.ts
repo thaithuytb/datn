@@ -7,7 +7,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { SampleService } from './sample.service';
-import { CreateSampleDto } from './dto/sample.dto';
+import { CheckTypeSampleDto, CreateSampleDto } from './dto/sample.dto';
 import { PublicMqttService } from '../../mqtt/publish';
 
 @Controller('api/v1/sample')
@@ -32,5 +32,11 @@ export class SampleController {
   @Post()
   async createSample(@Body('createSample') createSample: CreateSampleDto) {
     return this.sampleService.createSample(createSample);
+  }
+
+  @Post('checkType')
+  async checkTypeSample(@Body() dto: CheckTypeSampleDto) {
+    console.log({ dto });
+    return true;
   }
 }

@@ -1,9 +1,29 @@
-import { Garden, User } from '@prisma/client';
+import { Garden, GardensOnUsers, Role, RoleGarden, User } from '@prisma/client';
 
 export interface LoginType {
   statusCode: number;
   success: boolean;
   data: Login;
+}
+
+export interface GardenRoleAndUsersType {
+  statusCode: number;
+  success: boolean;
+  data: {
+    totalRecords: number;
+    users: GardenRoleAndUsers[];
+  };
+}
+
+export interface GardenRoleAndUsers {
+  role: RoleGarden;
+  user: User;
+}
+
+export interface GardensOnUsersType {
+  statusCode: number;
+  success: boolean;
+  data: GardensOnUsers;
 }
 
 export interface Login {
@@ -27,6 +47,7 @@ export class UserResponseDetail {
       address: dto.address,
       fullName: dto.fullName,
       gender: dto.gender,
+      role: dto.role,
     };
   }
 }
@@ -46,4 +67,5 @@ interface IUserResponseDetail {
   address?: string;
   fullName: string;
   gender?: string;
+  role: Role;
 }

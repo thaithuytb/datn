@@ -49,6 +49,11 @@ export const listSidebarInit: MenuItem[] = [
     url: "change-password",
   },
   {
+    titleSidebar: "Tạo tài khoản",
+    key: "create-account",
+    url: "create-account",
+  },
+  {
     titleSidebar: "Đăng xuất",
     key: "logout",
     url: "logout",

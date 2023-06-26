@@ -188,6 +188,7 @@ model GardensOnUsers {
   gardenId  Int      @map("garden_id")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  role      RoleGarden @default(VIEWER)
   garden    Garden   @relation(fields: [gardenId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
 
@@ -224,8 +225,13 @@ model NotificationsOnUsers {
 
 enum Role {
   USER
-  MANAGER
   ADMIN
+}
+
+enum RoleGarden {
+  MANAGER
+  USER
+  VIEWER
 }
 
 enum Gender {

@@ -1,8 +1,29 @@
+.Button button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #25c8f1;
+    color: white;
+    font-weight: 700;
+}
+
+.status_devices h3 {
+	margin: 0.5rem 0;
+}
+
+.status_devices p {
+	margin: 0;
+	padding-left: 1rem;
+}
+
 .status_devices {
 	padding: 15px 25px;
 }
 
-.status_devices_present_table, .status_devices_present_table th, .status_devices_present_table td {
+.status_devices_present_table,
+.status_devices_present_table th,
+.status_devices_present_table td {
 	border: 1px solid #999;
 	border-collapse: collapse;
 	padding: 7px;
@@ -12,6 +33,7 @@
 	display: flex;
 	justify-content: space-between;
 }
+
 .control_device {
 	cursor: pointer;
 	padding: 4px;
@@ -61,6 +83,7 @@
 .devices_control_gen div:first-child div button:hover {
 	background-color: rgb(99, 188, 223);
 }
+
 .list_device_select {
 	display: flex;
 	flex-direction: column;
@@ -75,9 +98,23 @@
 	font-size: 18px;
 }
 
-.list_device_select_title span, .list_device_select_title button {
+.list_device_select_title span,
+.list_device_select_title button {
 	/* border: none; */
 	margin-left: 7px;
 }
 
 /* newStatusGarden */
+
+
+/* --------------------------------------------- */
+/* Thresholds */
+.threshold {
+	display: flex;
+	justify-content: space-between;
+}
+.threshold-children {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}

@@ -32,7 +32,7 @@ export default function ChangePassword() {
           navigate("/login");
           authContext?.logout();
         }
-        messageContext?.success("thay đổi mật khẩu thành công");
+        messageContext?.success("Thay đổi mật khẩu thành công");
       } catch (error: any) {
         messageContext?.error(error?.message);
       }

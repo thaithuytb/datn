@@ -1,75 +1,11 @@
-import { useContext, useEffect, useState } from "react";
-import socketIOClient, { Socket } from "socket.io-client";
-import gardenApi from "../../api/garden";
-import { Garden } from "../../types/garden.type";
+import { useContext } from "react";
 import { Menu, Modal } from "antd";
 import { CloseOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { MenuItem, listSidebarInit } from "./routeSidebar";
 import { AuthContext } from "../../contexts/AuthContext";
-import { GardenContext } from "../../contexts/GardenContext";
 
 const { confirm } = Modal;
-// export default function SidebarLayout() {
-// const [gardens, setGardens] = useState<Garden[] | []>([]);
-
-// const getGardens = async () => {
-//   const { getGardens } = gardenApi;
-//   try {
-//     const response = await getGardens();
-//     console.log({ response });
-//     if (response.data.success === true) {
-//       setGardens(response.data.data);
-//     }
-//   } catch (error) {
-//     console.log({ error });
-//   }
-// };
-// const [socket, setSocket] = useState<Socket | null>(null);
-// const [message, setMessage] = useState("");
-
-// useEffect(() => {
-//   // Kết nối tới server socket
-//   const socket = socketIOClient("http://localhost:7000/fan");
-//   setSocket(socket)
-
-//   // Lắng nghe sự kiện "newFanStatus" từ server socket
-//   socket.on("newFanStatus", (data) => {
-//     console.log("Nhận dữ liệu từ server: ", data);
-//     // Cập nhật dữ liệu nhận được vào state
-//     setMessage(JSON.stringify(data));
-//   });
-
-//   // Ngắt kết nối socket khi component bị hủy
-//   return () => {
-//     socket.disconnect();
-//   };
-// }, []);
-
-// const handleSendMessage = () => {
-//   console.log('socket: ', socket)
-//   // Gửi dữ liệu lên server socket
-//   if (socket) {
-//     socket.emit("changeFanStatus", "test");
-//   }
-// };
-// useEffect(() => {
-//   getGardens();
-// }, []);
-
-//   return (
-//     <div>
-//       <h3>Danh sách khu vườn</h3>
-//       <ul>
-//         {gardens?.length > 0 &&
-//           gardens?.map((garden) => <li key={garden.id}>{garden.name}</li>)}
-//       </ul>
-//       <h3>Thông tin cá nhân</h3>
-//       {/* <button onClick={handleSendMessage}>Gửi tin nhắn</button> */}
-//       {/* <p>Trạng thái hiện tại của quạt:: {message}</p> */}
-//     {/* </div> */}
-//   );
-// }
 
 export default function SidebarLayout() {
   const authContext = useContext(AuthContext);
@@ -90,6 +26,10 @@ export default function SidebarLayout() {
 
   const navigate = useNavigate();
 
+  const logout = () => {
+    showLogoutModal();
+  };
+
   const showLogoutModal = () => {
     confirm({
       title: "Bạn có chắc muốn thoát đăng nhập  ",
@@ -101,12 +41,8 @@ export default function SidebarLayout() {
         navigate("/login");
         authContext?.logout();
       },
-      onCancel() {},
+      onCancel() { },
     });
-  };
-
-  const logout = () => {
-    showLogoutModal();
   };
 
   const listItemSidebar = ({ key }: { key: string }) => {
@@ -137,7 +73,7 @@ export default function SidebarLayout() {
     <Menu
       style={{ width: 256 }}
       mode="inline"
-      theme={"light"}
+      // theme={"light"}
       defaultSelectedKeys={["home"]}
       // defaultOpenKeys={["sub1"]}
       // defaultChecked={true}
