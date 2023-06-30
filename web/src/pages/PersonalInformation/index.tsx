@@ -49,15 +49,15 @@ export default function PersonalInformation() {
         <Input disabled />
       </Form.Item>
 
-      <Form.Item label="fullName" name="fullName">
+      <Form.Item label="Tên đầy đủ" name="fullName">
         <Input />
       </Form.Item>
 
-      <Form.Item label="phoneNumber" name="phoneNumber">
+      <Form.Item label="Số điện thoại" name="phoneNumber">
         <Input />
       </Form.Item>
 
-      <Form.Item label="address" name="address">
+      <Form.Item label="Địa chỉ" name="address">
         <Input />
       </Form.Item>
 

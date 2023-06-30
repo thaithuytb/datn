@@ -16,9 +16,11 @@ import GardenContextProvider from "./contexts/GardenContext";
 import StatusDevices from "./pages/StatusDevices";
 import ListDevice from "./pages/ListDevice";
 import DeviceContextProvider from "./contexts/DeviceContext";
-import CreateAccount from "./pages/CreateAccount";
+import CreateAccount from "./pages/Account/Create";
 import ManagementWorker from "./pages/ManagementWorker";
 import ProtectedMain from "./routes/protectedMain";
+import Account from "./pages/Account";
+import UpdateAccount from "./pages/Account/Update";
 
 const RouteMain = () => {
   return (
@@ -76,12 +78,11 @@ const RouteMain = () => {
                   <ProtectedRoute componentRedirect={ChangePassword} />
                 }
               />
-              <Route
-                path="/create-account"
-                element={
-                  <ProtectedRoute componentRedirect={CreateAccount} />
-                }
-              />
+              <Route>
+                <Route path="/account" element={<Account />} />
+                <Route path="/account/create-account" element={<CreateAccount />} />
+                <Route path="/account/update-account" element={<UpdateAccount />} />
+              </Route>
               <Route
                 path="/logout"
                 element={<ProtectedRoute componentRedirect={Logout} />}

@@ -88,14 +88,14 @@ const ShowModal: React.FC<IShowModal> = ({
 }) => {
   const garden = changeRole?.garden
   const role = changeRole?.role
-  const [dto, setDto] = useState<{gardenId?: number, userId?: number, role?: string}>({});
+  const [dto, setDto] = useState<{ gardenId?: number, userId?: number, role?: string }>({});
   useEffect(() => {
     setDto({
       gardenId: garden?.garden.id,
       userId: role?.userId,
       role: role?.value
     })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [changeRole])
   const itemsRole: SelectProps["options"] = [
     {
@@ -222,6 +222,7 @@ const ManagementWorker = () => {
       }
       setTotalPage(res?.data?.totalRecords)
       const data = res?.data?.users?.map((item: any, index: any) => {
+        const date = new Date(item.user.createdAt);
         return {
           key: index,
           stt: index + 1 + stt,
@@ -229,7 +230,7 @@ const ManagementWorker = () => {
           role: item.role,
           garden: garden.garden.name,
           gardenId: garden.id,
-          date: item.user.createdAt,
+          date: `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`,
           lable: item.user.fullName,
           value: item.user.fullName,
           userId: item.user.id,
