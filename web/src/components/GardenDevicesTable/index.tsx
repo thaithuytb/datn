@@ -23,10 +23,10 @@ const GardenDevicesTable: React.FC<PropsGardenDevicesTable> = ({
       quantity: 0,
       key: "LAMP",
     },
-    NEBULIZER: {
-      name: "Máy phun sương",
+    CURTAIN: {
+      name: "Rèm",
       quantity: 0,
-      key: "NEBULIZER",
+      key: "CURTAIN",
     },
     PUMP: {
       name: "Máy bơm",

@@ -55,7 +55,7 @@ export async function createUsers(prisma: PrismaClient, garden: Garden) {
         gardens: {
           create: {
             gardenId: garden.id,
-            role: RoleGarden.USER,
+            role: RoleGarden.MANAGER,
           },
         } as Prisma.GardensOnUsersCreateNestedManyWithoutUserInput,
       },
@@ -72,7 +72,7 @@ export async function createUsers(prisma: PrismaClient, garden: Garden) {
         gardens: {
           create: {
             gardenId: garden.id,
-            role: RoleGarden.USER,
+            role: RoleGarden.MANAGER,
           },
         } as Prisma.GardensOnUsersCreateNestedManyWithoutUserInput,
       },
@@ -89,7 +89,7 @@ export async function createUsers(prisma: PrismaClient, garden: Garden) {
         gardens: {
           create: {
             gardenId: garden.id,
-            role: RoleGarden.VIEWER,
+            role: RoleGarden.MANAGER,
           },
         } as Prisma.GardensOnUsersCreateNestedManyWithoutUserInput,
       },
@@ -106,7 +106,7 @@ export async function createUsers(prisma: PrismaClient, garden: Garden) {
           gardens: {
             create: {
               gardenId: i % 2 ? 1 : 2,
-              role: i % 2 ? RoleGarden.VIEWER : RoleGarden.USER,
+              role: RoleGarden.USER,
             },
           } as Prisma.GardensOnUsersCreateNestedManyWithoutUserInput,
         },

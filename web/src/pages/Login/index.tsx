@@ -65,11 +65,14 @@ export default function Login() {
       <div className="login">
         <div className="login_form">
           <header>
-            <img style={{ width: "30px", height: "auto", marginRight: "0.5rem" }}
-              src="https://upload.wikimedia.org/wikipedia/vi/thumb/e/ef/Logo_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_B%C3%A1ch_Khoa_H%C3%A0_N%E1%BB%99i.svg/1200px-Logo_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_B%C3%A1ch_Khoa_H%C3%A0_N%E1%BB%99i.svg.png" alt="" />
+            <img
+              style={{ width: "30px", height: "auto", marginRight: "0.5rem" }}
+              src="https://upload.wikimedia.org/wikipedia/vi/thumb/e/ef/Logo_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_B%C3%A1ch_Khoa_H%C3%A0_N%E1%BB%99i.svg/1200px-Logo_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_B%C3%A1ch_Khoa_H%C3%A0_N%E1%BB%99i.svg.png"
+              alt=""
+            />
             <h3>Đại học bách khoa hà nội</h3>
           </header>
-          <form onSubmit={submitFormLogin} >
+          <form onSubmit={submitFormLogin}>
             <h3>HELLO</h3>
             <input
               type="text"
@@ -89,7 +92,10 @@ export default function Login() {
           </form>
         </div>
         <div className="image_from">
-          <img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aHVtYW58ZW58MHx8MHx8fDA%3D&w=1000&q=80" alt="background" />
+          <img
+            src="https://datn-thai-v1-29112001.s3.ap-northeast-1.amazonaws.com/image-20230701041856224-thai-test-2.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIASMXT6WUPX2EAV4PP%2F20230630%2Fap-northeast-1%2Fs3%2Faws4_request&X-Amz-Date=20230630T211856Z&X-Amz-Expires=3600&X-Amz-Signature=36b41732530a732c474058c2f34a26e49684a5f8550475c5723505187122562f&X-Amz-SignedHeaders=host&x-id=GetObject"
+            alt="background"
+          />
         </div>
       </div>
     </div>

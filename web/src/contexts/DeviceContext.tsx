@@ -1,6 +1,8 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 import DeviceApi from "../api/device";
 import { MessageContext } from "./MessageContext";
+import ThresholdApi from "../api/threshold";
+import { IThreshold } from "../types/threshold";
 
 interface PropsDeviceContext {
   children: ReactNode;
@@ -10,6 +12,9 @@ interface IDeviceContext {
   devices: any[];
   getDevicesByGardenId: (gardenId: string) => void;
   setDevices: any;
+  getThresholdsByGardenId: (gardenId: number) => void;
+  thresholds: IThreshold[];
+  setThresholds: any;
 }
 
 export const DeviceContext = createContext<IDeviceContext | undefined>(
@@ -19,6 +24,7 @@ export const DeviceContext = createContext<IDeviceContext | undefined>(
 const DeviceContextProvider: React.FC<PropsDeviceContext> = ({ children }) => {
   const messageContext = useContext(MessageContext);
   const [devices, setDevices] = useState([]);
+  const [thresholds, setThresholds] = useState([]);
   const getDevicesByGardenId = async (gardenId: string) => {
     const deviceApi = DeviceApi.registerDeviceApi();
     try {
@@ -32,10 +38,26 @@ const DeviceContextProvider: React.FC<PropsDeviceContext> = ({ children }) => {
     }
   };
 
+  const getThresholdsByGardenId = async (gardenId: number) => {
+    const thresholdApi = ThresholdApi.registerThresholdApi();
+    try {
+      const res = await thresholdApi.getThreshold({ gardenId });
+      if (res.success) {
+        setThresholds(res.data.thresholds);
+      }
+    } catch (error: any) {
+      setThresholds([]);
+      messageContext?.error(error?.message);
+    }
+  };
+
   const data = {
     devices,
     getDevicesByGardenId,
     setDevices,
+    getThresholdsByGardenId,
+    thresholds,
+    setThresholds,
   };
 
   return (

@@ -60,7 +60,6 @@ export class UserResponseDetail {
       email: dto.email,
       createdAt: dto.createdAt,
       updatedAt: dto.updatedAt,
-      dateOfBirth: dto.dateOfBirth,
       address: dto.address,
       fullName: dto.fullName,
       gender: dto.gender,
@@ -81,7 +80,6 @@ interface IUserResponseDetail {
   email: string;
   createdAt?: string | Date;
   updatedAt?: string | Date;
-  dateOfBirth?: string | Date;
   address?: string;
   fullName: string;
   gender?: string;

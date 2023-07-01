@@ -1,25 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../infrastructures/dao/prisma.service';
 import { GardensOnUsers, Prisma, User } from '@prisma/client';
-import { GardenRoleAndUsers } from '../modules/auth/models/auth.model';
 import { UpsertGardensOnUsers } from '../modules/auth/dto/gardensOnUsers.dto';
 
 @Injectable()
 export class AuthRepository implements IAuthRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getUserByEmail(args: Prisma.UserFindFirstArgs): Promise<User> {
-    return this.prisma.user.findFirst(args);
+  async getUserByEmail(arg: Prisma.UserFindFirstArgs): Promise<User> {
+    return this.prisma.user.findFirst(arg);
   }
 
-  async createUser(args: Prisma.UserCreateInput): Promise<User> {
+  async createUser(arg: Prisma.UserCreateInput): Promise<User> {
     return this.prisma.user.create({
-      data: args,
+      data: arg,
     });
   }
 
-  async updateInformation(args: Prisma.UserUpdateArgs): Promise<User> {
-    return this.prisma.user.update(args);
+  async updateInformation(arg: Prisma.UserUpdateArgs): Promise<User> {
+    return this.prisma.user.update(arg);
   }
 
   async getUserIdsInGardensOnUsers(
@@ -36,28 +35,20 @@ export class AuthRepository implements IAuthRepository {
     });
   }
 
-  async getGardenRoleAndUsersByGardenId(
-    gardenId: number,
-    page: number,
-    limit: number,
-  ): Promise<GardenRoleAndUsers[]> {
-    return this.prisma.gardensOnUsers.findMany({
-      where: {
-        gardenId,
-      },
-      select: {
-        role: true,
-        user: true,
-      },
-      distinct: 'userId',
-      take: limit,
-      skip: (page - 1) * limit,
-    });
+  async getGardensOnUsers(
+    arg: Prisma.GardensOnUsersFindManyArgs,
+  ): Promise<GardensOnUsers[]> {
+    return this.prisma.gardensOnUsers.findMany(arg);
   }
 
-  async getCountGardenRoleAndUsersByGardenId(
-    gardenId: number,
-  ): Promise<number> {
+  async getUsers(arg: Prisma.UserFindManyArgs): Promise<User[]> {
+    return this.prisma.user.findMany(arg);
+  }
+
+  async getCountUsersOrUsersOnGardens(gardenId?: number): Promise<number> {
+    if (!gardenId) {
+      return this.prisma.user.count();
+    }
     return this.prisma.gardensOnUsers.count({
       where: {
         gardenId,
@@ -100,13 +91,12 @@ export class AuthRepository implements IAuthRepository {
 }
 
 export interface IAuthRepository {
-  getUserByEmail(args: Prisma.UserFindFirstArgs): Promise<User>;
-  createUser(args: Prisma.UserCreateInput): Promise<User>;
-  updateInformation(args: Prisma.UserUpdateArgs): Promise<User>;
+  getUserByEmail(arg: Prisma.UserFindFirstArgs): Promise<User>;
+  createUser(arg: Prisma.UserCreateInput): Promise<User>;
+  updateInformation(arg: Prisma.UserUpdateArgs): Promise<User>;
   getUserIdsInGardensOnUsers(gardenId?: number): Promise<{ userId: number }[]>;
-  getGardenRoleAndUsersByGardenId(
-    gardenId: number,
-    page: number,
-    limit: number,
-  ): Promise<GardenRoleAndUsers[]>;
+  getGardensOnUsers(
+    arg: Prisma.GardensOnUsersFindManyArgs,
+  ): Promise<GardensOnUsers[]>;
+  getUsers(arg: Prisma.UserFindManyArgs): Promise<User[]>;
 }

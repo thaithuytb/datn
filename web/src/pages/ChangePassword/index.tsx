@@ -26,7 +26,7 @@ export default function ChangePassword() {
       };
       const authApi = AuthApi.registerAuthApi();
       try {
-        const res = await authApi.updateUnformation(data);
+        const res = await authApi.updateInformation(data);
         console.log(res);
         if (res.success) {
           navigate("/login");

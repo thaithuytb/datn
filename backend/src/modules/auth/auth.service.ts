@@ -5,12 +5,13 @@ import { sign, verify } from 'jsonwebtoken';
 import * as argon2 from 'argon2';
 import { responseSuccess } from '../../common/responseSuccess';
 import {
-  GardenRoleAndUsersType,
+  GardenRoleAndUsers,
   GardensOnUsersType,
   LoginType,
   UserDetail,
   UserResponseDetail,
   UserResponseDetailType,
+  UsersWithGardensOnUsersType,
 } from './models/auth.model';
 import { RegisterDto } from './dto/register.dto';
 import { uuid } from 'uuidv4';
@@ -148,24 +149,73 @@ export class AuthService {
     return verify(token, process.env.JWT_SECRET);
   }
 
-  async getGardenRoleAndUsersByGardenId(
-    gardenId: number,
+  async getGardenRoleAndUsers(
     page: number,
     limit: number,
-  ): Promise<GardenRoleAndUsersType> {
+    gardenId?: number,
+  ): Promise<UsersWithGardensOnUsersType> {
     const countRecords =
-      await this.authRepository.getCountGardenRoleAndUsersByGardenId(gardenId);
-    const result = await this.authRepository.getGardenRoleAndUsersByGardenId(
-      gardenId,
-      page,
-      limit,
-    );
+      await this.authRepository.getCountUsersOrUsersOnGardens(gardenId);
+    let result;
+    if (gardenId) {
+      const condition: Prisma.GardensOnUsersFindManyArgs = {
+        where: {
+          gardenId,
+        },
+        select: {
+          role: true,
+          createdAt: true,
+          user: true,
+          garden: true,
+        },
+        take: limit,
+        skip: (page - 1) * limit,
+      };
+      const listUserWithGardenRoleOnUser =
+        (await this.authRepository.getGardensOnUsers(
+          condition,
+        )) as unknown as GardenRoleAndUsers[];
+      result = listUserWithGardenRoleOnUser.map((u) => ({
+        gardens: [
+          {
+            role: u.role,
+            createdAt: u.createdAt,
+            name: u.garden.name,
+          },
+        ],
+        user: UserResponseDetail.transform(u.user),
+      }));
+    } else {
+      const condition: Prisma.UserFindManyArgs = {
+        take: limit,
+        skip: (page - 1) * limit,
+        include: {
+          gardens: {
+            select: {
+              role: true,
+              createdAt: true,
+              garden: true,
+            },
+          },
+        },
+      };
+      const listUserWithGardenRoleOnUser = (await this.authRepository.getUsers(
+        condition,
+      )) as any;
+      result = listUserWithGardenRoleOnUser.map((u) => {
+        return {
+          gardens: u.gardens.map((garden) => ({
+            role: garden.role,
+            createdAt: garden.createdAt,
+            name: garden.garden.name,
+          })),
+          user: UserResponseDetail.transform(u),
+        };
+      });
+    }
     return responseSuccess(200, {
       totalRecords: countRecords,
-      users: result.map((rt) => ({
-        ...rt,
-        user: UserResponseDetail.transform(rt.user) as User,
-      })),
+      users: result,
     });
   }
 

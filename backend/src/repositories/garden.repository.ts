@@ -19,13 +19,13 @@ export class GardenRepository implements IGardenRepository {
   }
 
   //TODO: can add feature filter garden
-  async getGardens(args: Prisma.GardenFindManyArgs): Promise<Garden[]> {
-    return this.prisma.garden.findMany(args);
+  async getGardens(arg: Prisma.GardenFindManyArgs): Promise<Garden[]> {
+    return this.prisma.garden.findMany(arg);
   }
 }
 
 export interface IGardenRepository {
   getGardenByName(name: string): Promise<Garden>;
   getGardenById(arg: Prisma.GardenFindFirstArgsBase): Promise<Garden>;
-  getGardens(args: Prisma.GardenFindManyArgs): Promise<Garden[]>;
+  getGardens(arg: Prisma.GardenFindManyArgs): Promise<Garden[]>;
 }

@@ -6,12 +6,14 @@ import { createDevices } from './device';
 import { createNotifications } from './notification';
 import { createMeasureDeviceData } from './measure-device-data';
 import { createActuatorsDatas } from './actuators-data';
+import { createThresholds } from './threshold';
 
 export const prismaForSeed = new PrismaClient();
 
 export const createResources = async (prisma: PrismaClient) => {
   await createSample(prisma);
   const garden = await createGarden(prisma);
+  await createThresholds(prisma, garden);
   await createUsers(prisma, garden);
   const devices = await createDevices(prisma, garden);
   await createActuatorsDatas(prisma, garden, devices);

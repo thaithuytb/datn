@@ -34,7 +34,7 @@ class AuthApi {
     return axiosClient.post(url, { dto }) as unknown as ApiResponse;
   }
 
-  updateUnformation(dto: {
+  updateInformation(dto: {
     password?: string;
     newPassword?: string;
     fullName?: string;
@@ -48,11 +48,18 @@ class AuthApi {
     }) as unknown as ApiResponse;
   }
 
-  //getUser garden byID
-  getUsersByGardenId(dto: { gardenId: number, page?: number }) {
-    let url = `/auth/users/${dto.gardenId}`;
+  //getUsers: for user and account
+  getUsers(dto: { gardenId?: number; page?: number }) {
+    let url = `/auth/users`;
+    // let url = `/auth/users/${dto.gardenId}`;
+    if (dto.gardenId) {
+      url = url.concat(`?gardenId=${dto.gardenId}`);
+    }
     if (dto.page) {
-      url = `/auth/users/${dto.gardenId}?page=${dto.page}`;
+      if (dto.gardenId) {
+        url = url.concat(`&page=${dto.page}`);
+      }
+      url = url.concat(`?page=${dto.page}`);
     }
     // validation
     return axiosClient.get(url) as unknown as ApiResponse;

@@ -39,6 +39,11 @@ export const listSidebarInit: MenuItem[] = [
     ],
   },
   {
+    titleSidebar: "Quản lý tài khoản",
+    key: "account",
+    url: "account",
+  },
+  {
     titleSidebar: "Thông tin cá nhân",
     key: "personal-information",
     url: "personal-information",
@@ -47,11 +52,6 @@ export const listSidebarInit: MenuItem[] = [
     titleSidebar: "Đổi mật khẩu",
     key: "change-password",
     url: "change-password",
-  },
-  {
-    titleSidebar: "Tài khoản",
-    key: "account",
-    url: "account",
   },
   {
     titleSidebar: "Đăng xuất",

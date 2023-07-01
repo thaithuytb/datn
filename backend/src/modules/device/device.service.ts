@@ -3,7 +3,7 @@ import { DeviceTypeEnum, Prisma } from '@prisma/client';
 import { responseSuccess } from 'src/common/responseSuccess';
 import { DeviceRepository } from '../../repositories/device.repository';
 import { PrismaService } from '../../infrastructures/dao/prisma.service';
-import { ChangeDeviceStatusDto, ChangeThresholdDto } from './dto/device.dto';
+import { ChangeDeviceStatusDto } from './dto/device.dto';
 import { PublicMqttService } from '../../mqtt/publish';
 import { Redis } from 'ioredis';
 import { messageToMqtt } from '../../common/messageToMqtt';
@@ -11,7 +11,7 @@ import { messageToMqtt } from '../../common/messageToMqtt';
 export const convertData = {
   FAN: 'fanData',
   LAMP: 'lampData',
-  NEBULIZER: 'nebulizerData',
+  CURTAIN: 'curtainData',
   PUMP: 'pumpData',
   LIGHTSENSOR: 'lightData',
   HUMISENSOR: 'humiData',
@@ -22,7 +22,7 @@ const convertTypeDevice = (type: DeviceTypeEnum) => {
   switch (type) {
     case 'FAN':
     case 'LAMP':
-    case 'NEBULIZER':
+    case 'CURTAIN':
     case 'PUMP': {
       return 'actuator';
     }
@@ -88,21 +88,6 @@ export class DeviceService {
     if (topic) {
       this.mqttService.sendMessage(
         `datn/${topic}/${convertTypeDevice(dto.type)}`,
-        messageToMqtt({
-          ...dto,
-        }),
-      );
-      return true;
-    }
-    //TODO: need handle case topic is null
-    return false;
-  }
-
-  async changeThreshold(dto: ChangeThresholdDto) {
-    const topic = await this.redis.get('newTopic');
-    if (topic) {
-      this.mqttService.sendMessage(
-        `datn/${topic}/threshold`,
         messageToMqtt({
           ...dto,
         }),

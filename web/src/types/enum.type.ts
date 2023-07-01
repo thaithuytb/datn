@@ -1,7 +1,7 @@
 export const enum DeviceTypeEnum {
   FAN = "FAN",
   LAMP = "LAMP",
-  NEBULIZER = "NEBULIZER",
+  CURTAIN = "CURTAIN",
   PUMP = "PUMP",
   LIGHTSENSOR = "LIGHTSENSOR",
   HUMISENSOR = "HUMISENSOR",
@@ -17,8 +17,8 @@ export const convertDeviceType = {
     name: "Đèn",
     value: "Bật",
   },
-  NEBULIZER: {
-    name: "Máy phun sương",
+  CURTAIN: {
+    name: "Rèm",
     value: "Tắt",
   },
   PUMP: {

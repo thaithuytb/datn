@@ -1,30 +1,43 @@
 import "./index.css";
 import { useContext, useEffect, useState } from "react";
 import { GardenContext } from "../../contexts/GardenContext";
-import { Device } from "../../types/device.type";
+import {
+  DEVICE_TYPE,
+  Device,
+  convertDevice2Type,
+} from "../../types/device.type";
 import { DeviceTypeEnum } from "../../types/enum.type";
 import { useNavigate, useParams } from "react-router-dom";
 import { DeviceContext } from "../../contexts/DeviceContext";
 import socketIOClient, { Socket } from "socket.io-client";
 import DeviceApi from "../../api/device";
 import { MessageContext } from "../../contexts/MessageContext";
-import { DatePicker, Empty, Modal, Select, SelectProps, Table, TimePicker } from "antd";
+import {
+  DatePicker,
+  Empty,
+  Modal,
+  Select,
+  SelectProps,
+  Table,
+  TimePicker,
+} from "antd";
 import dayjs from "dayjs";
 import moment from "moment";
 import GardenApi from "../../api/garden";
 import Threshold from "./Threshold";
 import { ColumnsType } from "antd/es/table";
+import { getMeasuredAndStatusDevice } from "../../common/status-device";
 
 interface DataType {
   stt: any;
   ip: string;
   status: any;
   type: string;
-  device: Device
+  device: Device;
 }
 interface IViewEmpty {
-  selectGarden: any
-  itemsOption: any
+  selectGarden: any;
+  itemsOption: any;
 }
 interface IShowModal {
   isModalOpen: boolean;
@@ -84,7 +97,7 @@ const ShowModal: React.FC<IShowModal> = ({
         await gardenApi.changeStatusGarden(dto);
         setIsModalOpen(false);
         setTimeRemaining("00:00");
-      } catch (error) { }
+      } catch (error) {}
     }
   };
   const handleCancel = () => {
@@ -186,7 +199,7 @@ const convertTypeDevice = (type: DeviceTypeEnum) => {
   switch (type) {
     case "FAN":
     case "LAMP":
-    case "NEBULIZER":
+    case "CURTAIN":
     case "PUMP": {
       return "actuator";
     }
@@ -213,16 +226,14 @@ const ViewEmpty: React.FC<IViewEmpty> = ({ selectGarden, itemsOption }) => {
           />
         </div>
       }
-    >
-    </Empty>
-  )
-}
+    ></Empty>
+  );
+};
 
 export default function StatusDevices() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [socket, setSocket] = useState<Socket | null>(null);
   const [message, setMessage] = useState<any>(null);
-  const [thresholdsDisplay, setThresholdsDisplay] = useState("none");
   const navigate = useNavigate();
   const deviceContext = useContext(DeviceContext);
   const gardenContext = useContext(GardenContext);
@@ -241,8 +252,10 @@ export default function StatusDevices() {
   const [timeRemaining, setTimeRemaining] = useState<string>("00:00");
   const timeFormat = "HH:mm";
   const dateFormat = "DD-MM-YYYY";
-  const [garden, setGarden] = useState<any>()
-  const [dataTable, setDatatable] = useState<any>()
+  const [garden, setGarden] = useState<any>();
+  const [dataTable, setDataTable] = useState<any>();
+
+  console.log({ devices });
 
   useEffect(() => {
     //lấy toàn bộ khu vườn
@@ -265,14 +278,14 @@ export default function StatusDevices() {
 
   //refreshtUrl
   useEffect(() => {
-    const newGarden = gardens?.find(value => value.id === Number(gardenId))
+    const newGarden = gardens?.find((value) => value.id === Number(gardenId));
     if (newGarden) {
       setGarden({
         id: newGarden?.id,
         value: newGarden?.name,
         label: newGarden?.name,
-        isAuto: newGarden.isAuto
-      })
+        isAuto: newGarden.isAuto,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gardens]);
@@ -317,7 +330,8 @@ export default function StatusDevices() {
     const garden = gardens?.find((garden) => garden.id === item.id);
     if (garden) {
       setGarden({
-        ...item, isAuto: garden.isAuto
+        ...item,
+        isAuto: garden.isAuto,
       });
       navigate(`/status-devices/${item.id}`);
     } else {
@@ -331,13 +345,6 @@ export default function StatusDevices() {
   };
   const showModal = () => {
     setIsModalOpen(true);
-  };
-
-  //đóng mở phần xét ngưỡng------------------------------
-  const hiden = () => {
-    thresholdsDisplay === "none"
-      ? setThresholdsDisplay("block")
-      : setThresholdsDisplay("none");
   };
 
   useEffect(() => {
@@ -396,190 +403,175 @@ export default function StatusDevices() {
       title: "Stt",
       dataIndex: "stt",
       width: 10,
-      align: "center"
+      align: "center",
     },
     {
-      title: "Thiết bị",
+      title: "IP thiết bị",
       dataIndex: "ip",
-      align: "center"
+      align: "center",
     },
     {
-      title: "Trạng thái",
+      title: "Loại thiết bị",
+      dataIndex: "type",
+      align: "center",
+    },
+    {
+      title: "Tình trạng",
       dataIndex: "status",
-      align: "center"
+      align: "center",
     },
     {
       title: "Trạng thái/giá trị đo",
-      dataIndex: "type",
-      align: "center"
+      dataIndex: "value",
+      align: "center",
     },
   ];
-  console.log(garden)
-  columns = garden && !garden.isAuto ?
-    [
-      ...columns,
-      {
-        title: "Điều khiển thiết bị",
-        dataIndex: "",
-        align: "center",
-        render: (_, record) =>
-          dataTable.length > 0 ? (
-            record.device.type === "TEMPAIRSENSOR" ? <button
-              className="control_device"
-              onClick={() => changeStatusDevice(record.device)}
-            >
-              Đo giá trị mới
-            </button>
-              :
-              record.device.valueDevice?.value ? (
-                <button
-                  className="control_device"
-                  onClick={() => changeStatusDevice(record.device)}
-                >
-                  Đo giá trị mới
-                </button>
-              ) : record.device.valueDevice?.status ? (
-                <button
-                  className="control_device"
-                  onClick={() => changeStatusDevice(record.device)}
-                >
-                  Tắt
-                </button>
-              ) : (
-                <button
-                  className="control_device"
-                  onClick={() => changeStatusDevice(record.device)}
-                >
-                  Bật
-                </button>
-              )
-          ) : null,
-      }
-    ]
-    :
-    columns
+  columns =
+    garden && !garden.isAuto
+      ? [
+          ...columns,
+          {
+            title: "Điều khiển thiết bị",
+            dataIndex: "",
+            align: "center",
+            render: (_, record) =>
+              dataTable.length > 0 ? (
+                convertDevice2Type(record.device.type) === "ACTUATOR" &&
+                record.device.status ? (
+                  record.device.valueDevice?.status ? (
+                    <button
+                      className="control_device"
+                      onClick={() => changeStatusDevice(record.device)}
+                    >
+                      Tắt
+                    </button>
+                  ) : (
+                    <button
+                      className="control_device"
+                      onClick={() => changeStatusDevice(record.device)}
+                    >
+                      Bật
+                    </button>
+                  )
+                ) : (
+                  "Không thể điều khiển"
+                )
+              ) : null,
+          },
+        ]
+      : columns;
 
   useEffect(() => {
-    const newData = devices?.map((device, index: number) => ({
+    const newData = devices?.map((device: Device, index: number) => ({
       stt: index + 1,
       ip: device.ip,
-      status: device.status ? "Đang hoạt động" : "Không hoạt động",
-      type: device.type === "TEMPAIRSENSOR" ?
-        <>
-          <p>
-            Nhiệt độ: {device.valueDevice?.temp?.toFixed(2)}
-          </p>
-          <p>
-            Độ ẩm: {device.valueDevice?.airHumidity?.toFixed(2)}
-          </p>
-        </>
-        :
-        (
-          device.valueDevice?.value
-            ? device.valueDevice?.value?.toFixed(2)
-            : device.valueDevice?.status ? "Bật" : "Tắt"
-        ),
-      device
-    }))
+      status: device.status ? (
+        "Đang hoạt động"
+      ) : (
+        <div style={{ color: "#999" }}>Không hoạt động</div>
+      ),
+      type: DEVICE_TYPE[`${device.type}`],
+      value: getMeasuredAndStatusDevice(device),
+      device,
+    }));
 
-    setDatatable(newData)
+    setDataTable(newData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [devices])
+  }, [devices]);
   return (
     <>
-      {
-        gardens && !garden ?
-          <ViewEmpty
-            selectGarden={selectGarden}
-            itemsOption={itemsOption}
-          />
-          :
-          <>
-            {gardens && devices && (
-              <div className="status_devices">
-                {/* header */}
-                <div className="list_device_select">
-                  <header>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      <label>Khu vườn: </label>
-                      <Select
-                        id="garden-select"
-                        value={garden}
-                        style={{ width: 150 }}
-                        onChange={selectGarden}
-                        options={itemsOption}
-                        placeholder={"Chọn khu vườn"}
-                      />
-                      <label>
-                        Đang ở chế độ{" "}
-                        <span style={{ color: "blue" }}>
-                          {garden && garden.isAuto ? "auto" : "manual>"}
-                        </span>
-                      </label>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      Chuyển chế độ{" "}
-                      <span className="Button">
-                        <button onClick={changeMode}>
-                          {garden && garden.isAuto
-                            ? "Chuyển sang manual"
-                            : "Chuyển sang auto>"}
-                        </button>
-                      </span>
-                    </div>
-                  </header>
-                </div>
+      {gardens && !garden ? (
+        <ViewEmpty selectGarden={selectGarden} itemsOption={itemsOption} />
+      ) : (
+        <>
+          {gardens && devices && (
+            <div className="status_devices">
+              {/* header */}
+              <div className="list_device_select">
+                <header className="list_device_select__header">
+                  <div className="list_device_select__div_first">
+                    <label>Chọn vườn: </label>
+                    <Select
+                      id="garden-select"
+                      value={garden}
+                      style={{ width: 150 }}
+                      onChange={selectGarden}
+                      options={itemsOption}
+                      placeholder={"Chọn khu vườn"}
+                    />
+                  </div>
+                  <div className="list_device_select__div_second">
+                    <span>Chế độ chăm sóc :</span>
+                    <button className="Button" onClick={changeMode}>
+                      {garden && garden.isAuto ? "Tự động" : "Tự điều chỉnh"}
+                    </button>
+                  </div>
+                </header>
+              </div>
 
-                {/* xét ngưỡng các thiết bị */}
-                <div className="threshold_DeviceDetail">
-                  <h3>{">> "}Ngưỡng phù hợp cho khu vườn</h3>
-                  <p onClick={hiden} style={{ cursor: "pointer" }}>
-                    Xem chi tiết
-                  </p>
-                  <div style={{ display: thresholdsDisplay }}>
-                    <Threshold />
+              {/* xét ngưỡng các thiết bị */}
+              {gardenId && (
+                <div
+                  className="threshold_DeviceDetail"
+                  style={{ marginBottom: 20 }}
+                >
+                  <h3
+                    style={{
+                      fontWeight: 500,
+                      fontSize: "18px",
+                      marginBottom: 10,
+                    }}
+                  >
+                    <span style={{ color: "red" }}>&#10052; </span>
+                    Giới hạn cảm biến
+                  </h3>
+                  <div>
+                    <Threshold gardenId={gardenId} />
                   </div>
                 </div>
-
-                {/* bảng trạng thái thiết bị */}
-                <div>
-                  <h3>{">> "}Trạng thái hiện tại của thiết bị</h3>
-                  {/* phần bảng */}
-                  <Table
-                    pagination={false}
-                    columns={columns}
-                    dataSource={dataTable}
-                    bordered={true}
-                  />
-                </div>
-
-                {/* ---------------- */}
-                <ShowModal
-                  isModalOpen={isModalOpen}
-                  setIsModalOpen={setIsModalOpen}
-                  garden={garden}
-                  timeRemaining={timeRemaining}
-                  setTimeRemaining={setTimeRemaining}
-                  date={date}
-                  setDate={setDate}
-                  time={time}
-                  setTime={setTime}
-                  currentTime={currentTime}
-                  currentDate={currentDate}
-                  timeFormat={timeFormat}
-                  dateFormat={dateFormat}
-                  gardenId={gardenId}
+              )}
+              {/* bảng trạng thái thiết bị */}
+              <div style={{ marginTop: 10 }}>
+                <h3
+                  style={{
+                    fontWeight: 500,
+                    fontSize: "18px",
+                    marginBottom: 10,
+                  }}
+                >
+                  <span style={{ color: "red" }}>&#10052;</span> Trạng thái hiện
+                  tại của thiết bị
+                </h3>
+                {/* phần bảng */}
+                <Table
+                  pagination={false}
+                  columns={columns}
+                  dataSource={dataTable}
+                  bordered={true}
                 />
               </div>
-            )}
-          </>
-      }
+
+              {/* ---------------- */}
+              <ShowModal
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                garden={garden}
+                timeRemaining={timeRemaining}
+                setTimeRemaining={setTimeRemaining}
+                date={date}
+                setDate={setDate}
+                time={time}
+                setTime={setTime}
+                currentTime={currentTime}
+                currentDate={currentDate}
+                timeFormat={timeFormat}
+                dateFormat={dateFormat}
+                gardenId={gardenId}
+              />
+            </div>
+          )}
+        </>
+      )}
     </>
   );
 }

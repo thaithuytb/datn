@@ -4,10 +4,8 @@
 
 .list_device_select {
 	display: flex;
-	border-bottom: 1px solid #999;
 	padding: 20px 0px;
-	font-size: 25px;
-	margin-bottom: 20px;
+	font-size: 18px;
 }
 
 .list_device_select div:first-child {
