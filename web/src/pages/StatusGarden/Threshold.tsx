@@ -11,11 +11,18 @@ import {
 import dayjs from "dayjs";
 import { DEVICE_TYPE } from "../../types/device.type";
 import ThresholdApi from "../../api/threshold";
+import { MessageContext } from "../../contexts/MessageContext";
+import { SocketContext } from "../../contexts/SocketContext";
 
 const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const deviceContext = useContext(DeviceContext);
+  const messageContext = useContext(MessageContext);
   const getThresholdsByGardenId = deviceContext?.getThresholdsByGardenId;
   const thresholds = deviceContext?.thresholds;
+  const socketContext = useContext(SocketContext);
+  const socket = socketContext?.socket;
+  const setThresholds = deviceContext?.setThresholds;
 
   const [onChangeThresholdSlider, setOnChangeThresholdSlider] = useState({
     LIGHTSENSOR: {
@@ -38,6 +45,17 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gardenId]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("newThreshold", (data: any) => {
+        console.log("aaaaaaa", data);
+        // setThresholds(data);
+        messageContext?.success("Thay đổi ngưỡng thành công !!!");
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
 
   const onChangeThreshold = (
     value: number[],

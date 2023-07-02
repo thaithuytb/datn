@@ -100,13 +100,22 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
     }
 
     if (topic.slice(15) === '/regime') {
-      socketGateway.server.emit('newStatusGarden', parseMessage);
+      socketGateway.emitToGarden(
+        // parseMessage['gardenId'].toString(),
+        '1',
+        'newStatusGarden',
+        parseMessage,
+      );
       console.log('regime', parseMessage);
       return updateStatusGarden(prisma, parseMessage);
     }
 
     if (topic.slice(15) === '/threshold') {
-      socketGateway.server.emit('newThreshold', parseMessage);
+      socketGateway.emitToGarden(
+        parseMessage['gardenId'].toString(),
+        'newThreshold',
+        parseMessage,
+      );
       console.log('threshold', parseMessage);
       return updateThreshold(prisma, parseMessage);
     }
@@ -154,7 +163,12 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
           }
         }
         case '/actuator': {
-          socketGateway.server.emit('newStatus', parseMessage);
+          socketGateway.emitToGarden(
+            // device.gardenId.toString(),
+            '1',
+            'newStatus',
+            parseMessage,
+          );
           return prisma[convertData[device.type]].create({
             data: {
               status: parseMessage['status'],

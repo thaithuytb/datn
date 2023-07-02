@@ -9,7 +9,6 @@ import {
 import { DeviceTypeEnum } from "../../types/enum.type";
 import { useNavigate, useParams } from "react-router-dom";
 import { DeviceContext } from "../../contexts/DeviceContext";
-import socketIOClient, { Socket } from "socket.io-client";
 import DeviceApi from "../../api/device";
 import { MessageContext } from "../../contexts/MessageContext";
 import {
@@ -27,6 +26,7 @@ import GardenApi from "../../api/garden";
 import Threshold from "./Threshold";
 import { ColumnsType } from "antd/es/table";
 import { getMeasuredAndStatusDevice } from "../../common/status-device";
+import { SocketContext } from "../../contexts/SocketContext";
 
 interface DataType {
   stt: any;
@@ -230,9 +230,7 @@ const ViewEmpty: React.FC<IViewEmpty> = ({ selectGarden, itemsOption }) => {
   );
 };
 
-export default function StatusDevices() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [socket, setSocket] = useState<Socket | null>(null);
+export default function StatusGardens() {
   const [message, setMessage] = useState<any>(null);
   const navigate = useNavigate();
   const deviceContext = useContext(DeviceContext);
@@ -254,26 +252,39 @@ export default function StatusDevices() {
   const dateFormat = "DD-MM-YYYY";
   const [garden, setGarden] = useState<any>();
   const [dataTable, setDataTable] = useState<any>();
+  const socketContext = useContext(SocketContext);
+  const socket = socketContext?.socket;
 
-  console.log({ devices });
+  useEffect(() => {
+    if (socket) {
+      socket.on("newStatus", (data: any) => {
+        setMessage(data);
+        messageContext?.success("Cập nhập trạng thái mới thành công !!!");
+      });
+      socket.on("newStatusGarden", (data: any) => {
+        if (data) {
+          //update lại toàn bộ khu vườn
+          setGardens((gardens: any) =>
+            gardens?.map((garden: any) => {
+              if (garden.id === data.gardenId) {
+                return {
+                  ...garden,
+                  isAuto: data.isAuto,
+                };
+              }
+              return garden;
+            })
+          );
+        }
+        messageContext?.success("Cập nhập trạng thái mới thành công !!!");
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
 
   useEffect(() => {
     //lấy toàn bộ khu vườn
     gardenContext?.getGardens();
-
-    //setup socket
-    const socket = socketIOClient(
-      process.env.SERVER_WEB_SOCKET || "http://localhost:7000/device"
-    );
-    setSocket(socket);
-    socket.on("newStatus", (data) => {
-      setMessage(data);
-      messageContext?.success("Cập nhập trạng thái mới thành công !!!");
-    });
-    return () => {
-      socket.disconnect();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //refreshtUrl
@@ -287,34 +298,6 @@ export default function StatusDevices() {
         isAuto: newGarden.isAuto,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gardens]);
-
-  //nhận lại socket khi thay đổi chế độ
-  useEffect(() => {
-    const socket = socketIOClient(
-      process.env.SERVER_WEB_SOCKET || "http://localhost:7000/device"
-    );
-    socket.on("newStatusGarden", (data) => {
-      if (data) {
-        const newgardens = gardens?.map((garden) => {
-          if (garden.id === data.gardenId) {
-            return {
-              ...garden,
-              isAuto: data.isAuto,
-            };
-          }
-          return garden;
-        });
-        //update lại toàn bộ khu vườn
-        setGardens(newgardens);
-      }
-      messageContext?.success("Cập nhập trạng thái mới thành công !!!");
-    });
-
-    return () => {
-      socket.disconnect();
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gardens]);
 
@@ -333,7 +316,7 @@ export default function StatusDevices() {
         ...item,
         isAuto: garden.isAuto,
       });
-      navigate(`/status-devices/${item.id}`);
+      navigate(`/status-gardens/${item.id}`);
     } else {
       // setLisUser([]);
     }

@@ -4,7 +4,8 @@ import { GardenContext } from "../../contexts/GardenContext";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import GardenDevicesTable from "../../components/GardenDevicesTable";
 import { ColumnsType } from "antd/es/table";
-import { Select } from "antd";
+import { Select, SelectProps } from "antd";
+import { ViewEmpty } from "../ManagementWorker";
 
 export interface ColumnNameDeviceGarden {
   stt?: number;
@@ -39,7 +40,7 @@ export default function ListDevice() {
   const gardenContext = useContext(GardenContext);
   const gardenDetail = gardenContext?.gardenDetail;
   const gardens = gardenContext?.gardens;
-  console.log(gardens)
+  console.log(gardens);
 
   // danh sách khu vườn--------------------------
 
@@ -50,50 +51,54 @@ export default function ListDevice() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gardenId]);
 
-  useEffect(() => {
-    if (gardens?.length) {
-      navigate(`/list-device/${gardens[0].id}`);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gardens]);
+  const itemsOption: SelectProps["options"] =
+    gardens?.map((garden) => ({
+      id: garden.id,
+      value: garden.name,
+      label: garden.name,
+    })) || [];
+
+  const selectGarden = async (value: any, item: any) => {};
 
   useEffect(() => {
     gardenContext?.getGardens();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const selectGarden = () => {
-  };
-
   return (
-    <div className="list_device">
-      <header>
-        <label>Danh sách thiết bị theo khu vườn: </label>
-        <Select
-          style={{ width: 200 }}
-          // defaultValue={}
-          onChange={selectGarden}
-          options={[
-            {
-              value: "Tất cả",
-              label: "Tất cả"
-            },
-          ]}
-          placeholder={"Chọn khu vườn"}
-        />
-      </header>
-
-      {gardenId && gardenDetail && (
-        <div className="list_device_detail">
-          <div className="list_device_detail_title">
-            Danh sách thiết bị
-          </div>
-          <GardenDevicesTable
-            columns={columns}
-            devices={gardenDetail.devices}
-          />
-        </div>
+    <div>
+      {gardens ? (
+        <ViewEmpty selectGarden={selectGarden} itemsOption={itemsOption} />
+      ) : (
+        "sss"
       )}
     </div>
+    // <div className="list_device">
+    //   <header>
+    //     <label>Chon khu vườn: </label>
+    //     <Select
+    //       style={{ width: 200 }}
+    //       // defaultValue={}
+    //       onChange={selectGarden}
+    //       options={[
+    //         {
+    //           value: "Tất cả",
+    //           label: "Tất cả",
+    //         },
+    //       ]}
+    //       placeholder={"Chọn khu vườn"}
+    //     />
+    //   </header>
+
+    //   {gardenId && gardenDetail && (
+    //     <div className="list_device_detail">
+    //       <div className="list_device_detail_title">Danh sách thiết bị</div>
+    //       <GardenDevicesTable
+    //         columns={columns}
+    //         devices={gardenDetail.devices}
+    //       />
+    //     </div>
+    //   )}
+    // </div>
   );
 }

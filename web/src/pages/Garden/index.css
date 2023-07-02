@@ -1,7 +1,5 @@
 .garden {
 	padding: 15px 25px;
-	display: flex;
-	width: 70%;
 }
 
 .garden_header p {
@@ -31,4 +29,16 @@
 .garden .garden_header p span:first-child {
 	font-size: 18px;
 	margin-bottom: 5px;
+}
+
+.garden_header h3 {
+	font-weight: 400;
+	color: rgb(14, 13, 13) !important;
+}
+
+.garden_header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 20px;
 }

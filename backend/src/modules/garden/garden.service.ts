@@ -74,13 +74,17 @@ export class GardenService {
               },
             },
           },
+          include: {
+            devices: true,
+            users: true,
+          },
         }
-      : {};
-    query.select = {
-      id: true,
-      name: true,
-      isAuto: true,
-    };
+      : {
+          include: {
+            devices: true,
+            users: true,
+          },
+        };
     const gardens = await this.gardenRepository.getGardens(query);
     return responseSuccess(200, gardens);
   }
@@ -96,7 +100,7 @@ export class GardenService {
         this.mqttService.sendMessage(
           `datn/${topic}/regime`,
           JSON.stringify({
-            from: 'web',
+            // from: 'web',
             gardenId,
             isAuto,
             time,

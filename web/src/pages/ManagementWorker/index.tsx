@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import "./index.css";
 import { GardenContext } from "../../contexts/GardenContext";
 import { AuthContext } from "../../contexts/AuthContext";
-import { MessageContext } from "../../contexts/MessageContext";
 import AuthApi from "../../api/auth";
 import { Button, Modal, Select, SelectProps, Space, Table, Empty } from "antd";
 import { ExclamationCircleFilled, SearchOutlined } from "@ant-design/icons";
@@ -10,12 +9,6 @@ import { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { useNavigate, useParams } from "react-router-dom";
 import dayjs from "dayjs";
 const { confirm } = Modal;
-
-// const roleUser = {
-//   MANAGER: "Quản lý",
-//   USER: "Nhân viên",
-//   VIEWER: "Người xem",
-// };
 
 interface DataType {
   stt: any;
@@ -38,7 +31,7 @@ interface IShowModal {
     | undefined;
 }
 
-interface IViewEmpty {
+export interface IViewEmpty {
   selectGarden: any;
   itemsOption: any;
 }
@@ -60,7 +53,10 @@ const showDeleteConfirm = () => {
   });
 };
 
-const ViewEmpty: React.FC<IViewEmpty> = ({ selectGarden, itemsOption }) => {
+export const ViewEmpty: React.FC<IViewEmpty> = ({
+  selectGarden,
+  itemsOption,
+}) => {
   return (
     <Empty
       image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
@@ -349,8 +345,7 @@ const ManagementWorker = () => {
       ? [
           ...columns,
           {
-            title: "",
-            dataIndex: "",
+            title: "Thao tác",
             render: (_, record) =>
               listUser.length > 0 ? (
                 <>
