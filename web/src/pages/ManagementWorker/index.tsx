@@ -389,7 +389,7 @@ const ManagementWorker = () => {
 
   return (
     <>
-      {gardens && !garden ? (
+      {!gardenId ? (
         <ViewEmpty selectGarden={selectGarden} itemsOption={itemsOption} />
       ) : (
         <div className="ManagementWorker">

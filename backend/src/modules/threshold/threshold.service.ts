@@ -32,7 +32,7 @@ export class ThresholdService {
     return responseSuccess(200, { thresholds });
   }
 
-  async changeThreshold(dto: ChangeThresholdDto) {
+  async changeThreshold(dto: ChangeThresholdDto, userId: number) {
     const topic = await this.redis.get('newTopic');
     if (topic) {
       this.mqttService.sendMessage(
@@ -40,6 +40,7 @@ export class ThresholdService {
         JSON.stringify({
           // from: 'web',
           ...dto,
+          createdBy: userId,
         }),
       );
       return true;

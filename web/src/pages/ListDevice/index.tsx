@@ -1,11 +1,11 @@
 import "./index.css";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GardenContext } from "../../contexts/GardenContext";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import GardenDevicesTable from "../../components/GardenDevicesTable";
-import { ColumnsType } from "antd/es/table";
+import { useNavigate, useParams } from "react-router-dom";
+import Table, { ColumnsType } from "antd/es/table";
 import { Select, SelectProps } from "antd";
 import { ViewEmpty } from "../ManagementWorker";
+import { DeviceContext } from "../../contexts/DeviceContext";
 
 export interface ColumnNameDeviceGarden {
   stt?: number;
@@ -35,30 +35,53 @@ const columns: ColumnsType<ColumnNameDeviceGarden> = [
 ];
 
 export default function ListDevice() {
+  const deviceContext = useContext(DeviceContext)
+  const getDevicesByGardenId = deviceContext?.getDevicesByGardenId;
+  
+  const devices = deviceContext?.devices;
+  const setDevices = deviceContext?.setDevices;
   const { gardenId } = useParams();
   const navigate = useNavigate();
   const gardenContext = useContext(GardenContext);
   const gardenDetail = gardenContext?.gardenDetail;
   const gardens = gardenContext?.gardens;
-  console.log(gardens);
-
-  // danh sách khu vườn--------------------------
+  const [listDevice, setListDevice] = useState<ColumnNameDeviceGarden[]>()
+  const [garden, setGarden] = useState<any>();
+  console.log(gardenDetail)
 
   useEffect(() => {
-    if (gardenId) {
-      gardenContext?.getGardenById(gardenId);
+    if (devices) {
+      setListDevice(devices)
+    }
+  }, [devices]);
+
+  useEffect(() => {
+    if (gardenId && getDevicesByGardenId) {
+      getDevicesByGardenId(gardenId)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gardenId]);
 
   const itemsOption: SelectProps["options"] =
-    gardens?.map((garden) => ({
+    gardens?.map((garden, index: number) => ({
       id: garden.id,
       value: garden.name,
       label: garden.name,
     })) || [];
 
-  const selectGarden = async (value: any, item: any) => {};
+  //navigate đến khu vườn
+  const selectGarden = (value: any, item: any) => {
+    const garden = gardens?.find((garden) => garden.id === item.id);
+    if (garden) {
+      setGarden({
+        ...item,
+        isAuto: garden.isAuto,
+      });
+      navigate(`/management-devices/${item.id}`);
+    } else {
+      // setLisUser([]);
+    }
+  };
 
   useEffect(() => {
     gardenContext?.getGardens();
@@ -67,38 +90,31 @@ export default function ListDevice() {
 
   return (
     <div>
-      {gardens ? (
+      {gardens && !garden ? (
         <ViewEmpty selectGarden={selectGarden} itemsOption={itemsOption} />
       ) : (
-        "sss"
+        <div className="list_device">
+          <header>
+            <label>Chọn khu vườn: </label>
+            <Select
+              style={{ width: 200 }}
+              value={garden}
+              onChange={selectGarden}
+              options={itemsOption}
+              placeholder={"Chọn khu vườn"}
+            />
+          </header>
+          <div className="list_device_detail">
+            <div className="list_device_detail_title">Danh sách thiết bị</div>
+            <Table
+              bordered={true}
+              columns={columns}
+              dataSource={listDevice}
+            />
+          </div>
+
+        </div>
       )}
     </div>
-    // <div className="list_device">
-    //   <header>
-    //     <label>Chon khu vườn: </label>
-    //     <Select
-    //       style={{ width: 200 }}
-    //       // defaultValue={}
-    //       onChange={selectGarden}
-    //       options={[
-    //         {
-    //           value: "Tất cả",
-    //           label: "Tất cả",
-    //         },
-    //       ]}
-    //       placeholder={"Chọn khu vườn"}
-    //     />
-    //   </header>
-
-    //   {gardenId && gardenDetail && (
-    //     <div className="list_device_detail">
-    //       <div className="list_device_detail_title">Danh sách thiết bị</div>
-    //       <GardenDevicesTable
-    //         columns={columns}
-    //         devices={gardenDetail.devices}
-    //       />
-    //     </div>
-    //   )}
-    // </div>
   );
 }

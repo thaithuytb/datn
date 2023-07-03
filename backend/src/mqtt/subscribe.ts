@@ -1,12 +1,21 @@
-import { PrismaClient, ThresholdNameEnum } from '@prisma/client';
+import {
+  NotificationType,
+  PrismaClient,
+  ThresholdNameEnum,
+} from '@prisma/client';
 import * as mqtt from 'mqtt';
 import { newTopicJWT } from '../common/setJwtMqtt';
 import { uuid } from 'uuidv4';
 import { Redis } from 'ioredis';
 import { SocketGateway } from '../socket/socket.gateway';
 import { convertData } from '../modules/device/device.service';
+import { NotificationService } from '../modules/notification/notification.service';
+import * as dayjs from 'dayjs';
 
-export async function subscribeMqtt(socketGateway: SocketGateway) {
+export async function subscribeMqtt(
+  socketGateway: SocketGateway,
+  notificationService: NotificationService,
+) {
   const prisma = new PrismaClient();
 
   const redis = new Redis({
@@ -73,6 +82,7 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
           JSON.stringify({
             from: 'web',
             isAuto: garden.isAuto,
+            first: true,
           }),
         );
         for (const statusDevice of statusDevices) {
@@ -81,6 +91,7 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
             JSON.stringify({
               from: 'web',
               ...statusDevice,
+              first: true,
             }),
           );
         }
@@ -92,6 +103,7 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
               lowThreshold: JSON.parse(threshold.lowThreshold.toString()),
               highThreshold: JSON.parse(threshold.highThreshold.toString()),
               name: threshold.name,
+              first: true,
             }),
           );
         }
@@ -107,7 +119,27 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
         parseMessage,
       );
       console.log('regime', parseMessage);
-      return updateStatusGarden(prisma, parseMessage);
+      await updateStatusGarden(prisma, parseMessage);
+      if (typeof parseMessage['createdBy'] != 'number') {
+        return console.log(`${parseMessage['createdBy']} is not number`);
+      }
+      const newNotification = await notificationService.createNotifications({
+        title: `Thay đổi trạng thái khu vườn`,
+        description: `Thay đổi trạng thái khu vườn ${dayjs().format(
+          'YYYY-MM-DD',
+        )}`,
+        type: NotificationType.GARDEN,
+        createdBy: parseMessage['createdBy'],
+        // createdBy: 1,
+        gardenId: parseInt(parseMessage['gardenId']),
+      });
+      if (newNotification) {
+        socketGateway.emitToGarden(
+          parseMessage['gardenId'].toString(),
+          'newCountNotification',
+          parseMessage,
+        );
+      }
     }
 
     if (topic.slice(15) === '/threshold') {
@@ -116,8 +148,27 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
         'newThreshold',
         parseMessage,
       );
-      console.log('threshold', parseMessage);
-      return updateThreshold(prisma, parseMessage);
+      await updateThreshold(prisma, parseMessage);
+      if (typeof parseMessage['createdBy'] != 'number') {
+        return console.log(`${parseMessage['createdBy']} is not number`);
+      }
+      const newNotification = await notificationService.createNotifications({
+        title: `Thay đổi ngưỡng thiết bị`,
+        description: `Thay đổi ngưỡng thiết bị ngày ${dayjs().format(
+          'YYYY-MM-DD',
+        )}`,
+        type: NotificationType.DEVICE,
+        createdBy: parseMessage['createdBy'],
+        // createdBy: 1,
+        gardenId: parseInt(parseMessage['gardenId']),
+      });
+      if (newNotification) {
+        socketGateway.emitToGarden(
+          parseMessage['gardenId'].toString(),
+          'newCountNotification',
+          parseMessage,
+        );
+      }
     }
 
     if (topic.slice(15) === '/sensor' || topic.slice(15) === '/actuator') {

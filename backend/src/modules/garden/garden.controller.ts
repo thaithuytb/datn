@@ -23,9 +23,9 @@ export class GardenController {
     @Body('dto')
     dto: ChangeStatusGardenDto,
     @Param('gardenId', ParseIntPipe) gardenId: number,
+    @Req() req: any,
   ) {
-    console.log({ dto });
-    return this.gardenService.changeStatusGarden(dto, gardenId);
+    return this.gardenService.changeStatusGarden(dto, gardenId, req.user.id);
   }
 
   @Get()

@@ -3,8 +3,8 @@ import { PrismaClient } from '@prisma/client';
 export async function createGarden(prisma: PrismaClient) {
   const garden = await prisma.garden.create({
     data: {
-      name: 'Khu vuon A',
-      address: 'Thái Thụy, Thái Bình',
+      name: 'Khu vườn datn',
+      address: 'Đại học Bách Khoa Hà Nội',
       width: 20,
       length: 40,
       hight: 20,

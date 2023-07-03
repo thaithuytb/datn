@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { RoleGardenGuard } from '../../guards/roleGardenGuard';
@@ -27,7 +28,8 @@ export class ThresholdController {
   async changeThreshold(
     @Body('dto')
     dto: ChangeThresholdDto,
+    @Req() req: any,
   ) {
-    return this.thresholdService.changeThreshold(dto);
+    return this.thresholdService.changeThreshold(dto, req.user.id);
   }
 }

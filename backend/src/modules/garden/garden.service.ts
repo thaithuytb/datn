@@ -92,6 +92,7 @@ export class GardenService {
   async changeStatusGarden(
     dto: ChangeStatusGardenDto,
     gardenId: number,
+    userId: number,
   ): Promise<boolean> {
     const { time, isAuto } = dto;
     const topic = await this.redis.get('newTopic');
@@ -104,6 +105,7 @@ export class GardenService {
             gardenId,
             isAuto,
             time,
+            createdBy: userId,
           }),
         );
         return true;
@@ -111,9 +113,10 @@ export class GardenService {
         this.mqttService.sendMessage(
           `datn/${topic}/regime`,
           JSON.stringify({
-            from: 'web',
+            // from: 'web',
             gardenId,
             isAuto,
+            createdBy: userId,
           }),
         );
         return true;

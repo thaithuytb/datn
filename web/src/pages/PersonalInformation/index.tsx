@@ -1,5 +1,5 @@
 import { Button, Form, Input, Radio } from "antd";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { MessageContext } from "../../contexts/MessageContext";
 import AuthApi from "../../api/auth";
@@ -7,8 +7,7 @@ import Avatar from "../../components/Avatar";
 import FileApi from "../../api/file";
 
 export default function PersonalInformation() {
-  const [file, setFile] = useState<File>();
-  const [result, setResult] = useState(null);
+  const [urlImage, setUrlImage] = useState<string | null>();
   const authContext = useContext(AuthContext);
   const user = authContext?.authInformation.user;
   const setAuthInformation = authContext?.setAuthInformation;
@@ -22,22 +21,9 @@ export default function PersonalInformation() {
     id: user.id,
     gender: user.gender,
     dateCreateAccount: user.createdAt,
-    dateOfBrith: `${dateOfBrith.getDate()}-${
-      dateOfBrith.getMonth() + 1
-    }-${dateOfBrith.getFullYear()}`,
+    dateOfBrith: `${dateOfBrith.getDate()}-${dateOfBrith.getMonth() + 1
+      }-${dateOfBrith.getFullYear()}`,
   };
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const fileApi = new FileApi();
-        const res = await fileApi.uploadAvatar(file);
-        console.log(res);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, [file]);
 
   const updateInformation = async (values: any) => {
     const { id, fullName, email, phoneNumber, address, gender, createdAt } =
@@ -66,15 +52,12 @@ export default function PersonalInformation() {
   };
 
   //xử lý ảnh
-  const uploader = (event: any) => {
-    const reader = new FileReader();
+  const uploader = async (event: any) => {
     if (event.target.files[0]) {
-      setFile(event.target.files[0]);
-
-      reader.readAsDataURL(event.target.files[0]);
-      reader.onload = (event: any) => {
-        setResult(event.target.result);
-      };
+      const fileApi = new FileApi();
+      const res = await fileApi.uploadAvatar(event.target.files[0]);
+      console.log(res);
+      // setUrlImage('')
     }
   };
 
@@ -89,7 +72,7 @@ export default function PersonalInformation() {
     >
       <label htmlFor="avatar">
         {/* {result && <Avatar />} */}
-        <Avatar width="100px" url={result || ""} />
+        <Avatar width="100px" url={urlImage || ''} />
       </label>
       <input
         type="file"

@@ -13,6 +13,7 @@ import { DEVICE_TYPE } from "../../types/device.type";
 import ThresholdApi from "../../api/threshold";
 import { MessageContext } from "../../contexts/MessageContext";
 import { SocketContext } from "../../contexts/SocketContext";
+import { NotificationContext } from "../../contexts/NotificationContext";
 
 const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,6 +24,9 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
   const socketContext = useContext(SocketContext);
   const socket = socketContext?.socket;
   const setThresholds = deviceContext?.setThresholds;
+  const notificationContext = useContext(NotificationContext)
+  const count = notificationContext?.count
+  const setCount = notificationContext?.setCount
 
   const [onChangeThresholdSlider, setOnChangeThresholdSlider] = useState({
     LIGHTSENSOR: {
@@ -53,6 +57,16 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
         // setThresholds(data);
         messageContext?.success("Thay đổi ngưỡng thành công !!!");
       });
+      // socket.on("newCountNotification", (data: any) => {
+      //   if (data) {
+      //     setCount((count: number) => count + 1)
+      //   }
+      // });
+      //note return
+      return () => {
+        socket.off("newThreshold");
+        // socket.off("newCountNotification")
+      };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);

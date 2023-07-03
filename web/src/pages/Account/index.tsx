@@ -1,5 +1,5 @@
 import "./index.css";
-import { ColumnsType } from "antd/es/table";
+import { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { Button, Input, Modal, Table } from "antd";
 import { useEffect, useState } from "react";
 import AuthApi from "../../api/auth";
@@ -46,6 +46,8 @@ const Account = () => {
   const [account, setAccount] = useState<InformationAccount>();
   const [listAccount, setListAccount] = useState<InformationAccount[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [totalPage, setTotalPage] = useState<number>();
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   //navigate create account
   const create = () => {
@@ -103,16 +105,22 @@ const Account = () => {
     },
   ];
 
+  //thay đổi page
+  const changPagination = async (pagination: TablePaginationConfig) => {
+    setCurrentPage(Number(pagination.current));
+    await getAccount(pagination.current);
+  };
   const showModal = (record: any) => {
     setAccount(record);
     setIsModalOpen(true);
   };
 
-  const getAccount = async (page?: number | undefined, limit: number = 10) => {
+  const getAccount = async (page?: number | undefined, limit: number = 6) => {
     const dto = { page };
     try {
       const authApi = AuthApi.registerAuthApi();
       const res = await authApi.getUsers(dto);
+      setTotalPage(res?.data?.totalRecords)
       let stt = 0;
       if (page) {
         stt = (page - 1) * limit;
@@ -121,7 +129,7 @@ const Account = () => {
       const data = res?.data?.users.map(({ user }: any, index: number) => {
         return {
           key: index,
-          stt: (stt += 1),
+          stt: index + 1+ stt,
           id: user.id,
           fullName: user.fullName,
           email: user.email,
@@ -135,7 +143,7 @@ const Account = () => {
         };
       });
       setListAccount(data);
-    } catch (error) {}
+    } catch (error) { }
   };
   useEffect(() => {
     getAccount(1);
@@ -160,13 +168,13 @@ const Account = () => {
       </div>
 
       <Table
-        //   onChange={changPagination}
+        onChange={changPagination}
         bordered={true}
-        //   pagination={{
-        //     pageSize: 7,
-        //     total: totalPage,
-        //     current: currentPage
-        //   }}
+        pagination={{
+          pageSize: 6,
+          total: totalPage,
+          current: currentPage
+        }}
         columns={columns}
         dataSource={listAccount}
       />

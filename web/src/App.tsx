@@ -22,6 +22,7 @@ import ProtectedMain from "./routes/protectedMain";
 import Account from "./pages/Account";
 import UpdateAccount from "./pages/Account/Update";
 import { SocketProvider } from "./contexts/SocketContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
 
 const RouteMain = () => {
   return (
@@ -106,22 +107,24 @@ const RouteMain = () => {
 
 const App = () => {
   return (
-    <SocketProvider>
-      <AuthContextProvider>
-        <MessageContextProvider>
-          <GardenContextProvider>
-            <DeviceContextProvider>
-              <div className="app">
-                <Routes>
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/*" element={<RouteMain />} />
-                </Routes>
-              </div>
-            </DeviceContextProvider>
-          </GardenContextProvider>
-        </MessageContextProvider>
-      </AuthContextProvider>
-    </SocketProvider>
+    <NotificationProvider>
+      <SocketProvider>
+        <AuthContextProvider>
+          <MessageContextProvider>
+            <GardenContextProvider>
+              <DeviceContextProvider>
+                <div className="app">
+                  <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/*" element={<RouteMain />} />
+                  </Routes>
+                </div>
+              </DeviceContextProvider>
+            </GardenContextProvider>
+          </MessageContextProvider>
+        </AuthContextProvider>
+      </SocketProvider>
+    </NotificationProvider>
   );
 };
 

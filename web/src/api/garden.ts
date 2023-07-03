@@ -20,6 +20,13 @@ class GardenApi {
     return axiosClient.post(url, { dto: dto.body }) as unknown as ApiResponse;
   }
 
+  deleteGarden(dto: {
+    id: number;
+  }) {
+    const url = `/gardens/delete`;
+    return axiosClient.post(url, { dto }) as unknown as ApiResponse;
+  }
+
   static registerAuthApi() {
     return new GardenApi();
   }

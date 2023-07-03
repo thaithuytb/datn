@@ -8,68 +8,26 @@ import Avatar from "../../components/Avatar";
 import React, { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { colorHeader } from "../../types/variableMain";
-const listNoti = [
-  {
-    id: 0,
-    title: "Thông báo 1",
-    content: "Nội dung thông báo 1.Nội dung thông báo 1.Nội dung thông báo 1.Nội dung thông báo 1.Nội dung thông báo 1.Nội dung thông báo 1.",
-    url: "notification",
-    status: false
-  },
-  {
-    id: 1,
-    title: "Thông báo 2",
-    content: "Nội dung thông báo 2.Nội dung thông báo 2.Nội dung thông báo 2.",
-    url: "notification",
-    status: true
-  },
-  {
-    id: 2,
-    title: "Thông báo 3",
-    content: "Nội dung thông báo 3.Nội dung thông báo 3.Nội dung thông báo 3.",
-    url: "notification",
-    status: false
-  },
-  {
-    id: 3,
-    title: "Thông báo 4",
-    content: "Nội dung thông báo 4.Nội dung thông báo 4.Nội dung thông báo 4.",
-    url: "notification",
-    status: true
-  },
-  {
-    id: 4,
-    title: "Thông báo 5",
-    content: "Nội dung thông báo 5.Nội dung thông báo 5.Nội dung thông báo 5.",
-    url: "notification",
-    status: false
-  },
-  {
-    id: 5,
-    title: "Thông báo 6",
-    content: "Nội dung thông báo 5.Nội dung thông báo 5.Nội dung thông báo 5.",
-    url: "notification",
-    status: false
-  },
-  {
-    id: 6,
-    title: "Thông báo 7",
-    content: "Nội dung thông báo 5.Nội dung thông báo 5.Nội dung thông báo 5.",
-    url: "notification",
-    status: false
-  },
-]
+import { NotificationContext } from "../../contexts/NotificationContext";
+import { INotification } from "../../contexts/NotificationContext";
 
-function ItemNotification(props: any) {
-  const { title, content, url, status } = props
+interface IItemNotification {
+  noti: INotification
+
+}
+
+const ItemNotification: React.FC<IItemNotification> = ({ noti }) => {
+  // const { title, content, url, status } = props
+  const notification = noti.notification
+  const notificationStatus = noti.notificationStatus
   return (
-    <div style={{ borderBottom: "1px solid #beb9b9e0", display: "flex", justifyContent: "space-between" }}>
-      <Link to={url} style={{ color: "black" }}>
-        <h5 style={{ margin: "0" }}>{title}</h5>
-        <div>{content}</div>
+    <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div>
+        <h3 style={{ margin: "0" }}>{notification.title}</h3>
+        <div>{notification.description}</div>
         <div style={{ fontSize: "0.7rem", color: `${colorHeader}` }}>11/11/2001</div>
-      </Link>
-      {!status && <div style={{ display: 'flex', alignItems: "center", color: "rgb(149, 200, 230)" }}>o</div>}
+      </div>
+      {!notificationStatus.seen && <div style={{ display: 'flex', alignItems: "center", color: "rgb(149, 200, 230)" }}>o</div>}
     </div>
   );
 }
@@ -87,17 +45,8 @@ function ItemProfile() {
     </Link>
   );
 }
-const items: MenuProps["items"] = listNoti.map(noti => {
-  return (
-    {
-      label: (<ItemNotification title={noti.title} content={noti.content} url={noti.url} status={noti.status} />),
-      key: noti.id,
-      // style: noti.status ? { backgroundColor: '#ebeaea' } : {},
-    }
-  )
-}
-)
 
+//danh sách private
 const items2: MenuProps["items"] = [
   {
     label: ItemProfile(),
@@ -108,17 +57,12 @@ const { useToken } = theme;
 
 
 export default function HeaderLayout() {
-
   const authContext = useContext(AuthContext)
+  const notificationContext = useContext(NotificationContext)
+  const notifications = notificationContext?.notifications
+  const count = notificationContext?.count
 
   const name = authContext?.authInformation?.user?.fullName || "user"
-  let count = 0
-  listNoti.map(noti => {
-    if (noti.status !== true) {
-      count += 1
-    }
-    return count
-  })
 
   const { token } = useToken();
   const contentStyle = {
@@ -130,6 +74,19 @@ export default function HeaderLayout() {
   const menuStyle = {
     boxShadow: 'none',
   };
+
+  //danh sách thông báo
+  const items: MenuProps["items"] = notifications.map((noti: INotification) => {
+    return (
+      {
+        label: (<ItemNotification noti={noti} />),
+        key: noti.notification.id,
+        style: !noti.notificationStatus.seen ? { backgroundColor: '#aaaaaa' } : {},
+      }
+    )
+  }
+  )
+
   return (
     <Header className="header">
       <div className="header_left">

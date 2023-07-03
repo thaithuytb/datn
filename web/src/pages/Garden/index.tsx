@@ -1,14 +1,16 @@
+//Warning đang bị ở file này
 import "./index.css";
-import { useParams } from "react-router-dom";
 import Table, { ColumnsType } from "antd/es/table";
 import { useContext, useEffect } from "react";
-import GardenDevicesTable from "../../components/GardenDevicesTable";
 import { GardenContext } from "../../contexts/GardenContext";
-import { Link } from "react-router-dom";
 import dayjs from "dayjs";
-import { Button } from "antd";
+import { Button, Modal } from "antd";
+import GardenApi from "../../api/garden";
+import { ExclamationCircleFilled } from "@ant-design/icons";
+const { confirm } = Modal;
 
 export default function Garden() {
+  const gardenApi = GardenApi.registerAuthApi();
   const gardenContext = useContext(GardenContext);
   const gardens = gardenContext?.gardens;
   const getGardens = gardenContext?.getGardens;
@@ -17,7 +19,26 @@ export default function Garden() {
     if (getGardens) {
       getGardens();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  //xóa khu vườn
+  const showDeleteConfirm = (value: any) => {
+    confirm({
+      title: "Bạn có muốn tiếp tục xóa",
+      icon: <ExclamationCircleFilled />,
+      content: 'ấn "Cancel" để hủy',
+      okText: "Xóa",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk() {
+        gardenApi.deleteGarden({ id: value.id });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
 
   const columns: ColumnsType<any> = [
     {
@@ -72,11 +93,16 @@ export default function Garden() {
           <Button type="primary" ghost>
             Cập nhật
           </Button>
-          <Button style={{ marginLeft: "0.5rem" }} danger>
+          <Button
+            onClick={() => showDeleteConfirm(record)}
+            style={{ marginLeft: "0.5rem" }}
+            danger
+          >
             Xóa
           </Button>
         </>
       ),
+      align: "center",
     },
   ];
 

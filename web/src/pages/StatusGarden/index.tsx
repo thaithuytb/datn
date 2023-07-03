@@ -27,6 +27,7 @@ import Threshold from "./Threshold";
 import { ColumnsType } from "antd/es/table";
 import { getMeasuredAndStatusDevice } from "../../common/status-device";
 import { SocketContext } from "../../contexts/SocketContext";
+import { NotificationContext } from "../../contexts/NotificationContext";
 
 interface DataType {
   stt: any;
@@ -97,7 +98,7 @@ const ShowModal: React.FC<IShowModal> = ({
         await gardenApi.changeStatusGarden(dto);
         setIsModalOpen(false);
         setTimeRemaining("00:00");
-      } catch (error) {}
+      } catch (error) { }
     }
   };
   const handleCancel = () => {
@@ -255,36 +256,51 @@ export default function StatusGardens() {
   const socketContext = useContext(SocketContext);
   const socket = socketContext?.socket;
 
+  const notificationContext = useContext(NotificationContext)
+  const count = notificationContext?.count
+  const setCount = notificationContext?.setCount
+  console.log("count: ", count)
+
   useEffect(() => {
-    if (socket) {
-      socket.on("newStatus", (data: any) => {
-        setMessage(data);
-        messageContext?.success("Cập nhập trạng thái mới thành công !!!");
-      });
-      socket.on("newStatusGarden", (data: any) => {
-        if (data) {
-          //update lại toàn bộ khu vườn
-          setGardens((gardens: any) =>
-            gardens?.map((garden: any) => {
-              if (garden.id === data.gardenId) {
-                return {
-                  ...garden,
-                  isAuto: data.isAuto,
-                };
-              }
-              return garden;
-            })
-          );
-        }
-        messageContext?.success("Cập nhập trạng thái mới thành công !!!");
-      });
-    }
+    socket.on("newStatus", (data: any) => {
+      setMessage(data);
+      messageContext?.success("Cập nhập trạng thái mới thành công !!!");
+    });
+    socket.on("newStatusGarden", (data: any) => {
+      if (data) {
+        //update lại toàn bộ khu vườn
+        setGardens((gardens: any) =>
+          gardens?.map((garden: any) => {
+            if (garden.id === data.gardenId) {
+              return {
+                ...garden,
+                isAuto: data.isAuto,
+              };
+            }
+            return garden;
+          })
+        );
+
+      }
+      messageContext?.success("Cập nhập trạng thái mới thành công !!!");
+    });
+    socket.on("newCountNotification", (data: any) => {
+      if (data) {
+        setCount((count: number) => count + 1)
+      }
+    });
+    //note return
+    return () => {
+      socket.off("newStatus");
+      socket.off("newStatusGarden");
+      socket.off("newCountNotification")
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
-
   useEffect(() => {
     //lấy toàn bộ khu vườn
     gardenContext?.getGardens();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //refreshtUrl
@@ -340,7 +356,7 @@ export default function StatusGardens() {
   useEffect(() => {
     if (devices && message) {
       const newDevices = devices.map((device: Device) => {
-        if (device.id === message.deviceId) {
+        if (device.ip === message.ip) {
           return {
             ...device,
             valueDevice: message,
@@ -412,40 +428,41 @@ export default function StatusGardens() {
   columns =
     garden && !garden.isAuto
       ? [
-          ...columns,
-          {
-            title: "Điều khiển thiết bị",
-            dataIndex: "",
-            align: "center",
-            render: (_, record) =>
-              dataTable.length > 0 ? (
-                convertDevice2Type(record.device.type) === "ACTUATOR" &&
+        ...columns,
+        {
+          title: "Điều khiển thiết bị",
+          dataIndex: "",
+          align: "center",
+          render: (_, record) =>
+            dataTable.length > 0 ? (
+              convertDevice2Type(record.device.type) === "ACTUATOR" &&
                 record.device.status ? (
-                  record.device.valueDevice?.status ? (
-                    <button
-                      className="control_device"
-                      onClick={() => changeStatusDevice(record.device)}
-                    >
-                      Tắt
-                    </button>
-                  ) : (
-                    <button
-                      className="control_device"
-                      onClick={() => changeStatusDevice(record.device)}
-                    >
-                      Bật
-                    </button>
-                  )
+                record.device.valueDevice?.status ? (
+                  <button
+                    className="control_device"
+                    onClick={() => changeStatusDevice(record.device)}
+                  >
+                    Tắt
+                  </button>
                 ) : (
-                  "Không thể điều khiển"
+                  <button
+                    className="control_device"
+                    onClick={() => changeStatusDevice(record.device)}
+                  >
+                    Bật
+                  </button>
                 )
-              ) : null,
-          },
-        ]
+              ) : (
+                "Không thể điều khiển"
+              )
+            ) : null,
+        },
+      ]
       : columns;
 
   useEffect(() => {
     const newData = devices?.map((device: Device, index: number) => ({
+      key: index,
       stt: index + 1,
       ip: device.ip,
       status: device.status ? (
@@ -461,9 +478,10 @@ export default function StatusGardens() {
     setDataTable(newData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [devices]);
+  console.log(gardenId)
   return (
     <>
-      {gardens && !garden ? (
+      {!gardenId ? (
         <ViewEmpty selectGarden={selectGarden} itemsOption={itemsOption} />
       ) : (
         <>
