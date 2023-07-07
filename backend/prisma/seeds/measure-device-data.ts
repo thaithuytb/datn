@@ -1,4 +1,5 @@
 import { PrismaClient, Garden } from '@prisma/client';
+import * as dayjs from 'dayjs';
 
 export async function createMeasureDeviceData(
   prisma: PrismaClient,
@@ -28,9 +29,12 @@ export async function createMeasureDeviceData(
     promiseList.push(
       prisma.lightData.create({
         data: {
-          value: Math.random() * 1500,
+          value: Math.random() * 5000,
           gardenId: garden.id,
           deviceId: deviceIdLight.id,
+          createdAt: dayjs('2023-07-03')
+            .add(i + Math.random(), 'hour')
+            .toISOString(),
         },
       }),
     );
@@ -43,6 +47,9 @@ export async function createMeasureDeviceData(
           value: Math.random() * 99,
           gardenId: garden.id,
           deviceId: deviceIdHumi.id,
+          createdAt: dayjs('2023-07-03')
+            .add(i + Math.random(), 'hour')
+            .toISOString(),
         },
       }),
     );
@@ -56,6 +63,9 @@ export async function createMeasureDeviceData(
           airHumidity: Math.random() * 100,
           gardenId: garden.id,
           deviceId: deviceIdTempAir.id,
+          createdAt: dayjs('2023-07-03')
+            .add(i + Math.random(), 'hour')
+            .toISOString(),
         },
       }),
     );
