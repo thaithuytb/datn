@@ -44,16 +44,6 @@ interface IShowModal {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
   garden: any;
-  timeRemaining: string;
-  setTimeRemaining: (timeRemaining: string) => void;
-  setDate: (data: string) => void;
-  date: string;
-  setTime: (time: string) => void;
-  time: string;
-  currentTime: any;
-  currentDate: any;
-  timeFormat: any;
-  dateFormat: any;
   gardenId: any;
 }
 
@@ -62,17 +52,15 @@ const ShowModal: React.FC<IShowModal> = ({
   setIsModalOpen,
   gardenId,
   garden,
-  timeRemaining,
-  setTimeRemaining,
-  date,
-  setDate,
-  time,
-  setTime,
-  currentTime,
-  currentDate,
-  timeFormat,
-  dateFormat,
 }) => {
+  const dateFormat =''
+  const timeFormat =''
+  const currentDate = ''
+  const currentTime= ''
+  const [timeRemaining, setTimeRemaining] = useState<string>("00:00");
+
+  const [date, setDate] = useState<string>();
+  const [time, setTime] = useState<string>();
   //hàm thay đổi chế độ
   const handleOk = async () => {
     const isAuto = garden && !garden.isAuto;
@@ -110,7 +98,7 @@ const ShowModal: React.FC<IShowModal> = ({
   const duration = () => {
     const startTime = `${currentDate} ${currentTime}`;
     const endTime = `${date} ${time}`;
-    const dateTimeFormat = "DD-MM-YYYY HH:mm";
+    const dateTimeFormat = "YYY-MM-DD HH:mm";
 
     const startMoment = moment(startTime, dateTimeFormat);
     const endMoment = moment(endTime, dateTimeFormat);
@@ -136,7 +124,9 @@ const ShowModal: React.FC<IShowModal> = ({
   const changeTime = (time: any, timeString: any) => {
     setTime(timeString);
   };
-
+  console.log(currentDate)
+  console.log(dateFormat)
+  // console.log(dayjs(currentDate).format(dateFormat))
   return (
     <Modal
       title="Bạn muốn chuyển chế độ!!!"
@@ -163,15 +153,15 @@ const ShowModal: React.FC<IShowModal> = ({
             <div>
               Date
               <DatePicker
-                defaultValue={dayjs(currentDate, dateFormat)}
+                // defaultValue={dayjs(currentDate, currentDate)}
                 format={dateFormat}
-                onChange={changeDate}
+                onChange={(date, dateString) => changeDate(date, dateString)}
               />
             </div>
             <div style={{ margin: "0 1rem" }}>
               Time
               <TimePicker
-                defaultValue={dayjs(currentTime, timeFormat)}
+                // defaultValue={dayjs(currentTime, timeFormat)}
                 format={timeFormat}
                 onChange={changeTime}
               />
@@ -244,22 +234,13 @@ export default function StatusGardens() {
   const messageContext = useContext(MessageContext);
   const { gardenId } = useParams();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const currentTime = moment().format("HH:mm");
-  const currentDate = moment().format("DD-MM-YYYY");
-  const [date, setDate] = useState<string>(currentDate);
-  const [time, setTime] = useState<string>(currentTime);
-  const [timeRemaining, setTimeRemaining] = useState<string>("00:00");
-  const timeFormat = "HH:mm";
-  const dateFormat = "DD-MM-YYYY";
   const [garden, setGarden] = useState<any>();
   const [dataTable, setDataTable] = useState<any>();
   const socketContext = useContext(SocketContext);
   const socket = socketContext?.socket;
 
   const notificationContext = useContext(NotificationContext)
-  const count = notificationContext?.count
   const setCount = notificationContext?.setCount
-  console.log("count: ", count)
 
   useEffect(() => {
     socket.on("newStatus", (data: any) => {
@@ -478,7 +459,6 @@ export default function StatusGardens() {
     setDataTable(newData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [devices]);
-  console.log(gardenId)
   return (
     <>
       {!gardenId ? (
@@ -557,16 +537,6 @@ export default function StatusGardens() {
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
                 garden={garden}
-                timeRemaining={timeRemaining}
-                setTimeRemaining={setTimeRemaining}
-                date={date}
-                setDate={setDate}
-                time={time}
-                setTime={setTime}
-                currentTime={currentTime}
-                currentDate={currentDate}
-                timeFormat={timeFormat}
-                dateFormat={dateFormat}
                 gardenId={gardenId}
               />
             </div>

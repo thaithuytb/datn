@@ -4,7 +4,7 @@ export async function createNotifications(prisma: PrismaClient) {
   await prisma.notification.create({
     data: {
       title: 'Thay đổi trạng thái khu vườn',
-      description: 'Khu vườn vừa thay đổi trạng thái từ aoto -> manual',
+      description: 'Khu vườn vừa thay đổi trạng thái từ auto -> manual',
       createdBy: 1,
       type: NotificationType.GARDEN,
       gardenId: 1,

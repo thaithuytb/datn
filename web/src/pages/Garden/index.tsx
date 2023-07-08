@@ -1,20 +1,40 @@
 //Warning đang bị ở file này
 import "./index.css";
 import Table, { ColumnsType } from "antd/es/table";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GardenContext } from "../../contexts/GardenContext";
 import dayjs from "dayjs";
 import { Button, Modal } from "antd";
 import GardenApi from "../../api/garden";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+import Update from "./Update";
 const { confirm } = Modal;
+
+export interface IGarden {
+  address: string
+  createdAt: string
+  devices: any[]
+  hight: number
+  id: number
+  isAuto: boolean
+  isDeleted: boolean
+  landArea: number
+  length: number
+  name: string
+  updatedAt: string
+  users: any[]
+  width: number
+}
 
 export default function Garden() {
   const gardenApi = GardenApi.registerAuthApi();
   const gardenContext = useContext(GardenContext);
   const gardens = gardenContext?.gardens;
   const getGardens = gardenContext?.getGardens;
-
+  const navigate = useNavigate()
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [garden, setGarden] = useState<IGarden>()
   useEffect(() => {
     if (getGardens) {
       getGardens();
@@ -35,7 +55,6 @@ export default function Garden() {
         gardenApi.deleteGarden({ id: value.id });
       },
       onCancel() {
-        console.log("Cancel");
       },
     });
   };
@@ -90,7 +109,7 @@ export default function Garden() {
       title: "Thao tác",
       render: (_, record) => (
         <>
-          <Button type="primary" ghost>
+          <Button type="primary" ghost onClick={() => showModal(record)}>
             Cập nhật
           </Button>
           <Button
@@ -106,11 +125,21 @@ export default function Garden() {
     },
   ];
 
+  const showModal = (record: IGarden) => {
+    setGarden(record)
+    setIsModalOpen(true);
+  }
+
+  //add new Garden
+  const addNewGarden = () => {
+    navigate('/garden/new-garden')
+  }
+
   return (
     <div className="garden">
       <div className="garden_header">
         <h3>Quản lý khu vườn</h3>
-        <Button type="primary" ghost>
+        <Button onClick={addNewGarden} type="primary" ghost>
           Thêm khu vườn mới
         </Button>
       </div>
@@ -128,6 +157,12 @@ export default function Garden() {
           dataSource={gardens}
         />
       )}
+
+      <Update
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        garden={garden}
+      />
     </div>
   );
 }

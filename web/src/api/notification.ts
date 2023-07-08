@@ -12,6 +12,23 @@ class NotificationApi {
         const url = "/notifications/count-unread";
         return axiosClient.get(url);
     }
+
+    getNotification(dto: {
+        type: string,
+        seen?: boolean,
+        page?: number,
+        limit?: number
+    }) {
+        const url = `/notifications?type=${dto.type}&seen=${dto.seen}&page=${dto.page}&limit=${dto.limit}`
+        return axiosClient.get(url);
+    }
+
+    updateNotificationsOnUsers(dto: {
+        notificationId: number
+    }) {
+        const url = `/notifications/update`
+        return axiosClient.patch(url, { dto: { ...dto } });
+    }
 }
 
 export default NotificationApi;

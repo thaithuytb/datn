@@ -43,7 +43,6 @@ export const NotificationProvider: React.FC<PropsNotificationContext> = ({ child
     (async () => {
       const res = await notificationApi.countNotifile()
       if (res) {
-        console.log(res)
         setCount(res.data.count)
       }
     })()

@@ -105,7 +105,7 @@ export async function createUsers(prisma: PrismaClient, garden: Garden) {
           password: hashPW,
           gardens: {
             create: {
-              gardenId: i % 2 ? 1 : 2,
+              gardenId: 1,
               role: RoleGarden.USER,
             },
           } as Prisma.GardensOnUsersCreateNestedManyWithoutUserInput,

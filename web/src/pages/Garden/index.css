@@ -42,3 +42,16 @@
 	justify-content: space-between;
 	margin-bottom: 20px;
 }
+
+/* /////////////// */
+.ModalUpdateGarden {
+	display: flex;
+	justify-content: space-between;
+}
+.ModalUpdateGarden_left, .ModalUpdateGarden_right {
+	width: 45%;
+}
+.ModalUpdateGarden_right div,
+.ModalUpdateGarden_left div{
+	margin: 0.7rem 0;
+}

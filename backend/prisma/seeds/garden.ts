@@ -9,12 +9,13 @@ export async function createGarden(prisma: PrismaClient) {
       length: 40,
       hight: 20,
       landArea: 800,
+      coordinates: 'https://goo.gl/maps/WTV8rxztaD6sHkwMA',
     },
   });
   await prisma.garden.create({
     data: {
-      name: 'Khu vuon B',
-      address: 'Thanh Xuân, Hà Nội',
+      name: 'Test-1',
+      address: 'Thái Bình',
       width: 40,
       length: 40,
       landArea: 1600,
@@ -23,8 +24,8 @@ export async function createGarden(prisma: PrismaClient) {
   });
   await prisma.garden.create({
     data: {
-      name: 'Khu vuon C',
-      address: 'Thanh Xuân, Hà Nội',
+      name: 'Test-2',
+      address: 'Vĩnh Phúc',
       width: 40,
       length: 40,
       landArea: 1600,

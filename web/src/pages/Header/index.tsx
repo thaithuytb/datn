@@ -1,3 +1,4 @@
+import React, { useContext, useMemo, useState } from "react";
 import "./index.css";
 import { Badge, Button, Divider, Dropdown, Space, Switch, theme } from "antd";
 import { Link } from "react-router-dom";
@@ -5,23 +6,30 @@ import { BellFilled } from "@ant-design/icons";
 import { Header } from "antd/es/layout/layout";
 import type { MenuProps } from "antd";
 import Avatar from "../../components/Avatar";
-import React, { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { colorHeader } from "../../types/variableMain";
 import { NotificationContext } from "../../contexts/NotificationContext";
 import { INotification } from "../../contexts/NotificationContext";
+import NotificationApi from "../../api/notification";
 
 interface IItemNotification {
   noti: INotification
-
 }
 
 const ItemNotification: React.FC<IItemNotification> = ({ noti }) => {
-  // const { title, content, url, status } = props
   const notification = noti.notification
   const notificationStatus = noti.notificationStatus
+  const update = async () => {
+    const notificationApi = new NotificationApi();
+    try {
+      const res = await notificationApi.updateNotificationsOnUsers({ notificationId: noti.notification.id })
+      console.log(res)
+    } catch (error) {
+
+    }
+  }
   return (
-    <div style={{ display: "flex", justifyContent: "space-between" }}>
+    <div onClick={update} style={{ display: "flex", justifyContent: "space-between" }}>
       <div>
         <h3 style={{ margin: "0" }}>{notification.title}</h3>
         <div>{notification.description}</div>
@@ -57,10 +65,13 @@ const { useToken } = theme;
 
 
 export default function HeaderLayout() {
+  const [typeNotification, setTypeNotification] = useState<string>("GARDEN")
   const authContext = useContext(AuthContext)
   const notificationContext = useContext(NotificationContext)
   const notifications = notificationContext?.notifications
   const count = notificationContext?.count
+  const setNotifilcations = notificationContext?.setNotifilcations
+  const notificationApi = new NotificationApi();
 
   const name = authContext?.authInformation?.user?.fullName || "user"
 
@@ -81,11 +92,60 @@ export default function HeaderLayout() {
       {
         label: (<ItemNotification noti={noti} />),
         key: noti.notification.id,
-        style: !noti.notificationStatus.seen ? { backgroundColor: '#aaaaaa' } : {},
+        style: !noti.notificationStatus.seen ? { marginBottom: '0.2rem', backgroundColor: 'rgba(0, 0, 0, 0.05)', } : { marginBottom: "0.2rem" },
       }
     )
   }
   )
+
+  const getNotificationByType = async (type: string, page: number = 1) => {
+    setTypeNotification(type)
+    try {
+      const dto = {
+        type: type,
+        seen: false,
+        page: page,
+        limit: 10
+      }
+      const res = await notificationApi.getNotification(dto)
+      if (res && setNotifilcations) {
+        setNotifilcations((notifications: any) => ([...notifications, ...res.data.notifications]))
+      }
+    } catch (error) { }
+  }
+  console.log(notifications)
+
+  const showNotification = async (open: boolean) => {
+    if (open) {
+      getNotificationByType(typeNotification)
+    }
+  }
+
+  const throttle = useMemo(() =>{
+    let lastCall = 0;
+    return function () {
+        const now = new Date().getTime();
+        if (now - lastCall < 500) {
+            return;
+        }
+        lastCall = now;
+        getNotificationByType(typeNotification, 2);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleScroll = () => {
+    const node = document.getElementById("Dropdown_before")
+    let scrollTop = 0
+    node?.parentElement?.addEventListener('scroll', (event: any) => {
+      if (event.target.scrollTop > scrollTop && event.target.offsetHeight + event.target.scrollTop > event.target.scrollHeight) {
+        throttle()
+      }
+      scrollTop = event.target.scrollTop
+    })
+  };
+
+  handleScroll()
 
   return (
     <Header className="header">
@@ -96,22 +156,38 @@ export default function HeaderLayout() {
       </div>
 
       <div className="header_right">
-        <h3>
-          Xin chào {name}
-        </h3>
+        <h3>Xin chào {name}</h3>
 
         <div>
           <Dropdown
+            onOpenChange={showNotification}
             overlayClassName="custom-dropdown"
             trigger={['click']}
             menu={{ items }}
             dropdownRender={(menu) => (
-              <div style={contentStyle}>
+              <div style={contentStyle}
+                id="Dropdown_before"
+              // onScroll={handleScroll}
+              >
                 <h3 style={{ margin: "0", padding: 8 }}>Thông báo</h3>
                 <Space style={{ padding: 8 }}>
-                  <button className='slectNotification' >Tất cả</button>
-                  <button className='slectNotification' >Đã đọc</button>
-                  <button className='slectNotification' >Chưa đọc</button>
+                  <button onClick={() => getNotificationByType("GARDEN")}
+                    className='slectNotification'
+                    style={{ backgroundColor: typeNotification === 'GARDEN' ? colorHeader : '', color: typeNotification === 'GARDEN' ? 'white' : '' }}
+                  >
+                    GARDEN
+                  </button>
+                  <button onClick={() => getNotificationByType("DEVICE")}
+                    className='slectNotification'
+                    style={{ backgroundColor: typeNotification === 'DEVICE' ? colorHeader : '', color: typeNotification === 'DEVICE' ? 'white' : '' }}
+                  >
+                    DEVICE
+                  </button>
+                  <button onClick={() => getNotificationByType("OTHER")}
+                    className='slectNotification' style={{ backgroundColor: typeNotification === 'OTHER' ? colorHeader : '', color: typeNotification === 'OTHER' ? 'white' : '' }}
+                  >
+                    OTHER
+                  </button>
                 </Space>
                 <Divider style={{ margin: 0 }} />
                 {React.cloneElement(menu as React.ReactElement, { style: menuStyle })}
@@ -151,7 +227,7 @@ export default function HeaderLayout() {
             </Space>
           </Dropdown>
         </div>
-      </div>
-    </Header>
+      </div >
+    </Header >
   );
 }

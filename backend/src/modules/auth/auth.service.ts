@@ -219,6 +219,26 @@ export class AuthService {
     });
   }
 
+  async getUsersWithoutGardenId(
+    gardenId: number,
+  ): Promise<UsersWithGardensOnUsersType> {
+    const condition: Prisma.UserFindManyArgs = {
+      where: {
+        gardens: {
+          every: {
+            NOT: {
+              gardenId: gardenId,
+            },
+          },
+        },
+      },
+    };
+    const result = await this.authRepository.getUsers(condition);
+    return responseSuccess(200, {
+      users: result,
+    });
+  }
+
   async upsertGardensOnUsers(
     dto: UpsertGardensOnUsers,
   ): Promise<GardensOnUsersType> {

@@ -10,10 +10,9 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import "./home.css";
+import "./index.css";
 import GardenApi from "../../api/garden";
 import dayjs from "dayjs";
-import { start } from "repl";
 
 export default function Home() {
   const context = useContext(AuthContext);

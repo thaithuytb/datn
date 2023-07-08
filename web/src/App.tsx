@@ -23,6 +23,8 @@ import Account from "./pages/Account";
 import UpdateAccount from "./pages/Account/Update";
 import { SocketProvider } from "./contexts/SocketContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
+import CreateGarden from "./pages/Garden/Create";
+import RoadMap from "./pages/RoadMap";
 
 const RouteMain = () => {
   return (
@@ -43,6 +45,7 @@ const RouteMain = () => {
                   path="/garden/:gardenId/status"
                   element={<StatusGardens />}
                 />
+                <Route path="/garden/new-garden" element={<CreateGarden />} />
               </Route>
               <Route>
                 <Route
@@ -91,6 +94,9 @@ const RouteMain = () => {
                   path="/account/update-account"
                   element={<UpdateAccount />}
                 />
+              </Route>
+              <Route>
+                <Route path="/road-map" element={<RoadMap />} />
               </Route>
               <Route
                 path="/logout"

@@ -182,20 +182,21 @@ model LampData {
 }
 
 model Garden {
-  id        Int              @id @default(autoincrement())
-  name      String           @unique
-  address   String
-  width     Int?
-  length    Int?
-  isAuto    Boolean          @default(true)
-  hight     Int?
-  landArea  Int              @map("land_area")
-  createdAt DateTime         @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  isDeleted Boolean          @default(false)
-  devices   Device[]
-  users     GardensOnUsers[]
-  Threshold Threshold[]
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  address     String
+  width       Int?
+  length      Int?
+  isAuto      Boolean          @default(true)
+  hight       Int?
+  landArea    Int              @map("land_area")
+  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt   DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  isDeleted   Boolean          @default(false)
+  coordinates String?
+  devices     Device[]
+  users       GardensOnUsers[]
+  Threshold   Threshold[]
 
   @@map("gardens")
 }

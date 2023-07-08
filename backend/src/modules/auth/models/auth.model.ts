@@ -31,8 +31,8 @@ export interface UsersWithGardensOnUsersType {
   statusCode: number;
   success: boolean;
   data: {
-    totalRecords: number;
-    users: UsersWithGardensOnUsers[];
+    totalRecords?: number;
+    users: UsersWithGardensOnUsers[] | User[];
   };
 }
 

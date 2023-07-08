@@ -47,6 +47,11 @@ export const listSidebarInit: MenuItem[] = [
     url: "change-password",
   },
   {
+    titleSidebar: "Chi dan duong di",
+    key: "road-map",
+    url: "road-map",
+  },
+  {
     titleSidebar: "Đăng xuất",
     key: "logout",
     url: "logout",

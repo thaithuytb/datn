@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -72,6 +73,14 @@ export class AuthController {
       limit || 6,
       gardenId,
     );
+  }
+
+  @UseGuards(RoleAdminGuard)
+  @Get('users/without')
+  async getUsersWithoutGardenId(
+    @Query('gardenId', ParseIntPipe) gardenId: number,
+  ): Promise<UsersWithGardensOnUsersType> {
+    return this.authService.getUsersWithoutGardenId(gardenId);
   }
 
   @UseGuards(RoleAdminGuard)
