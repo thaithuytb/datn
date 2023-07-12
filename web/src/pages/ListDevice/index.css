@@ -2,6 +2,12 @@
 	padding: 10px 15px;
 }
 
+.list_device header {
+	display: flex;
+	justify-content: space-between;
+	margin: 1.5rem 0;
+}
+
 .list_device_select {
 	display: flex;
 	padding: 20px 0px;

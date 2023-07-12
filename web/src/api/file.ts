@@ -17,7 +17,7 @@ class FileApi {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      });
+      }) as unknown as ApiResponse;
     }
   }
 }

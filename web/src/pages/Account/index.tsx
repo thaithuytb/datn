@@ -13,13 +13,12 @@ const { confirm } = Modal;
 interface InformationAccount {
   stt: number;
   id: number;
-  fullname: string;
+  fullName: string;
   email: string;
   address: string;
   phoneNumber: string;
   gender: string;
   dateCreateAccount: string;
-  dateJoin: string;
   dateOfBrith: string;
   avata?: string;
 }
@@ -125,7 +124,7 @@ const Account = () => {
       if (page) {
         stt = (page - 1) * limit;
       }
-      // setTotalPage(res?.data?.totalRecords);
+      console.log(res?.data?.users)
       const data = res?.data?.users.map(({ user }: any, index: number) => {
         return {
           key: index,
@@ -136,8 +135,7 @@ const Account = () => {
           address: user.address || "NULL",
           phoneNumber: user.phoneNumber || "NULL",
           gender: user.gender,
-          dateCreateAccount: dayjs(user.createdAt).format("YYYY-MM-DD"),
-          dateJoin: user.createdAt,
+          dateCreateAccount: dayjs(user.createdAt).format("DD-YY-YYYY"),
           dateOfBirth: "NULL",
           avatar: user.fullName,
         };

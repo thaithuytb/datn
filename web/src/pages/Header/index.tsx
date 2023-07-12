@@ -72,6 +72,7 @@ export default function HeaderLayout() {
   const count = notificationContext?.count
   const setNotifilcations = notificationContext?.setNotifilcations
   const notificationApi = new NotificationApi();
+  const [page, setPage] = useState<number>(1)
 
   const name = authContext?.authInformation?.user?.fullName || "user"
 
@@ -97,8 +98,9 @@ export default function HeaderLayout() {
     )
   }
   )
-
-  const getNotificationByType = async (type: string, page: number = 1) => {
+  
+  const getNotificationByType = async (type: string) => {
+    console.log(page)
     setTypeNotification(type)
     try {
       const dto = {
@@ -109,11 +111,14 @@ export default function HeaderLayout() {
       }
       const res = await notificationApi.getNotification(dto)
       if (res && setNotifilcations) {
-        setNotifilcations((notifications: any) => ([...notifications, ...res.data.notifications]))
+        if(page === 1 || type === typeNotification) {
+          setNotifilcations([...res.data.notifications])
+        } else {
+          setNotifilcations((notifications: any) => ([...notifications, ...res.data.notifications]))
+        }
       }
     } catch (error) { }
   }
-  console.log(notifications)
 
   const showNotification = async (open: boolean) => {
     if (open) {
@@ -129,7 +134,7 @@ export default function HeaderLayout() {
             return;
         }
         lastCall = now;
-        getNotificationByType(typeNotification, 2);
+        getNotificationByType(typeNotification);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -140,6 +145,7 @@ export default function HeaderLayout() {
     node?.parentElement?.addEventListener('scroll', (event: any) => {
       if (event.target.scrollTop > scrollTop && event.target.offsetHeight + event.target.scrollTop > event.target.scrollHeight) {
         throttle()
+        setPage(page+1)
       }
       scrollTop = event.target.scrollTop
     })

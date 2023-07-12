@@ -25,11 +25,6 @@ class GardenApi {
     return axiosClient.post(url, { dto }) as unknown as ApiResponse;
   }
 
-  getDataStatisticalByDate() {
-    const url = `/data-statistical`;
-    return axiosClient.get(url) as unknown as ApiResponse;
-  }
-
   static registerAuthApi() {
     return new GardenApi();
   }

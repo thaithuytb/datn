@@ -11,29 +11,56 @@ import {
   Legend,
 } from "recharts";
 import "./index.css";
-import GardenApi from "../../api/garden";
 import dayjs from "dayjs";
+import { DatePicker } from "antd";
+import DataStatisticalApi from "../../api/data-statistical";
 
 export default function Home() {
+  const dataStatisticalApi = new DataStatisticalApi();
   const context = useContext(AuthContext);
   const [dataStatistical, setDataStatistical] = useState([]);
+  const dateFormat = 'YYYY-MM-DD'
+  const currentDate = dayjs()
 
   useEffect(() => {
     if (context?.authInformation?.isAuthenticated) {
       const asyncApiFunction = async () => {
-        const gardenApi = GardenApi.registerAuthApi();
-        const res = await gardenApi.getDataStatisticalByDate();
-        console.log(res);
+        const res = await dataStatisticalApi.getDataStatisticalByDate({time : dayjs().format('YYYY-MM-DD')});
         if (res.success) {
           setDataStatistical(res.data);
         }
       };
       asyncApiFunction();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [context?.authInformation?.isAuthenticated]);
+
+  const changeDate = async (date: any, dateString: string) => {
+    // data-statistical
+    const dataStatisticalApi = new DataStatisticalApi();
+    try {
+      const dto ={
+        time: dateString
+      }
+      const res = await dataStatisticalApi.getDataStatisticalByDate(dto);
+      if (res.success) {
+        setDataStatistical(res.data);
+      }
+    } catch (error) {
+
+    }
+  };
 
   return (
     <div className="home">
+      <div style={{marginBottom: '1rem'}}>
+        Chon ngay de xem:
+        <DatePicker
+          defaultValue={dayjs(currentDate, dateFormat)}
+          format={dateFormat}
+          onChange={changeDate}
+        />
+      </div>
       {context?.authInformation?.isAuthenticated ? (
         dataStatistical &&
         dataStatistical.map((data: any) => {
@@ -148,7 +175,7 @@ export default function Home() {
                     })}
                     stroke="#8884d8"
                     dot={false}
-                    // className="test_non"
+                  // className="test_non"
                   />
                   <Line
                     // className="test_non"

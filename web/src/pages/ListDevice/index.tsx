@@ -3,15 +3,14 @@ import { useContext, useEffect, useState } from "react";
 import { GardenContext } from "../../contexts/GardenContext";
 import { useNavigate, useParams } from "react-router-dom";
 import Table, { ColumnsType } from "antd/es/table";
-import { Select, SelectProps } from "antd";
+import { Button, Select, SelectProps } from "antd";
 import { ViewEmpty } from "../ManagementWorker";
 import { DeviceContext } from "../../contexts/DeviceContext";
-
 export interface ColumnNameDeviceGarden {
   stt?: number;
   name: string;
   quantity: number;
-  key: string | number;
+  type: string | number;
 }
 
 const columns: ColumnsType<ColumnNameDeviceGarden> = [
@@ -35,32 +34,85 @@ const columns: ColumnsType<ColumnNameDeviceGarden> = [
 ];
 
 export default function ListDevice() {
-  const deviceContext = useContext(DeviceContext)
-  const getDevicesByGardenId = deviceContext?.getDevicesByGardenId;
-  
-  const devices = deviceContext?.devices;
-  const setDevices = deviceContext?.setDevices;
+
   const { gardenId } = useParams();
   const navigate = useNavigate();
   const gardenContext = useContext(GardenContext);
-  const gardenDetail = gardenContext?.gardenDetail;
   const gardens = gardenContext?.gardens;
-  const [listDevice, setListDevice] = useState<ColumnNameDeviceGarden[]>()
   const [garden, setGarden] = useState<any>();
-  console.log(gardenDetail)
 
-  useEffect(() => {
-    if (devices) {
-      setListDevice(devices)
-    }
-  }, [devices]);
+  const deviceContext = useContext(DeviceContext);
+  const devices = deviceContext?.devices
+  const getDevicesByGardenId = deviceContext?.getDevicesByGardenId;
 
-  useEffect(() => {
-    if (gardenId && getDevicesByGardenId) {
-      getDevicesByGardenId(gardenId)
+  const dataTabale: {
+    [key: string]: {
+      stt: number;
+      name: string;
+      type: string;
+      quantity: number;
+    };
+  } = {
+    FAN: {
+      stt: 1,
+      name: "Quạt",
+      type: "FAN",
+      quantity: 0
+    },
+    LAMP: {
+      stt: 2,
+      name: "Đèn",
+      type: "LAMP",
+      quantity: 0
+    },
+    CURTAIN: {
+      stt: 3,
+      name: "Rèm",
+      type: "CURTAIN",
+      quantity: 0
+    },
+    PUMP: {
+      stt: 4,
+      name: "Máy bơm",
+      type: "PUMP",
+      quantity: 0
+    },
+    LIGHTSENSOR: {
+      stt: 5,
+      name: "Cảm biến ánh sáng",
+      type: "LIGHTSENSOR",
+      quantity: 0
+    },
+    HUMISENSOR: {
+      stt: 6,
+      name: "Cảm biến độ ẩm đất",
+      type: "HUMISENSOR",
+      quantity: 0
+    },
+    TEMPAIRSENSOR: {
+      stt: 7,
+      name: "Cảm biến nhiệt độ, độ ẩm",
+      type: "TEMPAIRSENSOR",
+      quantity: 0
+    },
+  }
+
+  if (devices && gardenId) {
+    for (const device of devices) {
+      dataTabale[device.type] = {
+        ...dataTabale[device.type],
+        quantity: dataTabale[device.type].quantity + 1,
+      };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gardenId]);
+  }
+
+
+  //looix warning
+  const rows = Object.values(dataTabale).filter((row: ColumnNameDeviceGarden, index: number) => {
+    return (
+      row.quantity !== 0
+    )
+  });
 
   const itemsOption: SelectProps["options"] =
     gardens?.map((garden, index: number) => ({
@@ -75,7 +127,6 @@ export default function ListDevice() {
     if (garden) {
       setGarden({
         ...item,
-        isAuto: garden.isAuto,
       });
       navigate(`/management-devices/${item.id}`);
     } else {
@@ -88,31 +139,65 @@ export default function ListDevice() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (gardenId && getDevicesByGardenId) {
+      getDevicesByGardenId(gardenId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gardenId]);
+
+  useEffect(() => {
+    const newGarden = gardens?.find((value) => value.id === Number(gardenId));
+    if (newGarden) {
+      setGarden({
+        id: newGarden?.id,
+        value: newGarden?.name,
+        label: newGarden?.name,
+        garden: newGarden,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gardens]);
+
+  const addNewDevice = () => {
+    navigate('/management-devices/create', {
+      state: {
+        garden : garden,
+        itemsOption: itemsOption
+      }
+    })
+  }
+
   return (
     <div>
-      {gardens && !garden ? (
+      {!gardenId ? (
         <ViewEmpty selectGarden={selectGarden} itemsOption={itemsOption} />
       ) : (
         <div className="list_device">
           <header>
-            <label>Chọn khu vườn: </label>
-            <Select
-              style={{ width: 200 }}
-              value={garden}
-              onChange={selectGarden}
-              options={itemsOption}
-              placeholder={"Chọn khu vườn"}
-            />
+            <div>
+              <label>Chọn khu vườn: </label>
+              <Select
+                style={{ width: 200 }}
+                value={garden}
+                onChange={selectGarden}
+                options={itemsOption}
+                placeholder={"Chọn khu vườn"}
+              />
+            </div>
+            <Button onClick={addNewDevice} type="primary" ghost>
+              Thêm thiết bị mới
+            </Button>
           </header>
           <div className="list_device_detail">
             <div className="list_device_detail_title">Danh sách thiết bị</div>
             <Table
+              pagination={false}
               bordered={true}
               columns={columns}
-              dataSource={listDevice}
+              dataSource={rows}
             />
           </div>
-
         </div>
       )}
     </div>

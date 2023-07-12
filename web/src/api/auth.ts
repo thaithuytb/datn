@@ -78,11 +78,8 @@ class AuthApi {
     }) as unknown as ApiResponse;
   }
 
-  getListUser(dto: { name?: string }) {
-    let url = `/auth/users`;
-    if (dto.name) {
-      url = `/auth/users?name=${dto.name}`;
-    }
+  getUsersWithoutGardenId(dto: { gardenId: number }) {
+    const url = `/auth/users/without?gardenId=${dto.gardenId}`;
     // validation
     return axiosClient.get(url) as unknown as ApiResponse;
   }

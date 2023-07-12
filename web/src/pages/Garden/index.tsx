@@ -157,12 +157,13 @@ export default function Garden() {
           dataSource={gardens}
         />
       )}
-
-      <Update
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-        garden={garden}
-      />
+      {isModalOpen &&
+        <Update
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          garden={garden}
+        />
+      }
     </div>
   );
 }

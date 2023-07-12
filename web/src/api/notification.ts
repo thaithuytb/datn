@@ -10,7 +10,7 @@ export interface ApiResponse {
 class NotificationApi {
     countNotifile() {
         const url = "/notifications/count-unread";
-        return axiosClient.get(url);
+        return axiosClient.get(url) as unknown as ApiResponse;
     }
 
     getNotification(dto: {
@@ -20,14 +20,14 @@ class NotificationApi {
         limit?: number
     }) {
         const url = `/notifications?type=${dto.type}&seen=${dto.seen}&page=${dto.page}&limit=${dto.limit}`
-        return axiosClient.get(url);
+        return axiosClient.get(url)  as unknown as ApiResponse;
     }
 
     updateNotificationsOnUsers(dto: {
         notificationId: number
     }) {
         const url = `/notifications/update`
-        return axiosClient.patch(url, { dto: { ...dto } });
+        return axiosClient.patch(url, { dto: { ...dto } })  as unknown as ApiResponse;
     }
 }
 

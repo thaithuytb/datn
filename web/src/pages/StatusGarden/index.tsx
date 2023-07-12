@@ -21,13 +21,17 @@ import {
   TimePicker,
 } from "antd";
 import dayjs from "dayjs";
-import moment from "moment";
 import GardenApi from "../../api/garden";
 import Threshold from "./Threshold";
 import { ColumnsType } from "antd/es/table";
 import { getMeasuredAndStatusDevice } from "../../common/status-device";
 import { SocketContext } from "../../contexts/SocketContext";
 import { NotificationContext } from "../../contexts/NotificationContext";
+import weekday from "dayjs/plugin/weekday"
+import localeData from "dayjs/plugin/localeData"
+
+dayjs.extend(weekday)
+dayjs.extend(localeData)
 
 interface DataType {
   stt: any;
@@ -53,32 +57,35 @@ const ShowModal: React.FC<IShowModal> = ({
   gardenId,
   garden,
 }) => {
-  const dateFormat =''
-  const timeFormat =''
-  const currentDate = ''
-  const currentTime= ''
+  const dateFormat = 'YYYY-MM-DD'
+  const timeFormat = 'HH:mm'
+  const currentDate = dayjs()
   const [timeRemaining, setTimeRemaining] = useState<string>("00:00");
-
-  const [date, setDate] = useState<string>();
-  const [time, setTime] = useState<string>();
+  const [date, setDate] = useState<string>(currentDate.format(dateFormat));
+  const [time, setTime] = useState<string>(currentDate.format(timeFormat));
   //hàm thay đổi chế độ
   const handleOk = async () => {
     const isAuto = garden && !garden.isAuto;
     if (!date || !time) {
       console.log("check time");
     } else {
-      const [day, month] = date.split("-");
+      const [hours, minute] = time.split(":")
+      const [year, month, day] = date.split("-");
 
       // Xóa số 0 ở đầu ngày và tháng nếu có
       const formattedDay = parseInt(day, 10).toString();
       const formattedMonth = parseInt(month, 10).toString();
       const formattedDate = `${formattedDay}-${formattedMonth}`;
 
+      const formatHours = parseInt(hours, 10).toString()
+      const formatMinute = parseInt(minute, 10).toString()
+      const formattedTime = `${formatHours}:${formatMinute}`;
+
       const dto = {
         id: `${gardenId}`,
         body: {
           isAuto,
-          time: `${formattedDate} ${time}`,
+          time: `${formattedDate} ${formattedTime}`,
         },
       };
       try {
@@ -96,37 +103,28 @@ const ShowModal: React.FC<IShowModal> = ({
 
   //hàm tính thời gian được chọn trừ đi thời gian hiện tại
   const duration = () => {
-    const startTime = `${currentDate} ${currentTime}`;
-    const endTime = `${date} ${time}`;
-    const dateTimeFormat = "YYY-MM-DD HH:mm";
+    const startTime = dayjs(`${currentDate.format('YYYY-MM-DD HH:mm')}`);
+    const endTime = dayjs(`${date} ${time}`);
 
-    const startMoment = moment(startTime, dateTimeFormat);
-    const endMoment = moment(endTime, dateTimeFormat);
+    const newTime = endTime.diff(startTime, 'minute');
+    const hours = Math.floor(newTime / 60);
+    const minutes = newTime % 60;
 
-    const newTime = moment.duration(endMoment.diff(startMoment));
-    const totalMinutes = newTime.asMinutes();
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-
-    return `${hours}:${minutes}`;
+    return `${`${hours}`}:${`${minutes}`}`;
   };
 
-  //mỗi khi lựa chọn thời gian hàm duration() được gọi lại
   useEffect(() => {
     setTimeRemaining(duration());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time, date]);
 
-  //nhận giá trị thời gian thay đổi
-  const changeDate = (date: any, dateString: any) => {
+  const changeDate = (date: any, dateString: string) => {
     setDate(dateString);
   };
-  const changeTime = (time: any, timeString: any) => {
+  const changeTime = (time: any, timeString: string) => {
     setTime(timeString);
   };
-  console.log(currentDate)
-  console.log(dateFormat)
-  // console.log(dayjs(currentDate).format(dateFormat))
+
   return (
     <Modal
       title="Bạn muốn chuyển chế độ!!!"
@@ -140,7 +138,7 @@ const ShowModal: React.FC<IShowModal> = ({
         <>
           <div>
             Thời gian hiện tại<br></br>
-            {currentDate} {currentTime}
+            {currentDate.format(dateFormat)} {currentDate.format(timeFormat)}
           </div>
           <div style={{ marginTop: "1.3rem" }}>Thời gian quay lại auto</div>
           <div
@@ -153,15 +151,15 @@ const ShowModal: React.FC<IShowModal> = ({
             <div>
               Date
               <DatePicker
-                // defaultValue={dayjs(currentDate, currentDate)}
+                defaultValue={dayjs(currentDate, dateFormat)}
                 format={dateFormat}
-                onChange={(date, dateString) => changeDate(date, dateString)}
+                onChange={changeDate}
               />
             </div>
             <div style={{ margin: "0 1rem" }}>
               Time
               <TimePicker
-                // defaultValue={dayjs(currentTime, timeFormat)}
+                defaultValue={dayjs(currentDate, timeFormat)}
                 format={timeFormat}
                 onChange={changeTime}
               />
@@ -533,12 +531,14 @@ export default function StatusGardens() {
               </div>
 
               {/* ---------------- */}
-              <ShowModal
-                isModalOpen={isModalOpen}
-                setIsModalOpen={setIsModalOpen}
-                garden={garden}
-                gardenId={gardenId}
-              />
+              {isModalOpen &&
+                <ShowModal
+                  isModalOpen={isModalOpen}
+                  setIsModalOpen={setIsModalOpen}
+                  garden={garden}
+                  gardenId={gardenId}
+                />
+              }
             </div>
           )}
         </>

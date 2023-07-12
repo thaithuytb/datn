@@ -4,6 +4,28 @@ import { MessageContext } from "./MessageContext";
 import ThresholdApi from "../api/threshold";
 import { IThreshold } from "../types/threshold";
 
+interface IValueDevice {
+  createdAt: string
+  deviceId: number
+  gardenId: number
+  id: number
+  status: boolean
+  updatedAt: string
+  value: number | null
+}
+
+export interface IDevice {
+  createdAt: string
+  gardenId: number
+  id: number
+  ip: string
+  isDeleted: boolean
+  status: boolean
+  type: string
+  updatedAt: string
+  valueDevice: IValueDevice
+}
+
 interface PropsDeviceContext {
   children: ReactNode;
 }

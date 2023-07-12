@@ -1,10 +1,12 @@
-import { Button, Form, Input, Radio } from "antd";
+import { Button, DatePicker, Form, Input, Radio } from "antd";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { MessageContext } from "../../contexts/MessageContext";
 import AuthApi from "../../api/auth";
 import Avatar from "../../components/Avatar";
 import FileApi from "../../api/file";
+import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 export default function PersonalInformation() {
   const [urlImage, setUrlImage] = useState<string | null>();
@@ -12,7 +14,10 @@ export default function PersonalInformation() {
   const user = authContext?.authInformation.user;
   const setAuthInformation = authContext?.setAuthInformation;
   const messageContext = useContext(MessageContext);
-  const dateOfBrith = new Date(user.createdAt);
+  const [changeDisplay, setChangeDisplay] = useState<boolean>(true)
+  const navigate = useNavigate();
+  const dateFormat ="DD-MM-YYYY"
+
   const initialValues = {
     email: user.email,
     fullName: user.fullName,
@@ -20,13 +25,14 @@ export default function PersonalInformation() {
     address: user.address,
     id: user.id,
     gender: user.gender,
-    dateCreateAccount: user.createdAt,
-    dateOfBrith: `${dateOfBrith.getDate()}-${dateOfBrith.getMonth() + 1
-      }-${dateOfBrith.getFullYear()}`,
+    dateCreateAccount: dayjs(user.createdAt).format("DD-MM-YYYY"),
+    dateOfBrith: user.dateOfBrith? dayjs(user.dateOfBrith, dateFormat) : null
   };
+  console.log(user)
 
   const updateInformation = async (values: any) => {
-    const { id, fullName, email, phoneNumber, address, gender, createdAt } =
+    console.log(values)
+    const { id, fullName, email, phoneNumber, address, gender, createdAt, dateOfBrith } =
       values;
     const data = {
       fullName: fullName,
@@ -36,18 +42,42 @@ export default function PersonalInformation() {
       // id: id,
       // gender: gender,
       // dateCreateAccount: createdAt,
-      // dateOfBrith: `${dateOfBrith.getDate()}-${dateOfBrith.getMonth() + 1}-${dateOfBrith.getFullYear()}`,
+      // dateOfBrith: `dayjs(user.dateOfBrith, dateFormat)
     };
     const authApi = AuthApi.registerAuthApi();
-    try {
-      const res = await authApi.updateInformation(data);
-      setAuthInformation({
-        ...authContext?.authInformation,
-        user: { ...res.data },
-      });
-      messageContext?.success("Cập nhật thông tin cá nhân thành công !!!");
-    } catch (error: any) {
-      messageContext?.error(error?.message);
+    // try {
+    //   const res = await authApi.updateInformation(data);
+    //   setAuthInformation({
+    //     ...authContext?.authInformation,
+    //     user: { ...res.data },
+    //   });
+    //   messageContext?.success("Cập nhật thông tin cá nhân thành công !!!");
+    // } catch (error: any) {
+    //   messageContext?.error(error?.message);
+    // }
+  };
+
+  const onChangPassword = async (values: any) => {
+    const { email, password, newPassword, authenticationPassword } = values;
+    if (newPassword !== authenticationPassword) {
+      messageContext?.error("mật khẩu mới nhập lại sai");
+    } else {
+      const data = {
+        password: password,
+        newPassword: newPassword,
+      };
+      const authApi = AuthApi.registerAuthApi();
+      try {
+        const res = await authApi.updateInformation(data);
+        console.log(res);
+        if (res.success) {
+          navigate("/login");
+          authContext?.logout();
+        }
+        messageContext?.success("Thay đổi mật khẩu thành công");
+      } catch (error: any) {
+        messageContext?.error(error?.message);
+      }
     }
   };
 
@@ -61,15 +91,13 @@ export default function PersonalInformation() {
     }
   };
 
+  //
+  const change = () => {
+    setChangeDisplay(!changeDisplay)
+  }
+
   return (
-    <Form
-      className="form_left"
-      name="basic"
-      labelCol={{ span: 5 }}
-      style={{ maxWidth: 600 }}
-      onFinish={updateInformation}
-      initialValues={initialValues}
-    >
+    <div className="form_left">
       <label htmlFor="avatar">
         {/* {result && <Avatar />} */}
         <Avatar width="100px" url={urlImage || ''} />
@@ -80,42 +108,108 @@ export default function PersonalInformation() {
         onChange={(e) => uploader(e)}
         name="postImg"
       />
-      <Form.Item label="Tên đầy đủ" name="fullName">
-        <Input />
-      </Form.Item>
+      <br /><br />
+     
+        {changeDisplay ?
+           <Form
+           name="basic"
+           labelCol={{ span: 5 }}
+           style={{ maxWidth: 600 }}
+           onFinish={updateInformation}
+           initialValues={initialValues}
+         >
+            <Form.Item label="Tên đầy đủ" name="fullName">
+              <Input />
+            </Form.Item>
 
+            <Form.Item label="Email" name="email">
+              <Input />
+            </Form.Item>
+
+            <Form.Item label="Số điện thoại" name="phoneNumber">
+              <Input />
+            </Form.Item>
+
+            <Form.Item label="Địa chỉ" name="address">
+              <Input />
+            </Form.Item>
+
+            <Form.Item label="Ngày sinh" name="dateOfBrith">
+              <DatePicker 
+                // defaultValue={dayjs(currentDate, dateFormat)}
+                format={dateFormat}
+              />
+            </Form.Item>
+
+            <Form.Item label="Ngày tạo tài khoản" name="dateCreateAccount">
+              <Input disabled />
+            </Form.Item>
+
+            <Form.Item name="gender" label="Giới tính">
+              <Radio.Group value={user.gender}>
+                <Radio value="MALE">Nam</Radio>
+                <Radio value="FEMALE">Nữ</Radio>
+              </Radio.Group>
+            </Form.Item>
+
+            <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
+              <Button type="primary" htmlType="submit">
+                Thay đổi thông tin
+              </Button>
+              <span style={{ padding: '0 3rem' }} />
+              <Button type="link" htmlType="button" onClick={change}>
+                {`Mat khau ->`}
+              </Button>
+            </Form.Item>
+          </Form>
+          :
+          <Form
+      className="form_left"
+      name="basic"
+      labelCol={{ span: 7 }}
+      style={{ maxWidth: 700 }}
+      onFinish={onChangPassword}
+      initialValues={initialValues}
+    >
       <Form.Item label="Email" name="email">
-        <Input />
-      </Form.Item>
-
-      <Form.Item label="Số điện thoại" name="phoneNumber">
-        <Input />
-      </Form.Item>
-
-      <Form.Item label="Địa chỉ" name="address">
-        <Input />
-      </Form.Item>
-
-      <Form.Item label="Ngày sinh" name="dateOfBrith">
-        <Input />
-      </Form.Item>
-
-      <Form.Item label="Ngày tạo tài khoản" name="dateCreateAccount">
         <Input disabled />
       </Form.Item>
 
-      <Form.Item name="gender" label="Giới tính">
-        <Radio.Group value={user.gender}>
-          <Radio value="MALE">Nam</Radio>
-          <Radio value="FEMALE">Nữ</Radio>
-        </Radio.Group>
+      <Form.Item
+        label="Mật khẩu"
+        name="password"
+        rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
+      >
+        <Input.Password />
       </Form.Item>
 
-      <Form.Item wrapperCol={{ offset: 9, span: 16 }}>
-        <Button type="primary" htmlType="submit">
-          Thay đổi thông tin
-        </Button>
+      <Form.Item
+        label="Mật khẩu mới"
+        name="newPassword"
+        rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+      >
+        <Input.Password />
       </Form.Item>
-    </Form>
+      <Form.Item
+        label="Nhập lại mật khẩu mới"
+        name="authenticationPassword"
+        rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+      >
+        <Input.Password />
+      </Form.Item>
+
+            <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
+              <Button type="link" htmlType="button" onClick={change}>
+                {`<- Thong tin`}
+              </Button>
+              <span style={{ padding: '0 3rem' }} />
+              <Button type="primary" htmlType="submit">
+                Thay đổi mật khẩu
+              </Button>
+            </Form.Item>
+      </Form>
+}
+    </ div>
+
   );
 }

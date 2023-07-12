@@ -1,6 +1,5 @@
 import React from 'react'
 import { Button, Modal } from 'antd'
-import { useNavigate } from 'react-router-dom'
 import Avatar from '../../components/Avatar'
 interface IShowModal {
     isModalOpen: boolean
@@ -8,13 +7,12 @@ interface IShowModal {
     account: {
         stt: number
         id: number
-        fullname: string
+        fullName: string
         email: string
         address: string
         phoneNumber: string
         gender: string
         dateCreateAccount: string
-        dateJoin: string
         dateOfBrith: string
         avata?: string
     } | undefined
@@ -22,15 +20,13 @@ interface IShowModal {
 
 const Profile: React.FC<IShowModal> = ({ isModalOpen, setIsModalOpen, account }) => {
 
-    const navigate = useNavigate()
     const handleOk = () => {
         setIsModalOpen(false)
-        navigate("/account/update-account", { state: { account } });
     }
     const handleCancel = () => {
         setIsModalOpen(false)
     }
-
+    console.log(account)
     return (
         <Modal
             title="Thông tin chi tiết"
@@ -50,7 +46,7 @@ const Profile: React.FC<IShowModal> = ({ isModalOpen, setIsModalOpen, account })
                 <header className='ModalProfile_header'>
                     <Avatar width="100px" />
                     <div style={{ paddingLeft: "1rem" }}>
-                        <div>{account?.fullname}</div>
+                        <div>{account?.fullName}</div>
                         <div>{account?.dateOfBrith}</div>
                     </div>
                 </header>
@@ -59,7 +55,7 @@ const Profile: React.FC<IShowModal> = ({ isModalOpen, setIsModalOpen, account })
                     <div className='ModalProfile_left'>
                         <div className='ModalProfile_detail'>
                             <span>Tên đầy đủ: </span>
-                            <span>{account?.fullname}</span>
+                            <span>{account?.fullName}</span>
                         </div>
                         <div className='ModalProfile_detail'>
                             <span>Email: </span>
@@ -86,11 +82,7 @@ const Profile: React.FC<IShowModal> = ({ isModalOpen, setIsModalOpen, account })
                         </div>
                         <div className='ModalProfile_detail'>
                             <span>Ngày tạo tài khoản: </span>
-                            <span>2-6-20213</span>
-                        </div>
-                        <div className='ModalProfile_detail'>
-                            <span>Ngày tham gia khu vườn: </span>
-                            <span>22-7-2023</span>
+                            <span>{account?.dateCreateAccount}</span>
                         </div>
                     </div>
                 </div>

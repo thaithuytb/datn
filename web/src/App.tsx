@@ -4,7 +4,6 @@ import HeaderLayout from "./pages/Header";
 import SidebarLayout from "./pages/Sidebar";
 import Garden from "./pages/Garden";
 import Logout from "./components/Logout";
-import ChangePassword from "./pages/ChangePassword";
 import PersonalInformation from "./pages/PersonalInformation";
 import ProtectedRoute from "./routes/protectedRoute";
 import NotFound from "./components/NotFound";
@@ -23,6 +22,7 @@ import Account from "./pages/Account";
 import UpdateAccount from "./pages/Account/Update";
 import { SocketProvider } from "./contexts/SocketContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
+import CreateDevice from "./pages/ListDevice/CreateDevice";
 import CreateGarden from "./pages/Garden/Create";
 import RoadMap from "./pages/RoadMap";
 
@@ -59,6 +59,7 @@ const RouteMain = () => {
               </Route>
               <Route>
                 <Route path="/management-devices" element={<ListDevice />} />
+                <Route path="/management-devices/create" element={<CreateDevice />} />
                 <Route
                   path="/management-devices/:gardenId"
                   element={<ListDevice />}
@@ -79,10 +80,6 @@ const RouteMain = () => {
                 element={
                   <ProtectedRoute componentRedirect={PersonalInformation} />
                 }
-              />
-              <Route
-                path="/change-password"
-                element={<ProtectedRoute componentRedirect={ChangePassword} />}
               />
               <Route>
                 <Route path="/account" element={<Account />} />
