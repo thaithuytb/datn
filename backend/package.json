@@ -11,7 +11,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/src/main",
     "lint": "eslint \"{src,apps,libs,test, prisma/seeds/*.ts}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -22,7 +22,9 @@
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:db:pull": "prisma db pull",
     "prisma:migrate:reset": "prisma migrate reset --schema prisma/schema.prisma && yarn prisma:init",
-    "prisma:init": "yarn dotenv -e .env.$NODE_ENV ts-node prisma/seeds/index.ts"
+    "prisma:init": "yarn dotenv -e .env.$NODE_ENV ts-node prisma/seeds/index.ts",
+    "prisma:init:prod:test": "node dist/prisma/seeds/index.js", 
+    "start:migrate:prod": "yarn dotenv -e .env.$NODE_ENV prisma migrate deploy && yarn prisma:init:prod:test && yarn start:prod"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.363.0",
