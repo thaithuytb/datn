@@ -23,20 +23,18 @@ export const listSidebarInit: MenuItem[] = [
   },
   {
     titleSidebar: "Quản lý thiết bị",
-    key: "management-device",
-    url: "management-device",
-    children: [
-      {
-        titleSidebar: "Danh sách thiết bị",
-        url: "list-device",
-        key: "list-device",
-      },
-      {
-        titleSidebar: "Trạng thái thiết bị",
-        url: "status-devices",
-        key: "status-devices",
-      },
-    ],
+    key: "management-devices",
+    url: "management-devices",
+  },
+  {
+    titleSidebar: "Quản lý tài khoản",
+    key: "account",
+    url: "account",
+  },
+  {
+    titleSidebar: "Quản lý chăm sóc khu vườn",
+    key: "status-gardens",
+    url: "status-gardens",
   },
   {
     titleSidebar: "Thông tin cá nhân",
@@ -44,14 +42,9 @@ export const listSidebarInit: MenuItem[] = [
     url: "personal-information",
   },
   {
-    titleSidebar: "Đổi mật khẩu",
-    key: "change-password",
-    url: "change-password",
-  },
-  {
-    titleSidebar: "Tạo tài khoản",
-    key: "create-account",
-    url: "create-account",
+    titleSidebar: "Chi dan duong di",
+    key: "road-map",
+    url: "road-map",
   },
   {
     titleSidebar: "Đăng xuất",

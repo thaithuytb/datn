@@ -17,7 +17,23 @@ export interface GardenRoleAndUsersType {
 
 export interface GardenRoleAndUsers {
   role: RoleGarden;
+  createdAt: string;
+  garden: Garden;
   user: User;
+}
+
+export interface UsersWithGardensOnUsers {
+  gardens: Garden[];
+  user: User;
+}
+
+export interface UsersWithGardensOnUsersType {
+  statusCode: number;
+  success: boolean;
+  data: {
+    totalRecords?: number;
+    users: UsersWithGardensOnUsers[] | User[];
+  };
 }
 
 export interface GardensOnUsersType {
@@ -44,6 +60,7 @@ export class UserResponseDetail {
       email: dto.email,
       createdAt: dto.createdAt,
       updatedAt: dto.updatedAt,
+      dateOfBirth: dto.dateOfBirth,
       address: dto.address,
       fullName: dto.fullName,
       gender: dto.gender,
@@ -64,6 +81,7 @@ interface IUserResponseDetail {
   email: string;
   createdAt?: string | Date;
   updatedAt?: string | Date;
+  dateOfBirth?: string | Date;
   address?: string;
   fullName: string;
   gender?: string;

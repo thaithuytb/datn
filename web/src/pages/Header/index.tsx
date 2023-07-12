@@ -1,3 +1,4 @@
+import React, { useContext, useMemo, useState } from "react";
 import "./index.css";
 import { Badge, Button, Divider, Dropdown, Space, Switch, theme } from "antd";
 import { Link } from "react-router-dom";
@@ -5,71 +6,36 @@ import { BellFilled } from "@ant-design/icons";
 import { Header } from "antd/es/layout/layout";
 import type { MenuProps } from "antd";
 import Avatar from "../../components/Avatar";
-import React, { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { colorHeader } from "../../types/variableMain";
-const listNoti = [
-  {
-    id: 0,
-    title: "Thông báo 1",
-    content: "Nội dung thông báo 1.Nội dung thông báo 1.Nội dung thông báo 1.Nội dung thông báo 1.Nội dung thông báo 1.Nội dung thông báo 1.",
-    url: "notification",
-    status: false
-  },
-  {
-    id: 1,
-    title: "Thông báo 2",
-    content: "Nội dung thông báo 2.Nội dung thông báo 2.Nội dung thông báo 2.",
-    url: "notification",
-    status: true
-  },
-  {
-    id: 2,
-    title: "Thông báo 3",
-    content: "Nội dung thông báo 3.Nội dung thông báo 3.Nội dung thông báo 3.",
-    url: "notification",
-    status: false
-  },
-  {
-    id: 3,
-    title: "Thông báo 4",
-    content: "Nội dung thông báo 4.Nội dung thông báo 4.Nội dung thông báo 4.",
-    url: "notification",
-    status: true
-  },
-  {
-    id: 4,
-    title: "Thông báo 5",
-    content: "Nội dung thông báo 5.Nội dung thông báo 5.Nội dung thông báo 5.",
-    url: "notification",
-    status: false
-  },
-  {
-    id: 5,
-    title: "Thông báo 6",
-    content: "Nội dung thông báo 5.Nội dung thông báo 5.Nội dung thông báo 5.",
-    url: "notification",
-    status: false
-  },
-  {
-    id: 6,
-    title: "Thông báo 7",
-    content: "Nội dung thông báo 5.Nội dung thông báo 5.Nội dung thông báo 5.",
-    url: "notification",
-    status: false
-  },
-]
+import { NotificationContext } from "../../contexts/NotificationContext";
+import { INotification } from "../../contexts/NotificationContext";
+import NotificationApi from "../../api/notification";
 
-function ItemNotification(props: any) {
-  const { title, content, url, status } = props
+interface IItemNotification {
+  noti: INotification
+}
+
+const ItemNotification: React.FC<IItemNotification> = ({ noti }) => {
+  const notification = noti.notification
+  const notificationStatus = noti.notificationStatus
+  const update = async () => {
+    const notificationApi = new NotificationApi();
+    try {
+      const res = await notificationApi.updateNotificationsOnUsers({ notificationId: noti.notification.id })
+      console.log(res)
+    } catch (error) {
+
+    }
+  }
   return (
-    <div style={{ borderBottom: "1px solid #beb9b9e0", display: "flex", justifyContent: "space-between" }}>
-      <Link to={url} style={{ color: "black" }}>
-        <h5 style={{ margin: "0" }}>{title}</h5>
-        <div>{content}</div>
+    <div onClick={update} style={{ display: "flex", justifyContent: "space-between" }}>
+      <div>
+        <h3 style={{ margin: "0" }}>{notification.title}</h3>
+        <div>{notification.description}</div>
         <div style={{ fontSize: "0.7rem", color: `${colorHeader}` }}>11/11/2001</div>
-      </Link>
-      {!status && <div style={{ display: 'flex', alignItems: "center", color: "rgb(149, 200, 230)" }}>o</div>}
+      </div>
+      {!notificationStatus.seen && <div style={{ display: 'flex', alignItems: "center", color: "rgb(149, 200, 230)" }}>o</div>}
     </div>
   );
 }
@@ -87,17 +53,8 @@ function ItemProfile() {
     </Link>
   );
 }
-const items: MenuProps["items"] = listNoti.map(noti => {
-  return (
-    {
-      label: (<ItemNotification title={noti.title} content={noti.content} url={noti.url} status={noti.status} />),
-      key: noti.id,
-      // style: noti.status ? { backgroundColor: '#ebeaea' } : {},
-    }
-  )
-}
-)
 
+//danh sách private
 const items2: MenuProps["items"] = [
   {
     label: ItemProfile(),
@@ -108,17 +65,16 @@ const { useToken } = theme;
 
 
 export default function HeaderLayout() {
-
+  const [typeNotification, setTypeNotification] = useState<string>("GARDEN")
   const authContext = useContext(AuthContext)
+  const notificationContext = useContext(NotificationContext)
+  const notifications = notificationContext?.notifications
+  const count = notificationContext?.count
+  const setNotifilcations = notificationContext?.setNotifilcations
+  const notificationApi = new NotificationApi();
+  const [page, setPage] = useState<number>(1)
 
   const name = authContext?.authInformation?.user?.fullName || "user"
-  let count = 0
-  listNoti.map(noti => {
-    if (noti.status !== true) {
-      count += 1
-    }
-    return count
-  })
 
   const { token } = useToken();
   const contentStyle = {
@@ -130,6 +86,73 @@ export default function HeaderLayout() {
   const menuStyle = {
     boxShadow: 'none',
   };
+
+  //danh sách thông báo
+  const items: MenuProps["items"] = notifications.map((noti: INotification) => {
+    return (
+      {
+        label: (<ItemNotification noti={noti} />),
+        key: noti.notification.id,
+        style: !noti.notificationStatus.seen ? { marginBottom: '0.2rem', backgroundColor: 'rgba(0, 0, 0, 0.05)', } : { marginBottom: "0.2rem" },
+      }
+    )
+  }
+  )
+  
+  const getNotificationByType = async (type: string) => {
+    console.log(page)
+    setTypeNotification(type)
+    try {
+      const dto = {
+        type: type,
+        seen: false,
+        page: page,
+        limit: 10
+      }
+      const res = await notificationApi.getNotification(dto)
+      if (res && setNotifilcations) {
+        if(page === 1 || type === typeNotification) {
+          setNotifilcations([...res.data.notifications])
+        } else {
+          setNotifilcations((notifications: any) => ([...notifications, ...res.data.notifications]))
+        }
+      }
+    } catch (error) { }
+  }
+
+  const showNotification = async (open: boolean) => {
+    if (open) {
+      getNotificationByType(typeNotification)
+    }
+  }
+
+  const throttle = useMemo(() =>{
+    let lastCall = 0;
+    return function () {
+        const now = new Date().getTime();
+        if (now - lastCall < 500) {
+            return;
+        }
+        lastCall = now;
+        getNotificationByType(typeNotification);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleScroll = () => {
+    const node = document.getElementById("Dropdown_before")
+    let scrollTop = 0
+    node?.parentElement?.addEventListener('scroll', (event: any) => {
+      if (event.target.scrollTop > scrollTop && event.target.offsetHeight + event.target.scrollTop > event.target.scrollHeight) {
+        throttle()
+        setPage(page+1)
+      }
+      scrollTop = event.target.scrollTop
+    })
+  };
+
+  handleScroll()
+
   return (
     <Header className="header">
       <div className="header_left">
@@ -139,22 +162,38 @@ export default function HeaderLayout() {
       </div>
 
       <div className="header_right">
-        <h3>
-          Xin chào {name}
-        </h3>
+        <h3>Xin chào {name}</h3>
 
         <div>
           <Dropdown
+            onOpenChange={showNotification}
             overlayClassName="custom-dropdown"
             trigger={['click']}
             menu={{ items }}
             dropdownRender={(menu) => (
-              <div style={contentStyle}>
+              <div style={contentStyle}
+                id="Dropdown_before"
+              // onScroll={handleScroll}
+              >
                 <h3 style={{ margin: "0", padding: 8 }}>Thông báo</h3>
                 <Space style={{ padding: 8 }}>
-                  <button className='slectNotification' >Tất cả</button>
-                  <button className='slectNotification' >Đã đọc</button>
-                  <button className='slectNotification' >Chưa đọc</button>
+                  <button onClick={() => getNotificationByType("GARDEN")}
+                    className='slectNotification'
+                    style={{ backgroundColor: typeNotification === 'GARDEN' ? colorHeader : '', color: typeNotification === 'GARDEN' ? 'white' : '' }}
+                  >
+                    GARDEN
+                  </button>
+                  <button onClick={() => getNotificationByType("DEVICE")}
+                    className='slectNotification'
+                    style={{ backgroundColor: typeNotification === 'DEVICE' ? colorHeader : '', color: typeNotification === 'DEVICE' ? 'white' : '' }}
+                  >
+                    DEVICE
+                  </button>
+                  <button onClick={() => getNotificationByType("OTHER")}
+                    className='slectNotification' style={{ backgroundColor: typeNotification === 'OTHER' ? colorHeader : '', color: typeNotification === 'OTHER' ? 'white' : '' }}
+                  >
+                    OTHER
+                  </button>
                 </Space>
                 <Divider style={{ margin: 0 }} />
                 {React.cloneElement(menu as React.ReactElement, { style: menuStyle })}
@@ -194,7 +233,7 @@ export default function HeaderLayout() {
             </Space>
           </Dropdown>
         </div>
-      </div>
-    </Header>
+      </div >
+    </Header >
   );
 }

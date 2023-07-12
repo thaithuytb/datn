@@ -1,12 +1,21 @@
-import { PrismaClient } from '@prisma/client';
+import {
+  NotificationType,
+  PrismaClient,
+  ThresholdNameEnum,
+} from '@prisma/client';
 import * as mqtt from 'mqtt';
 import { newTopicJWT } from '../common/setJwtMqtt';
 import { uuid } from 'uuidv4';
 import { Redis } from 'ioredis';
 import { SocketGateway } from '../socket/socket.gateway';
 import { convertData } from '../modules/device/device.service';
+import { NotificationService } from '../modules/notification/notification.service';
+import * as dayjs from 'dayjs';
 
-export async function subscribeMqtt(socketGateway: SocketGateway) {
+export async function subscribeMqtt(
+  socketGateway: SocketGateway,
+  notificationService: NotificationService,
+) {
   const prisma = new PrismaClient();
 
   const redis = new Redis({
@@ -66,30 +75,35 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
           prisma,
           garden.id,
         );
+        const thresholds = await getThresholdsByGardenId(prisma, garden.id);
         const newTopic = await redis.get('newTopic');
         client.publish(
           `datn/${newTopic}/regime`,
           JSON.stringify({
             from: 'web',
             isAuto: garden.isAuto,
+            first: true,
           }),
         );
         for (const statusDevice of statusDevices) {
-          if (!statusDevice.lowThreshold && !statusDevice.highThreshold) {
-            client.publish(
-              `datn/${newTopic}/actuator`,
-              JSON.stringify({
-                from: 'web',
-                ...statusDevice,
-              }),
-            );
-            continue;
-          }
+          client.publish(
+            `datn/${newTopic}/actuator`,
+            JSON.stringify({
+              from: 'web',
+              ...statusDevice,
+              first: true,
+            }),
+          );
+        }
+        for (const threshold of thresholds) {
           client.publish(
             `datn/${newTopic}/threshold`,
             JSON.stringify({
               from: 'web',
-              ...statusDevice,
+              lowThreshold: JSON.parse(threshold.lowThreshold.toString()),
+              highThreshold: JSON.parse(threshold.highThreshold.toString()),
+              name: threshold.name,
+              first: true,
             }),
           );
         }
@@ -98,15 +112,63 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
     }
 
     if (topic.slice(15) === '/regime') {
-      socketGateway.server.emit('newStatusGarden', parseMessage);
+      socketGateway.emitToGarden(
+        // parseMessage['gardenId'].toString(),
+        '1',
+        'newStatusGarden',
+        parseMessage,
+      );
       console.log('regime', parseMessage);
-      return updateStatusGarden(prisma, parseMessage);
+      await updateStatusGarden(prisma, parseMessage);
+      if (typeof parseMessage['createdBy'] != 'number') {
+        return console.log(`${parseMessage['createdBy']} is not number`);
+      }
+      const newNotification = await notificationService.createNotifications({
+        title: `Thay đổi trạng thái khu vườn`,
+        description: `Thay đổi trạng thái khu vườn ${dayjs().format(
+          'YYYY-MM-DD',
+        )}`,
+        type: NotificationType.GARDEN,
+        createdBy: parseMessage['createdBy'],
+        // createdBy: 1,
+        gardenId: parseInt(parseMessage['gardenId']),
+      });
+      if (newNotification) {
+        socketGateway.emitToGarden(
+          parseMessage['gardenId'].toString(),
+          'newCountNotification',
+          parseMessage,
+        );
+      }
     }
 
     if (topic.slice(15) === '/threshold') {
-      socketGateway.server.emit('newThreshold', parseMessage);
-      console.log('threshold', parseMessage);
-      return updateThreshold(prisma, parseMessage);
+      socketGateway.emitToGarden(
+        parseMessage['gardenId'].toString(),
+        'newThreshold',
+        parseMessage,
+      );
+      await updateThreshold(prisma, parseMessage);
+      if (typeof parseMessage['createdBy'] != 'number') {
+        return console.log(`${parseMessage['createdBy']} is not number`);
+      }
+      const newNotification = await notificationService.createNotifications({
+        title: `Thay đổi ngưỡng thiết bị`,
+        description: `Thay đổi ngưỡng thiết bị ngày ${dayjs().format(
+          'YYYY-MM-DD',
+        )}`,
+        type: NotificationType.DEVICE,
+        createdBy: parseMessage['createdBy'],
+        // createdBy: 1,
+        gardenId: parseInt(parseMessage['gardenId']),
+      });
+      if (newNotification) {
+        socketGateway.emitToGarden(
+          parseMessage['gardenId'].toString(),
+          'newCountNotification',
+          parseMessage,
+        );
+      }
     }
 
     if (topic.slice(15) === '/sensor' || topic.slice(15) === '/actuator') {
@@ -152,7 +214,12 @@ export async function subscribeMqtt(socketGateway: SocketGateway) {
           }
         }
         case '/actuator': {
-          socketGateway.server.emit('newStatus', parseMessage);
+          socketGateway.emitToGarden(
+            // device.gardenId.toString(),
+            '1',
+            'newStatus',
+            parseMessage,
+          );
           return prisma[convertData[device.type]].create({
             data: {
               status: parseMessage['status'],
@@ -182,14 +249,6 @@ const getStatusDevicesByGardenId = async (
   });
 
   const promiseList = devices.map(async (device) => {
-    if (device.lowThreshold && device.highThreshold) {
-      return {
-        deviceId: device.id,
-        ip: device.ip,
-        lowThreshold: JSON.parse(device.lowThreshold.toString()),
-        highThreshold: JSON.parse(device.highThreshold.toString()),
-      };
-    }
     const valueDevice = await prisma[convertData[device.type]].findFirst({
       orderBy: {
         createdAt: 'desc',
@@ -204,6 +263,19 @@ const getStatusDevicesByGardenId = async (
   });
 
   return await Promise.all([...promiseList]);
+};
+
+const getThresholdsByGardenId = async (
+  prisma: PrismaClient,
+  gardenId: number,
+) => {
+  const thresholds = await prisma.threshold.findMany({
+    where: {
+      gardenId,
+    },
+  });
+
+  return thresholds;
 };
 
 const getGarden = async (prisma: PrismaClient, gardenId: number) => {
@@ -221,6 +293,10 @@ const getGarden = async (prisma: PrismaClient, gardenId: number) => {
 };
 
 const updateStatusGarden = async (prisma: PrismaClient, parseMessage: any) => {
+  if (typeof parseMessage['gardenId'] !== 'number') {
+    console.log('ERROR validate updateStatusGarden', parseMessage);
+    return;
+  }
   return prisma.garden.update({
     where: {
       id: parseMessage.gardenId,
@@ -232,23 +308,17 @@ const updateStatusGarden = async (prisma: PrismaClient, parseMessage: any) => {
 };
 
 const updateThreshold = async (prisma: PrismaClient, parseMessage: any) => {
-  const device = await prisma.device.findFirst({
-    where: {
-      ip: parseMessage['ip'],
-    },
-  });
-
-  if (!device) {
-    return console.log(
-      `error: device not found with topic: /threshold. Data: ${JSON.stringify(
-        parseMessage,
-      )}`,
-    );
+  if (
+    typeof parseMessage['name'] !== 'string' ||
+    typeof parseMessage['gardenId'] !== 'number'
+  ) {
+    console.log('ERROR validate updatedThreshold', parseMessage);
+    return;
   }
-
-  return prisma.device.update({
+  return prisma.threshold.updateMany({
     where: {
-      id: device.id,
+      name: parseMessage['name'] as ThresholdNameEnum,
+      gardenId: parseMessage['gardenId'],
     },
     data: {
       lowThreshold: JSON.stringify(parseMessage['lowThreshold']),

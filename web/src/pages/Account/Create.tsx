@@ -78,7 +78,7 @@ const CreateAccount = () => {
 
       <Form.Item name='gender' label="Giới tính">
         <Radio.Group>
-          <Radio value="MALLE">Nam</Radio>
+          <Radio value="MALE">Nam</Radio>
           <Radio value="FEMALE">Nữ</Radio>
         </Radio.Group>
       </Form.Item>

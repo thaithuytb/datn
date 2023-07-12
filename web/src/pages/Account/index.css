@@ -1,0 +1,33 @@
+.titleAccount {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.SearchAccount {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.ModalProfile_header {
+    display: flex;
+    align-items: center;
+}
+
+.ModalProfile_header div {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: rgb(136, 135, 135);
+}
+
+.ModalProfile {
+    display: flex;
+    justify-content: space-between;
+}
+
+.ModalProfile_detail {
+    padding: 0.7rem 0;
+    font-size: 1.05rem;
+    color: rgb(77, 77, 77);
+}

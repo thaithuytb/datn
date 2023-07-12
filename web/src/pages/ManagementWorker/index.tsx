@@ -2,19 +2,26 @@ import React, { useContext, useEffect, useState } from "react";
 import "./index.css";
 import { GardenContext } from "../../contexts/GardenContext";
 import { AuthContext } from "../../contexts/AuthContext";
-import { MessageContext } from "../../contexts/MessageContext";
 import AuthApi from "../../api/auth";
-import { Button, Modal, Select, SelectProps, Space, Table, Empty } from "antd";
+import { Button, Modal, Select, SelectProps, Table, Empty } from "antd";
 import { ExclamationCircleFilled, SearchOutlined } from "@ant-design/icons";
 import { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { useNavigate, useParams } from "react-router-dom";
+import dayjs from "dayjs";
+import ChangeRole from "./ChangeRole";
+import { IChangeRole } from "./ChangeRole";
+import { MessageContext } from "../../contexts/MessageContext";
+
 const { confirm } = Modal;
 
-// const roleUser = {
-//   MANAGER: "Quản lý",
-//   USER: "Nhân viên",
-//   VIEWER: "Người xem",
-// };
+const convertRoleGarden = {
+  MANAGER: 'Quan ly',
+  USER: 'Nhan vien'
+}
+
+const getConvertedRole = (roleInGarden: any) => {
+  return convertRoleGarden[roleInGarden as keyof typeof convertRoleGarden];
+}
 
 interface DataType {
   stt: any;
@@ -25,19 +32,9 @@ interface DataType {
   date: string;
 }
 
-interface IShowModal {
-  isModalOpen: any;
-  setIsModalOpen: any;
+export interface IViewEmpty {
+  selectGarden: any;
   itemsOption: any;
-  changeRole: {
-    garden?: any
-    role?: any
-  } | undefined;
-}
-
-interface IViewEmpty {
-  selectGarden: any
-  itemsOption: any
 }
 
 const showDeleteConfirm = () => {
@@ -57,7 +54,10 @@ const showDeleteConfirm = () => {
   });
 };
 
-const ViewEmpty: React.FC<IViewEmpty> = ({ selectGarden, itemsOption }) => {
+export const ViewEmpty: React.FC<IViewEmpty> = ({
+  selectGarden,
+  itemsOption,
+}) => {
   return (
     <Empty
       image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
@@ -65,7 +65,8 @@ const ViewEmpty: React.FC<IViewEmpty> = ({ selectGarden, itemsOption }) => {
       description={
         <div>
           Chọn khu vườn
-          <br /><br />
+          <br />
+          <br />
           <Select
             id="garden-select"
             style={{ width: 200 }}
@@ -75,99 +76,7 @@ const ViewEmpty: React.FC<IViewEmpty> = ({ selectGarden, itemsOption }) => {
           />
         </div>
       }
-    >
-    </Empty>
-  )
-}
-
-const ShowModal: React.FC<IShowModal> = ({
-  isModalOpen,
-  setIsModalOpen,
-  itemsOption,
-  changeRole,
-}) => {
-  const garden = changeRole?.garden
-  const role = changeRole?.role
-  const [dto, setDto] = useState<{gardenId?: number, userId?: number, role?: string}>({});
-  useEffect(() => {
-    setDto({
-      gardenId: garden?.garden.id,
-      userId: role?.userId,
-      role: role?.value
-    })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [changeRole])
-  const itemsRole: SelectProps["options"] = [
-    {
-      value: "MANAGER",
-      label: "MANAGER",
-    },
-    {
-      value: "USER",
-      label: "USER",
-    },
-    {
-      value: "VIEWER",
-      label: "VIEWER",
-    },
-  ];
-  const handleOk = async () => {
-    try {
-      const authApi = AuthApi.registerAuthApi()
-      const res = await authApi.upsertGardensOnUser(dto)
-      console.log(res)
-      setIsModalOpen(false)
-    } catch (error) {
-      console.log(error)
-    }
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-  const selectGarden = (value: any, item: any) => {
-    setDto({
-      ...dto,
-      gardenId: item.id
-    });
-  };
-  const selectRole = (value: any, item: any) => {
-    setDto({
-      ...dto,
-      role: item.value
-    });
-  };
-  return (
-    <Modal
-      title="Thay đổi quyền người dùng"
-      open={isModalOpen}
-      onOk={handleOk}
-      onCancel={handleCancel}
-    >
-      <div>
-        <Space>Chọn khu vườn</Space>
-        <Select
-          suffixIcon={<SearchOutlined />}
-          showSearch
-          style={{ width: "100%" }}
-          value={garden}
-          onChange={selectGarden}
-          options={itemsOption}
-          placeholder="Tìm kiếm khu vườn"
-        />
-      </div>
-      <div style={{ marginTop: "1.5rem" }}>
-        <Space>Chọn chức vụ</Space>
-        <Select
-          suffixIcon={<SearchOutlined />}
-          showSearch
-          value={role}
-          style={{ width: "100%" }}
-          options={itemsRole}
-          onChange={selectRole}
-          placeholder="Chức vụ"
-        />
-      </div>
-    </Modal>
+    ></Empty>
   );
 };
 
@@ -175,17 +84,18 @@ const ManagementWorker = () => {
   const authApi = AuthApi.registerAuthApi();
   const gardenContext = useContext(GardenContext);
   const gardens = gardenContext?.gardens;
-  const authContext = useContext(AuthContext)
-  const navigate = useNavigate()
+  const authContext = useContext(AuthContext);
+  const navigate = useNavigate();
   const [listUser, setLisUser] = useState<any>([]);
   const [dtoAddUser, setDtoAddUser] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [changeRole, setChangeRole] = useState<{ garden?: any, role?: any }>();
+  const [changeRole, setChangeRole] = useState<IChangeRole>();
   const [garden, setGarden] = useState<any>();
-  const [totalPage, setTotalPage] = useState<number>()
-  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [totalPage, setTotalPage] = useState<number>();
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const { gardenId } = useParams();
-  const roleUserOfPage = authContext?.authInformation.user.role
+  const roleUserOfPage = authContext?.authInformation.user.role;
+  const messageContext = useContext(MessageContext)
 
   //lấy tất cả khu vườn về-------------------------------------------
   useEffect(() => {
@@ -195,41 +105,46 @@ const ManagementWorker = () => {
 
   //refreshtUrl
   useEffect(() => {
-    const newGarden = gardens?.find(value => value.id === Number(gardenId))
+    const newGarden = gardens?.find((value) => value.id === Number(gardenId));
     if (newGarden) {
       setGarden({
         id: newGarden?.id,
         value: newGarden?.name,
         label: newGarden?.name,
-        garden: newGarden
-      })
+        garden: newGarden,
+      });
       getAllUserByGardenId({
         id: newGarden?.id,
         value: newGarden?.name,
         label: newGarden?.name,
-        garden: newGarden
+        garden: newGarden,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gardens]);
-  const getAllUserByGardenId = async (garden: any, page?: number | undefined, limit: number = 7) => {
+  const getAllUserByGardenId = async (
+    garden: any,
+    page?: number | undefined,
+    limit: number = 7
+  ) => {
     const dto = { gardenId: garden?.id, page: page };
     try {
-      const res = await authApi.getUsersByGardenId(dto);
-      let stt = 0
+      const res = await authApi.getUsers(dto);
+      let stt = 0;
       if (page) {
-        stt = (page - 1) * limit
+        stt = (page - 1) * limit;
       }
-      setTotalPage(res?.data?.totalRecords)
+      setTotalPage(res?.data?.totalRecords);
       const data = res?.data?.users?.map((item: any, index: any) => {
         return {
           key: index,
           stt: index + 1 + stt,
           name: item.user.fullName,
-          role: item.role,
+          roleInGarden:
+            item.gardens[0].role,
           garden: garden.garden.name,
           gardenId: garden.id,
-          date: item.user.createdAt,
+          date: dayjs(item.gardens[0].createdAt).format("YYYY-MM-DD"),
           lable: item.user.fullName,
           value: item.user.fullName,
           userId: item.user.id,
@@ -246,58 +161,55 @@ const ManagementWorker = () => {
     })) || [];
   //chọn khu vườn--------------------------------------------------------
   const selectGarden = async (value: any, item: any) => {
-    setCurrentPage(1)
+    setCurrentPage(1);
     const garden = gardens?.find((garden) => garden.id === item.id);
     if (garden) {
       setGarden({ ...item, garden: garden });
       await getAllUserByGardenId({ ...item, garden: garden }, undefined);
-      navigate(`/management-worker/${garden.id}`)
+      navigate(`/management-worker/${garden.id}`);
     } else {
       setLisUser([]);
     }
   };
   //thêm người vào khu vườn-----------------------------------------------
 
-  const [listSearch, setListSearch] = useState([])
-  const [search, setSearch] = useState<string | undefined>()
+  const [listSearch, setListSearch] = useState([]);
 
-  const getListUserSearch = async (dto: { name?: string }) => {
-    const res = await authApi.getListUser(dto)
-    const data = res.data.map((item: any) => ({
-      label: item.fullName,
-      value: item.fullName,
-      user: item
-    }))
-    setListSearch(data)
-  }
+  const getListUserSearch = async (dto: { gardenId: number }) => {
+    const res = await authApi.getUsersWithoutGardenId(dto);
+    if (res.success) {
+      const data = res?.data?.users.map((item: any) => ({
+        label: item.fullName,
+        value: item.fullName,
+        user: item,
+      }));
+      setListSearch(data);
+    }
+  };
 
   useEffect(() => {
-    const handleSearch = setTimeout(() => {
-      getListUserSearch({ name: search })
-    }, 500);
-
-    return () => clearTimeout(handleSearch);
+    getListUserSearch({ gardenId: Number(gardenId) });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search])
-  const searchUser = (value: string) => {
-    setSearch(value)
-  }
+  }, [gardenId]);
 
   const handleChange = (value: string, item: any) => {
     setDtoAddUser({
       gardenId: Number(gardenId),
       userId: item.user.id,
-      role: "USER"
+      role: "USER",
     });
   };
 
   const addUser = async () => {
     try {
-      const dto = { ...dtoAddUser }
-      const res = await authApi.upsertGardensOnUser(dto)
-      console.log(res)
+      const dto = { ...dtoAddUser };
+      const res = await authApi.upsertGardensOnUser(dto);
+      if(res.success) {
+        messageContext?.success("Them nguoi thanh cong")
+        getAllUserByGardenId(garden);
+      }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -311,55 +223,59 @@ const ManagementWorker = () => {
     {
       title: "Name",
       dataIndex: "name",
-      // sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
-      title: "Nhiệm vụ",
-      dataIndex: "role",
-      // sorter: (a, b) => a.role.localeCompare(b.role),
+      title: "Chức vụ",
+      dataIndex: "roleInGarden",
+      render: (_, record: any) => {
+        return getConvertedRole(record.roleInGarden)
+      }
     },
     {
       title: "Khu vườn",
       dataIndex: "garden",
-      // sorter: (a, b) => a.garden.localeCompare(b.garden),
     },
     {
-      title: "Ngày tham gia",
+      title: "Ngày tham gia khu vườn",
       dataIndex: "date",
-      // sorter: (a, b) => a.date.localeCompare(b.date),
     },
   ];
-  columns = roleUserOfPage === "ADMIN" ? [
-    ...columns,
-    {
-      title: "",
-      dataIndex: "",
-      render: (_, record) =>
-        listUser.length > 0 ? (
-          <>
-            <Button onClick={() => showModal(record)} type="primary" ghost>
-              Thay đổi quyền
-            </Button>
-            <Button
-              onClick={showDeleteConfirm}
-              style={{ marginLeft: "0.5rem" }}
-              danger
-            >
-              Xóa
-            </Button>
-          </>
-        ) : null,
-      width: 230,
-    },
-  ] : columns;
-
+  columns =
+    roleUserOfPage === "ADMIN"
+      ? [
+        ...columns,
+        {
+          title: "Thao tác",
+          render: (_, record) =>
+            listUser.length > 0 ? (
+              <>
+                <Button
+                  onClick={() => showModal(record)}
+                  type="primary"
+                  ghost
+                >
+                  Cập nhật
+                </Button>
+                <Button
+                  onClick={showDeleteConfirm}
+                  style={{ marginLeft: "0.5rem" }}
+                  danger
+                >
+                  Xóa
+                </Button>
+              </>
+            ) : null,
+          width: 230,
+        },
+      ]
+      : columns;
 
   const showModal = (record: any) => {
     setChangeRole({
       garden: garden,
-      role: {
-        value: record.role,
-        label: record.role,
+      roleInGarden: {
+        value: record.roleInGarden,
+        label: getConvertedRole(record.roleInGarden),
         userId: record.userId,
       },
     });
@@ -367,91 +283,89 @@ const ManagementWorker = () => {
   };
 
   const changPagination = async (pagination: TablePaginationConfig) => {
-    setCurrentPage(Number(pagination.current))
+    setCurrentPage(Number(pagination.current));
     await getAllUserByGardenId(garden, pagination.current);
-  }
+  };
 
   return (
     <>
-      {
-        gardens && !garden ?
-          <ViewEmpty
-            selectGarden={selectGarden}
-            itemsOption={itemsOption}
-          />
-          :
-          <div className="ManagementWorker">
-            <header>
-              <label>Chọn vườn: </label>
-              <Select
-                id="garden-select"
-                style={{ width: 200 }}
-                defaultValue={garden}
-                onChange={selectGarden}
-                options={itemsOption}
-                placeholder={"Chọn khu vườn"}
-              />
-            </header>
+      {!gardenId ? (
+        <ViewEmpty selectGarden={selectGarden} itemsOption={itemsOption} />
+      ) : (
+        <div className="ManagementWorker">
+          <header>
+            <label>Chọn vườn: </label>
+            <Select
+              id="garden-select"
+              style={{ width: 200 }}
+              value={garden}
+              onChange={selectGarden}
+              options={itemsOption}
+              placeholder={"Chọn khu vườn"}
+            />
+          </header>
 
-            <div className="body-ManagementWorker">
-              {/* thêm người vào khu vườn */}
-              <div
-                style={{
-                  margin: "1rem 0",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <span>Thêm người vào khu vườn: {garden?.label || "Bạn hãy chọn khu vườn......."}</span>
-                <div style={{ width: "50%", float: "right" }}>
-                  <span>Thêm người: </span>
-                  <Select
-                    onSearch={searchUser}
-                    suffixIcon={<SearchOutlined />}
-                    showSearch
-                    style={{ width: "60%" }}
-                    onChange={handleChange}
-                    options={listSearch}
-                    placeholder="Tìm kiếm người"
-                  />
-
-                  <Button
-                    onClick={addUser}
-                    type="primary"
-                    style={{ marginLeft: "1rem" }}
-                  >
-                    Thêm
-                  </Button>
-                </div>
-              </div>
-
-              {/* bảng user  */}
-              <div>
-                <Table
-                  onChange={changPagination}
-                  bordered={true}
-                  pagination={{
-                    pageSize: 7,
-                    total: totalPage,
-                    current: currentPage
-                  }}
-                  columns={columns}
-                  dataSource={listUser}
+          <div className="body-ManagementWorker">
+            {/* thêm người vào khu vườn */}
+            <div
+              style={{
+                margin: "1rem 0",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span>
+                Thêm người vào khu vườn:{" "}
+                {garden?.label || "Bạn hãy chọn khu vườn......."}
+              </span>
+              <div style={{ width: "50%", float: "right" }}>
+                <span>Thêm người: </span>
+                <Select
+                  suffixIcon={<SearchOutlined />}
+                  showSearch
+                  style={{ width: "60%" }}
+                  onChange={handleChange}
+                  options={listSearch}
+                  placeholder="Tìm kiếm người"
                 />
+
+                <Button
+                  onClick={addUser}
+                  type="primary"
+                  style={{ marginLeft: "1rem" }}
+                >
+                  Thêm
+                </Button>
               </div>
             </div>
-            <ShowModal
+
+            {/* bảng user  */}
+            <div>
+              <Table
+                onChange={changPagination}
+                bordered={true}
+                pagination={{
+                  pageSize: 7,
+                  total: totalPage,
+                  current: currentPage,
+                }}
+                columns={columns}
+                dataSource={listUser}
+              />
+            </div>
+          </div>
+          {isModalOpen &&
+            <ChangeRole
               isModalOpen={isModalOpen}
               setIsModalOpen={setIsModalOpen}
               itemsOption={itemsOption}
               changeRole={changeRole}
             />
-          </div>
-      }
+          }
+        </div>
+      )}
     </>
-
-
   );
 };
 

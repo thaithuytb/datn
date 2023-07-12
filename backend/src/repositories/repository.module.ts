@@ -6,6 +6,8 @@ import { AuthRepository } from './auth.repository';
 import { NotificationRepository } from './notification.repository';
 import { DaoModule } from '../infrastructures/dao/dao.module';
 import { DeviceRepository } from './device.repository';
+import { ThresholdRepository } from './threshold.repository';
+import { DataStatisticalRepository } from './humi.repository';
 
 @Module({
   imports: [DaoModule],
@@ -16,6 +18,8 @@ import { DeviceRepository } from './device.repository';
     AuthRepository,
     NotificationRepository,
     DeviceRepository,
+    ThresholdRepository,
+    DataStatisticalRepository,
   ],
   exports: [
     SampleRepository,
@@ -24,6 +28,8 @@ import { DeviceRepository } from './device.repository';
     AuthRepository,
     NotificationRepository,
     DeviceRepository,
+    ThresholdRepository,
+    DataStatisticalRepository,
   ],
 })
 export class RepositoryModule {}

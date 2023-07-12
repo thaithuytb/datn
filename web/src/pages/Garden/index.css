@@ -1,7 +1,5 @@
 .garden {
 	padding: 15px 25px;
-	display: flex;
-	width: 70%;
 }
 
 .garden_header p {
@@ -31,4 +29,29 @@
 .garden .garden_header p span:first-child {
 	font-size: 18px;
 	margin-bottom: 5px;
+}
+
+.garden_header h3 {
+	font-weight: 400;
+	color: rgb(14, 13, 13) !important;
+}
+
+.garden_header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 20px;
+}
+
+/* /////////////// */
+.ModalUpdateGarden {
+	display: flex;
+	justify-content: space-between;
+}
+.ModalUpdateGarden_left, .ModalUpdateGarden_right {
+	width: 45%;
+}
+.ModalUpdateGarden_right div,
+.ModalUpdateGarden_left div{
+	margin: 0.7rem 0;
 }

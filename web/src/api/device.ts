@@ -18,7 +18,7 @@ class DeviceApi {
     gardenId: string
   ) {
     const url = `/devices/change-device/${gardenId}`;
-    return axiosClient.post(url, { dto });
+    return axiosClient.post(url, { dto })  as unknown as ApiResponse;
   }
 
   changeThreshold(dto: {

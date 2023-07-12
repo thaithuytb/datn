@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   ParseIntPipe,
   Patch,
   Post,
@@ -13,10 +12,10 @@ import {
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import {
-  GardenRoleAndUsersType,
   GardensOnUsersType,
   LoginType,
   UserResponseDetailType,
+  UsersWithGardensOnUsersType,
 } from './models/auth.model';
 import { RegisterDto } from './dto/register.dto';
 import { RoleAdminGuard } from '../../guards/roleAdminGuard';
@@ -62,25 +61,26 @@ export class AuthController {
     return this.authService.updateInformation(req.user as User, dto);
   }
 
-  //Garden on user
   @UseGuards(RoleAdminGuard)
   @Get('users')
-  async getUsersByName(@Query('name') name?: string): Promise<any> {
-    return this.authService.getUsersByName(name);
+  async getUsersByGardenId(
+    @Query('gardenId', new OptionalParseIntPipe()) gardenId?: number,
+    @Query('page', new OptionalParseIntPipe()) page?: number,
+    @Query('limit', new OptionalParseIntPipe()) limit?: number,
+  ): Promise<UsersWithGardensOnUsersType> {
+    return this.authService.getGardenRoleAndUsers(
+      page || 1,
+      limit || 6,
+      gardenId,
+    );
   }
 
   @UseGuards(RoleAdminGuard)
-  @Get('users/:gardenId')
-  async getUsersByGardenId(
-    @Param('gardenId', ParseIntPipe) gardenId: number,
-    @Query('page', new OptionalParseIntPipe()) page?: number,
-    @Query('limit', new OptionalParseIntPipe()) limit?: number,
-  ): Promise<GardenRoleAndUsersType> {
-    return this.authService.getGardenRoleAndUsersByGardenId(
-      gardenId,
-      page || 1,
-      limit || 6,
-    );
+  @Get('users/without')
+  async getUsersWithoutGardenId(
+    @Query('gardenId', ParseIntPipe) gardenId: number,
+  ): Promise<UsersWithGardensOnUsersType> {
+    return this.authService.getUsersWithoutGardenId(gardenId);
   }
 
   @UseGuards(RoleAdminGuard)

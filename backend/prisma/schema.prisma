@@ -19,42 +19,57 @@ model Sample {
 }
 
 model User {
-  id                   Int                    @id @default(autoincrement())
-  phoneNumber          String?                @map("phone_number")
-  email                String                 @unique
-  password             String
-  role                 Role                   @default(USER)
-  createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt            DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  address              String?
-  fullName             String                 @map("full_name")
-  gender               Gender                 @default(MALE)
-  gardens              GardensOnUsers[]
-  notificationsOnUsers NotificationsOnUsers[]
+  id            Int                    @id @default(autoincrement())
+  phoneNumber   String?                @map("phone_number")
+  email         String                 @unique
+  password      String
+  role          Role                   @default(USER)
+  createdAt     DateTime               @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt     DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  address       String?
+  fullName      String                 @map("full_name")
+  dateOfBirth   DateTime?              @map("date_of_birth")
+  gender        Gender                 @default(MALE)
+  gardens       GardensOnUsers[]
+  notifications NotificationsOnUsers[]
+  Notification  Notification[]
+  isDeleted     Boolean                @default(false)
 
   @@map("users")
 }
 
 model Device {
-  id             Int            @id @default(autoincrement())
-  ip             String         @unique
-  status         Boolean        @default(true)
-  type           DeviceTypeEnum
-  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt      DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  gardenId       Int            @map("garden_id")
-  garden         Garden         @relation(fields: [gardenId], references: [id], onDelete: Cascade)
-  lowThreshold   String?        @map("low_threshold")
-  highThreshold  String?         @map("high_threshold")
-  tempAirDatas   TempAirData[]
-  humiDatas      HumiData[]
-  lightDatas     LightData[]
-  fanDatas       FanData[]
-  pumpDatas      PumpData[]
-  nebulizerDatas NebulizerData[]
-  lampDatas      LampData[]
+  id           Int            @id @default(autoincrement())
+  ip           String         @unique
+  status       Boolean        @default(true)
+  type         DeviceTypeEnum
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt    DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  gardenId     Int            @map("garden_id")
+  garden       Garden         @relation(fields: [gardenId], references: [id], onDelete: Cascade)
+  tempAirDatas TempAirData[]
+  humiDatas    HumiData[]
+  lightDatas   LightData[]
+  fanDatas     FanData[]
+  pumpDatas    PumpData[]
+  curtainDatas CurtainData[]
+  lampDatas    LampData[]
+  isDeleted    Boolean        @default(false)
 
   @@map("devices")
+}
+
+model Threshold {
+  id            Int               @id @default(autoincrement())
+  name          ThresholdNameEnum
+  lowThreshold  String?           @map("low_threshold")
+  highThreshold String?           @map("high_threshold")
+  gardenId      Int               @map("garden_id")
+  garden        Garden            @relation(fields: [gardenId], references: [id], onDelete: Cascade)
+  createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt     DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+
+  @@map("thresholds")
 }
 
 model TempAirData {
@@ -80,7 +95,7 @@ model HumiData {
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   gardenId  Int      @map("garden_id")
   deviceId  Int      @map("device_id")
-  device      Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  device    Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 
   @@index([deviceId])
   @@index([deviceId, createdAt])
@@ -135,7 +150,7 @@ model PumpData {
   @@map("pump_datas")
 }
 
-model NebulizerData {
+model CurtainData {
   id        Int      @id @default(autoincrement())
   value     Float?
   status    Boolean
@@ -148,7 +163,7 @@ model NebulizerData {
   @@index([deviceId])
   @@index([deviceId, createdAt])
   @@index([gardenId, deviceId])
-  @@map("nebulizer_datas")
+  @@map("curtain_datas")
 }
 
 model LampData {
@@ -171,26 +186,29 @@ model Garden {
   name        String           @unique
   address     String
   width       Int?
-  length      Int? 
+  length      Int?
   isAuto      Boolean          @default(true)
   hight       Int?
   landArea    Int              @map("land_area")
   createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt   DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  isDeleted   Boolean          @default(false)
+  coordinates String?
   devices     Device[]
   users       GardensOnUsers[]
+  Threshold   Threshold[]
 
   @@map("gardens")
 }
 
 model GardensOnUsers {
-  userId    Int      @map("user_id")
-  gardenId  Int      @map("garden_id")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  role      RoleGarden @default(VIEWER)
-  garden    Garden   @relation(fields: [gardenId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  userId    Int        @map("user_id")
+  gardenId  Int        @map("garden_id")
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  role      RoleGarden @default(USER)
+  garden    Garden     @relation(fields: [gardenId], references: [id])
+  user      User       @relation(fields: [userId], references: [id])
 
   @@id([userId, gardenId])
   @@index([gardenId], map: "gardensOnUsers_garden_id_fkey")
@@ -198,25 +216,28 @@ model GardensOnUsers {
 }
 
 model Notification {
-  id          Int                    @id @default(autoincrement())
-  description String
-  title       String
-  createdAt   DateTime               @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt   DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  users       NotificationsOnUsers[]
+  id            Int                    @id @default(autoincrement())
+  description   String
+  title         String
+  createdAt     DateTime               @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt     DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  createdBy     Int                    @map("created_by")
+  createdByUser User                   @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  users         NotificationsOnUsers[]
+  gardenId      Int?                   @map("garden_id")
+  type          NotificationType
 
   @@map("notifications")
 }
 
 model NotificationsOnUsers {
-  userId         Int              @map("user_id")
-  notificationId Int              @map("notification_id")
-  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  seen           Boolean          @default(false)
-  type           NotificationType
-  notification   Notification     @relation(fields: [notificationId], references: [id])
-  user           User             @relation(fields: [userId], references: [id])
+  userId         Int          @map("user_id")
+  notificationId Int          @map("notification_id")
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  seen           Boolean      @default(false)
+  notification   Notification @relation(fields: [notificationId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
 
   @@id([userId, notificationId])
   @@index([notificationId], map: "notificationsOnUsers_notification_id_fkey")
@@ -231,7 +252,6 @@ enum Role {
 enum RoleGarden {
   MANAGER
   USER
-  VIEWER
 }
 
 enum Gender {
@@ -242,15 +262,21 @@ enum Gender {
 enum DeviceTypeEnum {
   FAN
   LAMP
-  NEBULIZER
+  CURTAIN
   PUMP
   LIGHTSENSOR
   HUMISENSOR
   TEMPAIRSENSOR
 }
 
+enum ThresholdNameEnum {
+  LIGHTSENSOR
+  HUMISENSOR
+  TEMPAIRSENSOR
+}
+
 enum NotificationType {
-  CALENDAR
-  NOTION
+  GARDEN
+  DEVICE
   OTHER
 }

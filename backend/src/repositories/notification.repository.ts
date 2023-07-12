@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../infrastructures/dao/prisma.service';
-import { Notification, NotificationsOnUsers, Prisma } from '@prisma/client';
-import { CreateNotificationDto } from 'src/modules/notification/dto/notification.dto';
+import { Notification, Prisma } from '@prisma/client';
 import { PrismaTransactional } from 'prisma/custom.prisma.type';
 
 @Injectable()
@@ -9,40 +8,53 @@ export class NotificationRepository implements INotificationRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async getNotifications(
-    args: Prisma.NotificationsOnUsersFindManyArgs,
-  ): Promise<NotificationsOnUsers[]> {
-    return this.prisma.notificationsOnUsers.findMany(args);
+    arg: Prisma.NotificationFindManyArgs,
+  ): Promise<Notification[]> {
+    return this.prisma.notification.findMany(arg);
   }
 
-  async createNotification(
-    dto: CreateNotificationDto,
-    prisma: PrismaTransactional = this.prisma,
-  ) {
-    return prisma.notification.create({
-      data: CreateNotificationDto.transform(dto),
+  async getCountNotifications(
+    arg: Prisma.NotificationWhereInput,
+  ): Promise<number> {
+    return this.prisma.notification.count({
+      where: arg,
     });
   }
 
-  async createNotificationsOnUsers(
-    args: Prisma.NotificationsOnUsersCreateManyInput[],
+  async updateNotificationsOnUsers(dto: {
+    userId: number;
+    notificationId: number;
+  }): Promise<{ count: number }> {
+    return this.prisma.notificationsOnUsers.updateMany({
+      where: {
+        userId: dto.userId,
+        notificationId: dto.notificationId,
+      },
+      data: {
+        seen: true,
+      },
+    });
+  }
+  async createNotifications(
+    arg: Prisma.NotificationCreateInput,
     prisma: PrismaTransactional = this.prisma,
-  ): Promise<{ count: number }> {
-    return prisma.notificationsOnUsers.createMany({
-      data: args,
+  ): Promise<Notification> {
+    return prisma.notification.create({
+      data: arg,
     });
   }
 }
 
 export interface INotificationRepository {
   getNotifications(
-    args: Prisma.NotificationsOnUsersFindManyArgs,
-  ): Promise<NotificationsOnUsers[]>;
-  createNotification(
-    dto: CreateNotificationDto,
-    prisma: PrismaTransactional,
-  ): Promise<Notification>;
-  createNotificationsOnUsers(
-    args: Prisma.NotificationsOnUsersCreateManyInput[],
-    prisma: PrismaTransactional,
-  ): Promise<{ count: number }>;
+    args: Prisma.NotificationFindManyArgs,
+  ): Promise<Notification[]>;
+  // createNotification(
+  //   dto: CreateNotificationDto,
+  //   prisma: PrismaTransactional,
+  // ): Promise<Notification>;
+  // createNotificationsOnUsers(
+  //   args: Prisma.NotificationsOnUsersCreateManyInput[],
+  //   prisma: PrismaTransactional,
+  // ): Promise<{ count: number }>;
 }

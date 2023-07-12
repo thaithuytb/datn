@@ -10,6 +10,7 @@ import { DaoModule } from '../../infrastructures/dao/dao.module';
   imports: [RepositoryModule, DaoModule],
   providers: [NotificationService, AuthService],
   controllers: [NotificationController],
+  exports: [NotificationService],
 })
 export class NotificationModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
