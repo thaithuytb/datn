@@ -1,11 +1,4 @@
-import {
-  Garden,
-  Gender,
-  Prisma,
-  PrismaClient,
-  Role,
-  RoleGarden,
-} from '@prisma/client';
+import { Garden, Gender, PrismaClient, Role, RoleGarden } from '@prisma/client';
 import * as argon2 from 'argon2';
 import { uuid } from 'uuidv4';
 
@@ -40,7 +33,7 @@ export async function createUsers(prisma: PrismaClient, garden: Garden) {
               gardenId: garden.id,
               role: RoleGarden.MANAGER,
             },
-          } as Prisma.GardensOnUsersCreateNestedManyWithoutUserInput,
+          },
         },
       }),
       prisma.user.create({
@@ -57,7 +50,7 @@ export async function createUsers(prisma: PrismaClient, garden: Garden) {
               gardenId: garden.id,
               role: RoleGarden.MANAGER,
             },
-          } as Prisma.GardensOnUsersCreateNestedManyWithoutUserInput,
+          },
         },
       }),
       prisma.user.create({
@@ -74,7 +67,7 @@ export async function createUsers(prisma: PrismaClient, garden: Garden) {
               gardenId: garden.id,
               role: RoleGarden.MANAGER,
             },
-          } as Prisma.GardensOnUsersCreateNestedManyWithoutUserInput,
+          },
         },
       }),
       prisma.user.create({
@@ -91,7 +84,7 @@ export async function createUsers(prisma: PrismaClient, garden: Garden) {
               gardenId: garden.id,
               role: RoleGarden.MANAGER,
             },
-          } as Prisma.GardensOnUsersCreateNestedManyWithoutUserInput,
+          },
         },
       }),
     );
@@ -108,7 +101,7 @@ export async function createUsers(prisma: PrismaClient, garden: Garden) {
               gardenId: 1,
               role: RoleGarden.USER,
             },
-          } as Prisma.GardensOnUsersCreateNestedManyWithoutUserInput,
+          },
         },
       }),
     );

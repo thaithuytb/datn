@@ -1,20 +1,35 @@
 import { DeviceTypeEnum, Garden, PrismaClient } from '@prisma/client';
 
 export async function createDevices(prisma: PrismaClient, garden: Garden) {
-  const fan_1 = await prisma.device.create({
+  const fan_1_1 = await prisma.device.create({
     data: {
       ip: 'fan_1_1',
       type: DeviceTypeEnum.FAN,
       gardenId: garden.id,
+      startAt: '00:00:00',
+      endAt: '23:59:59',
+      duration: '[900]',
+      time: "['05:00:00']",
     },
   });
-
-  const fan_2 = await prisma.device.create({
+  const lamp_1_1 = await prisma.device.create({
     data: {
-      ip: 'fan_2_1',
-      type: DeviceTypeEnum.FAN,
+      ip: 'lamp_1_1',
+      type: DeviceTypeEnum.LAMP,
       gardenId: garden.id,
-      status: false,
+      startAt: '07:00:00',
+      endAt: '18:59:59',
+    },
+  });
+  const pump_1_1 = await prisma.device.create({
+    data: {
+      ip: 'pump_1_1',
+      type: DeviceTypeEnum.PUMP,
+      gardenId: garden.id,
+      startAt: '00:00:00',
+      endAt: '23:59:59',
+      duration: '[600, 600]',
+      time: "['05:30:00', '18:00:00']",
     },
   });
 
@@ -22,37 +37,27 @@ export async function createDevices(prisma: PrismaClient, garden: Garden) {
     data: [
       {
         ip: 'humi_sensor_1_1',
-        type: DeviceTypeEnum.HUMISENSOR,
+        type: DeviceTypeEnum.HUMIDITY_SENSOR,
         gardenId: garden.id,
+        startAt: '00:00:00',
+        endAt: '23:59:59',
       },
       {
         ip: 'light_sensor_1_1',
-        type: DeviceTypeEnum.LIGHTSENSOR,
+        type: DeviceTypeEnum.LIGHT_SENSOR,
         gardenId: garden.id,
+        startAt: '00:00:00',
+        endAt: '23:59:59',
       },
       {
         ip: 'temp_air_sensor_1_1',
-        type: DeviceTypeEnum.TEMPAIRSENSOR,
+        type: DeviceTypeEnum.TEMPERATURE_HUMIDITY_AIR_SENSOR,
         gardenId: garden.id,
-      },
-      {
-        ip: 'lamp_1_1',
-        type: DeviceTypeEnum.LAMP,
-        gardenId: garden.id,
-      },
-      {
-        ip: 'pump_1_1',
-        type: DeviceTypeEnum.PUMP,
-        gardenId: garden.id,
-      },
-      {
-        status: false,
-        ip: 'curtain_1_1',
-        type: DeviceTypeEnum.CURTAIN,
-        gardenId: garden.id,
+        startAt: '00:00:00',
+        endAt: '23:59:59',
       },
     ],
   });
 
-  return [fan_1, fan_2];
+  return [fan_1_1, pump_1_1, lamp_1_1];
 }

@@ -1,23 +1,23 @@
 version: '3.8'
 services:
-  api_1:
-    container_name: datn_api_1
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      - REDIS_HOST=cache
-      - CACHE_PORT=6379
-    tty: true
-    stdin_open: true
-    ports:
-      - '${PORT}:${PORT}'
-    depends_on:
-      - db
-      - cache
-    volumes:
-      - .:/app
-      - /app/node_modules
+  # api_1:
+  #   container_name: datn_api_1
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     - REDIS_HOST=cache
+  #     - CACHE_PORT=6379
+  #   tty: true
+  #   stdin_open: true
+  #   ports:
+  #     - '${PORT}:${PORT}'
+  #   depends_on:
+  #     - db
+  #     - cache
+  #   volumes:
+  #     - .:/app
+  #     - /app/node_modules
   cache:
     container_name: datn_cache
     image: redis:6.2

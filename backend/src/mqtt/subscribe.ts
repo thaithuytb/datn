@@ -1,4 +1,5 @@
 import {
+  DeviceTypeEnum,
   NotificationType,
   PrismaClient,
   ThresholdNameEnum,
@@ -192,7 +193,7 @@ export async function subscribeMqtt(
       switch (topic.slice(15)) {
         case '/sensor': {
           // socketGateway.server.emit('newStatus', parseMessage);
-          if (device.type === 'TEMPAIRSENSOR') {
+          if (device.type === DeviceTypeEnum.TEMPERATURE_HUMIDITY_AIR_SENSOR) {
             return console.log({ sensor: parseMessage });
             // return prisma[convertData[device.type]].create({
             //   data: {

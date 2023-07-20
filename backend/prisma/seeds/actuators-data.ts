@@ -8,35 +8,16 @@ export async function createActuatorsDatas(
   const promiseList = [];
   for (let i = 1; i < 100; ++i) {
     promiseList.push(
-      prisma.fanData.create({
+      prisma.actuatorData.create({
         data: {
           status: Math.random() > 0.5 ? true : false,
           gardenId: garden.id,
-          deviceId: Math.random() > 0.5 ? devices[0].id : devices[1].id,
-        },
-      }),
-    );
-  }
-
-  for (let i = 1; i < 2; ++i) {
-    promiseList.push(
-      prisma.pumpData.create({
-        data: {
-          status: Math.random() > 0.5 ? true : false,
-          gardenId: garden.id,
-          deviceId: devices[0].id,
-        },
-      }),
-    );
-  }
-
-  for (let i = 1; i < 2; ++i) {
-    promiseList.push(
-      prisma.lampData.create({
-        data: {
-          status: Math.random() > 0.5 ? true : false,
-          gardenId: garden.id,
-          deviceId: devices[0].id,
+          deviceId:
+            Math.random() > 0.8
+              ? devices[0].id
+              : Math.random() > 0.4
+              ? devices[1].id
+              : devices[2].id,
         },
       }),
     );

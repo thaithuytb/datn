@@ -1,4 +1,4 @@
-import { PrismaClient, Garden } from '@prisma/client';
+import { PrismaClient, Garden, ThresholdNameEnum } from '@prisma/client';
 import * as dayjs from 'dayjs';
 
 export async function createMeasureDeviceData(
@@ -9,25 +9,25 @@ export async function createMeasureDeviceData(
 
   const deviceIdLight = await prisma.device.findFirst({
     where: {
-      type: 'LIGHTSENSOR',
+      type: ThresholdNameEnum.LIGHT_SENSOR,
     },
   });
 
   const deviceIdHumi = await prisma.device.findFirst({
     where: {
-      type: 'HUMISENSOR',
+      type: ThresholdNameEnum.HUMIDITY_SENSOR,
     },
   });
 
   const deviceIdTempAir = await prisma.device.findFirst({
     where: {
-      type: 'TEMPAIRSENSOR',
+      type: ThresholdNameEnum.TEMPERATURE_HUMIDITY_AIR_SENSOR,
     },
   });
 
   for (let i = 1; i < 150; ++i) {
     promiseList.push(
-      prisma.lightData.create({
+      prisma.lightLuxData.create({
         data: {
           value: Math.random() * 5000,
           gardenId: garden.id,
@@ -42,7 +42,7 @@ export async function createMeasureDeviceData(
 
   for (let i = 1; i < 150; ++i) {
     promiseList.push(
-      prisma.humiData.create({
+      prisma.humidityData.create({
         data: {
           value: Math.random() * 99,
           gardenId: garden.id,
@@ -57,10 +57,10 @@ export async function createMeasureDeviceData(
 
   for (let i = 1; i < 150; ++i) {
     promiseList.push(
-      prisma.tempAirData.create({
+      prisma.temperatureHumidityAirData.create({
         data: {
-          temp: Math.random() * 100,
-          airHumidity: Math.random() * 100,
+          temperature: Math.random() * 100,
+          humidityAir: Math.random() * 100,
           gardenId: garden.id,
           deviceId: deviceIdTempAir.id,
           createdAt: dayjs('2023-07-03')

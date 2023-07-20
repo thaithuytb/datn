@@ -39,22 +39,23 @@ model User {
 }
 
 model Device {
-  id           Int            @id @default(autoincrement())
-  ip           String         @unique
-  status       Boolean        @default(true)
-  type         DeviceTypeEnum
-  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt    DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  gardenId     Int            @map("garden_id")
-  garden       Garden         @relation(fields: [gardenId], references: [id], onDelete: Cascade)
-  tempAirDatas TempAirData[]
-  humiDatas    HumiData[]
-  lightDatas   LightData[]
-  fanDatas     FanData[]
-  pumpDatas    PumpData[]
-  curtainDatas CurtainData[]
-  lampDatas    LampData[]
-  isDeleted    Boolean        @default(false)
+  id                          Int                          @id @default(autoincrement())
+  ip                          String                       @unique
+  status                      Boolean                      @default(true)
+  type                        DeviceTypeEnum
+  createdAt                   DateTime                     @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt                   DateTime                     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  gardenId                    Int                          @map("garden_id")
+  garden                      Garden                       @relation(fields: [gardenId], references: [id], onDelete: Cascade)
+  isDeleted                   Boolean                      @default(false)
+  ActuatorData                ActuatorData[]
+  startAt                     String?
+  endAt                       String?
+  duration                    String?
+  time                        String?
+  TemperatureHumidityAirDatas TemperatureHumidityAirData[]
+  HumidityDatas               HumidityData[]
+  LightLuxDatas               LightLuxData[]
 
   @@map("devices")
 }
@@ -72,10 +73,10 @@ model Threshold {
   @@map("thresholds")
 }
 
-model TempAirData {
+model TemperatureHumidityAirData {
   id          Int      @id @default(autoincrement())
-  temp        Float
-  airHumidity Float    @map("air_humidity")
+  temperature Float
+  humidityAir Float    @map("humidity_air")
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   gardenId    Int      @map("garden_id")
@@ -85,10 +86,10 @@ model TempAirData {
   @@index([deviceId])
   @@index([deviceId, createdAt])
   @@index([gardenId, deviceId])
-  @@map("temp_air_datas")
+  @@map("temperature_humidity_air_datas")
 }
 
-model HumiData {
+model HumidityData {
   id        Int      @id @default(autoincrement())
   value     Float
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
@@ -100,10 +101,10 @@ model HumiData {
   @@index([deviceId])
   @@index([deviceId, createdAt])
   @@index([gardenId, deviceId])
-  @@map("humi_datas")
+  @@map("Humidity_datas")
 }
 
-model LightData {
+model LightLuxData {
   id        Int      @id @default(autoincrement())
   value     Float
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
@@ -115,10 +116,10 @@ model LightData {
   @@index([deviceId])
   @@index([deviceId, createdAt])
   @@index([gardenId, deviceId])
-  @@map("light_data")
+  @@map("light_lux_datas")
 }
 
-model FanData {
+model ActuatorData {
   id        Int      @id @default(autoincrement())
   value     Float?
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
@@ -131,54 +132,7 @@ model FanData {
   @@index([deviceId])
   @@index([deviceId, createdAt])
   @@index([gardenId, deviceId])
-  @@map("fan_datas")
-}
-
-model PumpData {
-  id        Int      @id @default(autoincrement())
-  value     Float?
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  gardenId  Int      @map("garden_id")
-  deviceId  Int      @map("device_id")
-  device    Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
-  status    Boolean
-
-  @@index([deviceId])
-  @@index([deviceId, createdAt])
-  @@index([gardenId, deviceId])
-  @@map("pump_datas")
-}
-
-model CurtainData {
-  id        Int      @id @default(autoincrement())
-  value     Float?
-  status    Boolean
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  gardenId  Int      @map("garden_id")
-  deviceId  Int      @map("device_id")
-  device    Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
-
-  @@index([deviceId])
-  @@index([deviceId, createdAt])
-  @@index([gardenId, deviceId])
-  @@map("curtain_datas")
-}
-
-model LampData {
-  id        Int      @id @default(autoincrement())
-  status    Boolean
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  gardenId  Int      @map("garden_id")
-  deviceId  Int      @map("device_id")
-  device    Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
-
-  @@index([deviceId])
-  @@index([deviceId, createdAt])
-  @@index([gardenId, deviceId])
-  @@map("lamp_datas")
+  @@map("actuator_datas")
 }
 
 model Garden {
@@ -262,17 +216,16 @@ enum Gender {
 enum DeviceTypeEnum {
   FAN
   LAMP
-  CURTAIN
   PUMP
-  LIGHTSENSOR
-  HUMISENSOR
-  TEMPAIRSENSOR
+  LIGHT_SENSOR
+  HUMIDITY_SENSOR
+  TEMPERATURE_HUMIDITY_AIR_SENSOR
 }
 
 enum ThresholdNameEnum {
-  LIGHTSENSOR
-  HUMISENSOR
-  TEMPAIRSENSOR
+  LIGHT_SENSOR
+  HUMIDITY_SENSOR
+  TEMPERATURE_HUMIDITY_AIR_SENSOR
 }
 
 enum NotificationType {

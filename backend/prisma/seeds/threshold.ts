@@ -4,21 +4,21 @@ export async function createThresholds(prisma: PrismaClient, garden: Garden) {
   await prisma.threshold.createMany({
     data: [
       {
-        name: ThresholdNameEnum.HUMISENSOR,
-        lowThreshold: JSON.stringify([60]),
+        name: ThresholdNameEnum.HUMIDITY_SENSOR,
+        lowThreshold: JSON.stringify([40]),
         highThreshold: JSON.stringify([80]),
         gardenId: garden.id,
       },
       {
-        name: ThresholdNameEnum.LIGHTSENSOR,
-        lowThreshold: JSON.stringify([300]),
-        highThreshold: JSON.stringify([1500]),
+        name: ThresholdNameEnum.LIGHT_SENSOR,
+        lowThreshold: JSON.stringify([4000]),
+        highThreshold: JSON.stringify([8000]),
         gardenId: garden.id,
       },
       {
-        name: ThresholdNameEnum.TEMPAIRSENSOR,
-        lowThreshold: JSON.stringify([25, 70]),
-        highThreshold: JSON.stringify([45, 90]),
+        name: ThresholdNameEnum.TEMPERATURE_HUMIDITY_AIR_SENSOR,
+        lowThreshold: JSON.stringify([20, 70]),
+        highThreshold: JSON.stringify([30, 90]),
         gardenId: garden.id,
       },
     ],

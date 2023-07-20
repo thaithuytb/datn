@@ -8,21 +8,32 @@ import { PublicMqttService } from '../../mqtt/publish';
 import { Redis } from 'ioredis';
 import { messageToMqtt } from '../../common/messageToMqtt';
 
+const prismaByDeviceType = (deviceType: DeviceTypeEnum) => {
+  switch (deviceType) {
+    case DeviceTypeEnum.LIGHT_SENSOR:
+      return 'lightLuxData';
+    case DeviceTypeEnum.HUMIDITY_SENSOR:
+      return 'humidityData';
+    case DeviceTypeEnum.TEMPERATURE_HUMIDITY_AIR_SENSOR:
+      return 'temperatureHumidityAirData';
+    default:
+      return 'actuatorData';
+  }
+};
+
 export const convertData = {
   FAN: 'fanData',
   LAMP: 'lampData',
-  CURTAIN: 'curtainData',
   PUMP: 'pumpData',
-  LIGHTSENSOR: 'lightData',
-  HUMISENSOR: 'humiData',
-  TEMPAIRSENSOR: 'tempAirData',
+  LIGHT_SENSOR: 'lightData',
+  HUMIDITY_SENSOR: 'humiData',
+  TEMPERATURE_HUMIDITY_AIR_SENSOR: 'tempAirData',
 };
 
 const convertTypeDevice = (type: DeviceTypeEnum) => {
   switch (type) {
     case 'FAN':
     case 'LAMP':
-    case 'CURTAIN':
     case 'PUMP': {
       return 'actuator';
     }
@@ -65,8 +76,12 @@ export class DeviceService {
 
     const promiseList = devices.map(async (device) => {
       const valueDevice = await this.prismaService[
-        convertData[device.type]
+        //need fix
+        `${prismaByDeviceType(device.type)}` as any
       ].findFirst({
+        where: {
+          deviceId: device.id,
+        },
         orderBy: {
           createdAt: 'desc',
         },
