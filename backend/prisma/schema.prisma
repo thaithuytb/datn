@@ -101,7 +101,7 @@ model HumidityData {
   @@index([deviceId])
   @@index([deviceId, createdAt])
   @@index([gardenId, deviceId])
-  @@map("Humidity_datas")
+  @@map("humidity_datas")
 }
 
 model LightLuxData {

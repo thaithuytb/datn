@@ -100,7 +100,6 @@ export class DeviceService {
 
   async updateDevice(dto: UpdateDeviceDto) {
     const device = await this.deviceRepository.updateDevice(dto);
-    console.log({ device });
     //pub
 
     return responseSuccess(200, device);

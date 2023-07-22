@@ -25,11 +25,12 @@ export async function createMeasureDeviceData(
     },
   });
 
-  for (let i = 1; i < 150; ++i) {
+  for (let i = 1; i < 200; ++i) {
     promiseList.push(
       prisma.lightLuxData.create({
         data: {
-          value: Math.random() * 5000,
+          value:
+            i > 70 ? 2000 + Math.random() * 1000 : 4000 + Math.random() * 2000,
           gardenId: garden.id,
           deviceId: deviceIdLight.id,
           createdAt: dayjs('2023-07-03')
@@ -40,11 +41,11 @@ export async function createMeasureDeviceData(
     );
   }
 
-  for (let i = 1; i < 150; ++i) {
+  for (let i = 1; i < 300; ++i) {
     promiseList.push(
       prisma.humidityData.create({
         data: {
-          value: Math.random() * 99,
+          value: 45 + Math.random() * 45,
           gardenId: garden.id,
           deviceId: deviceIdHumi.id,
           createdAt: dayjs('2023-07-03')
@@ -55,12 +56,12 @@ export async function createMeasureDeviceData(
     );
   }
 
-  for (let i = 1; i < 150; ++i) {
+  for (let i = 1; i < 400; ++i) {
     promiseList.push(
       prisma.temperatureHumidityAirData.create({
         data: {
-          temperature: Math.random() * 100,
-          humidityAir: Math.random() * 100,
+          temperature: 15 + Math.random() * 30,
+          humidityAir: 45 + Math.random() * 45,
           gardenId: garden.id,
           deviceId: deviceIdTempAir.id,
           createdAt: dayjs('2023-07-03')
