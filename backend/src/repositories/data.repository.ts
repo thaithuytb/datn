@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../infrastructures/dao/prisma.service';
 import * as dayjs from 'dayjs';
+import { dayjsVps } from '../common/dayjs-vps';
 import {
   HumidityData,
   LightLuxData,
@@ -17,14 +18,15 @@ export class DataStatisticalRepository implements IDataStatisticalRepository {
       where: {
         gardenId: gardenId,
         createdAt: {
-          gt: dayjs(date).subtract(1, 'day').endOf('day').toISOString(),
-          lt: dayjs(date).add(1, 'day').startOf('day').toISOString(),
+          gt: dayjsVps(date.subtract(1, 'day').endOf('day')).toISOString(),
+          lt: dayjsVps(date.add(1, 'day')).startOf('day').toISOString(),
         },
       },
       orderBy: {
         createdAt: 'asc',
       },
     };
+    console.log({ query: JSON.stringify(query) });
     const humidityData = await this.prisma.humidityData.findMany(
       query as Prisma.HumidityDataFindManyArgs,
     );

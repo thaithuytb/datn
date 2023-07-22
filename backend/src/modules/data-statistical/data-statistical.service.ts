@@ -20,7 +20,6 @@ export class DataStatisticalService {
     date: dayjs.Dayjs;
     isAdmin?: boolean;
   }): Promise<any> {
-    console.log(dto.userId);
     const gardens = dto.isAdmin
       ? await this.gardenService.getGardens({})
       : await this.gardenService.getGardens({
