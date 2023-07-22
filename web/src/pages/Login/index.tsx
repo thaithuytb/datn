@@ -70,10 +70,10 @@ export default function Login() {
               src="https://upload.wikimedia.org/wikipedia/vi/thumb/e/ef/Logo_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_B%C3%A1ch_Khoa_H%C3%A0_N%E1%BB%99i.svg/1200px-Logo_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_B%C3%A1ch_Khoa_H%C3%A0_N%E1%BB%99i.svg.png"
               alt=""
             />
-            <h3>Đại học bách khoa hà nội</h3>
+            <h3>Đại học Bách Khoa Hà Nội</h3>
           </header>
           <form onSubmit={submitFormLogin}>
-            <h3>HELLO</h3>
+            <div style={{display: 'flex', marginLeft: '-140px'}}><p style={{color:'red', paddingRight: '10px'}}>*</p> <p>Email</p></div>
             <input
               type="text"
               placeholder="email"
@@ -81,6 +81,7 @@ export default function Login() {
               value={email}
               onChange={onChangeSetInformationUserLogin}
             />
+            <div style={{display: 'flex', marginLeft: '-120px'}}><p style={{color:'red', paddingRight: '10px'}}>*</p> <p>Mật khẩu</p></div>
             <input
               type="password"
               placeholder="password"
@@ -88,14 +89,8 @@ export default function Login() {
               value={password}
               onChange={onChangeSetInformationUserLogin}
             />
-            <button type="submit">Login</button>
+            <button type="submit">Đăng nhập</button>
           </form>
-        </div>
-        <div className="image_from">
-          <img
-            src="https://datn-thai-v1-29112001.s3.ap-northeast-1.amazonaws.com/image-20230701041856224-thai-test-2.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIASMXT6WUPX2EAV4PP%2F20230630%2Fap-northeast-1%2Fs3%2Faws4_request&X-Amz-Date=20230630T211856Z&X-Amz-Expires=3600&X-Amz-Signature=36b41732530a732c474058c2f34a26e49684a5f8550475c5723505187122562f&X-Amz-SignedHeaders=host&x-id=GetObject"
-            alt="background"
-          />
         </div>
       </div>
     </div>

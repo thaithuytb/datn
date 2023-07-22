@@ -7,7 +7,9 @@
     transition: all 0.6s;
 }
 @media screen and (max-width: 400px){
-    
+    .header{
+        z-index: 10;
+    }
     .header_left h2{
         font-size: 16px;
     }
@@ -32,6 +34,7 @@
     .content{
         padding-top: 30px;
         /* overflow: hidden; */
+        overflow-x: hidden;
     }
     .app_content{
         overflow: hidden;
@@ -62,5 +65,37 @@
     #add_people button{
         margin-left: 0px !important; 
         width: 82px;
+    }
+    .login_form{
+        margin: auto;
+        width: 100%;
+    }
+    .login_form form{ 
+        margin: auto;
+        width: 50%;
+    }
+    .login_form input{
+        width: 100%;
+    }
+    .login_form h3{
+        width: 100%;
+    }
+    .login_form header{
+        width: 100%;
+        transform: translateY(-150px);
+    }
+    .login{
+        width: 100%;
+    }
+    .ant-empty-image img{
+        width: 100%;
+    }
+    #Dropdown_before{
+        width: 75%;
+        transform: translateX(34%);
+    }
+    .custom-dropdown{
+        border: none;
+        overflow: hidden;
     }
 }
