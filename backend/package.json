@@ -24,7 +24,7 @@
     "prisma:migrate:reset": "prisma migrate reset --schema prisma/schema.prisma && yarn prisma:init",
     "prisma:init": "yarn dotenv -e .env.$NODE_ENV ts-node prisma/seeds/index.ts",
     "prisma:init:prod:test": "node dist/prisma/seeds/index.js", 
-    "start:migrate:prod": "yarn dotenv -e .env.$NODE_ENV prisma migrate deploy && yarn prisma:init:prod:test && yarn start:prod"
+    "start:migrate:prod": "yarn dotenv -e .env.$NODE_ENV prisma migrate deploy && yarn start:prod"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.363.0",

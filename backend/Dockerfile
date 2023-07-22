@@ -17,6 +17,6 @@ COPY --from=builder /app/tsconfig.build.json ./
 COPY --from=builder /app/tsconfig.json ./
 COPY --from=builder /app/prisma ./prisma/
 COPY --from=builder /app/.env ./.env
-EXPOSE 7000
+EXPOSE 5000
 RUN yarn prisma:generate
 CMD ["yarn", "start:migrate:prod"]

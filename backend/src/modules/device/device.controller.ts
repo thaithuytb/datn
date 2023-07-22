@@ -24,7 +24,12 @@ export class DeviceController {
     return this.deviceService.changeDeviceStatus(dto);
   }
 
-  @Get(':gardenId')
+  @Get('/:deviceId')
+  async getDevicesById(@Param('deviceId', ParseIntPipe) deviceId: number) {
+    // return this.deviceService.getDevicesByGardenId(gardenId);
+  }
+
+  @Get('garden/:gardenId')
   async getDevicesByGardensId(
     @Param('gardenId', ParseIntPipe) gardenId: number,
   ) {
