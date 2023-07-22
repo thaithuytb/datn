@@ -3,7 +3,7 @@ import queryString from "query-string";
 import { LOCAL_STORAGE_TOKEN } from "../common/local-storage-token";
 
 const axiosClient = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: process.env.REACT_APP_API_URL || "http://localhost:5000/api/v1",
   headers: {
     "Content-Type": "application/json",
   },
@@ -26,8 +26,8 @@ axiosClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    if(error?.response?.data) {
-      throw error?.response?.data
+    if (error?.response?.data) {
+      throw error?.response?.data;
     }
     throw error;
   }

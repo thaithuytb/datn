@@ -21,7 +21,7 @@ export const SocketProvider: React.FC<PropsSocketContext> = ({ children }) => {
 
   useEffect(() => {
     const socket = socketIOClient(
-      process.env.SERVER_WEB_SOCKET || "http://localhost:7000/datn"
+      process.env.SERVER_WEB_SOCKET || "http://localhost:5000/datn"
     );
     setSocket(socket);
 

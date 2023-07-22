@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  web_da2:
+    container_name: web_da2
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '${PORT}:${PORT}'
