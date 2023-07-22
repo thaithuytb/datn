@@ -61,7 +61,7 @@ export default function RoadMap() {
                 <h4 style={{ margin: 0 }}>{garden.name}</h4>
                 <iframe
                   title="test"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119556.18319883458!2d106.530424!3d20.54183155!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314a09dbf440f1f9%3A0x86f86edbef4ed003!2zVGjDoWkgVGjhu6d5LCBUaGFpIEJpbmg!5e0!3m2!1sen!2s!4v1688999854789!5m2!1sen!2s"
+                  src="https://goo.gl/maps/h8XCzzBn8V5sUPpn9"
                   width="100%"
                   height="400"
                   style={{ border: 0 }}
@@ -78,7 +78,7 @@ export default function RoadMap() {
           <h4 style={{ margin: 0 }}>{garden.garden.name}</h4>
           <iframe
             title="YouTube video player"
-            src="https://www.youtube.com/embed/OTdtjuXNyWM"
+            src="https://www.youtube.com/embed/MQdmTqPpgg8"
             width="100%"
             height="100%"
             style={{ border: 0 }}
@@ -86,6 +86,7 @@ export default function RoadMap() {
             loading="lazy"
           >
           </iframe>
+
         </div>
       }
     </div>

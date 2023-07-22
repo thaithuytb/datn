@@ -128,7 +128,7 @@ export default function Home() {
                     type="monotone"
                     dataKey="value"
                     name="Ánh sáng"
-                    data={data.dataStatistical.lightDatas.map((item: any) => {
+                    data={data.dataStatistical.lightLuxData.map((item: any) => {
                       const hours =
                         dayjs(item.createdAt).hour() +
                         dayjs(item.createdAt).hour() / 60;
@@ -147,7 +147,7 @@ export default function Home() {
                     type="monotone"
                     dataKey="value"
                     name="Độ ẩm đất"
-                    data={data.dataStatistical.humiDatas.map((item: any) => {
+                    data={data.dataStatistical.humidityData.map((item: any) => {
                       const hours =
                         dayjs(item.createdAt).hour() +
                         dayjs(item.createdAt).hour() / 60;
@@ -163,7 +163,7 @@ export default function Home() {
                     type="monotone"
                     dataKey="temp"
                     name="Nhiệt độ"
-                    data={data.dataStatistical.tempAirDatas.map((item: any) => {
+                    data={data.dataStatistical.temperatureHumidityAirData.map((item: any) => {
                       const hours =
                         dayjs(item.createdAt).hour() +
                         dayjs(item.createdAt).hour() / 60;
@@ -182,7 +182,7 @@ export default function Home() {
                     type="monotone"
                     dataKey="airHumidity"
                     name="Độ ẩm không khí"
-                    data={data.dataStatistical.tempAirDatas.map((item: any) => {
+                    data={data.dataStatistical.temperatureHumidityAirData.map((item: any) => {
                       const hours =
                         dayjs(item.createdAt).hour() +
                         dayjs(item.createdAt).hour() / 60;

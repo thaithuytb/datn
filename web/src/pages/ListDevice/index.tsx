@@ -97,6 +97,8 @@ export default function ListDevice() {
     },
   }
 
+  console.log(devices)
+
   if (devices && gardenId) {
     for (const device of devices) {
       dataTabale[device.type] = {
