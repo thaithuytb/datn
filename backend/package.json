@@ -23,7 +23,7 @@
     "prisma:db:pull": "prisma db pull",
     "prisma:migrate:reset": "prisma migrate reset --schema prisma/schema.prisma && yarn prisma:init",
     "prisma:init": "yarn dotenv -e .env.$NODE_ENV ts-node prisma/seeds/index.ts",
-    "prisma:init:prod:test": "node dist/prisma/seeds/index.js", 
+    "prisma:init:prod:test": "node dist/prisma/seeds/index.js",
     "start:migrate:prod": "yarn dotenv -e .env.$NODE_ENV prisma migrate deploy && yarn start:prod"
   },
   "dependencies": {
@@ -47,7 +47,8 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
     "socket.io": "^4.6.1",
-    "uuidv4": "^6.2.13"
+    "uuidv4": "^6.2.13",
+    "winston": "^3.10.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
