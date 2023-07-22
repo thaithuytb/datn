@@ -3,7 +3,7 @@ import { DeviceTypeEnum, Prisma } from '@prisma/client';
 import { responseSuccess } from 'src/common/responseSuccess';
 import { DeviceRepository } from '../../repositories/device.repository';
 import { PrismaService } from '../../infrastructures/dao/prisma.service';
-import { ChangeDeviceStatusDto } from './dto/device.dto';
+import { ChangeDeviceStatusDto, UpdateDeviceDto } from './dto/device.dto';
 import { PublicMqttService } from '../../mqtt/publish';
 import { Redis } from 'ioredis';
 import { messageToMqtt } from '../../common/messageToMqtt';
@@ -96,6 +96,19 @@ export class DeviceService {
     const statusDevice = await Promise.all([...promiseList]);
 
     return responseSuccess(200, statusDevice);
+  }
+
+  async updateDevice(dto: UpdateDeviceDto) {
+    const device = await this.deviceRepository.updateDevice(dto);
+    console.log({ device });
+    //pub
+
+    return responseSuccess(200, device);
+  }
+
+  async getDeviceById(deviceId: number) {
+    const device = await this.deviceRepository.getDeviceByDeviceId(deviceId);
+    return responseSuccess(200, device);
   }
 
   async changeDeviceStatus(dto: ChangeDeviceStatusDto) {

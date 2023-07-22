@@ -4,12 +4,13 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import { RoleGardenGuard } from '../../guards/roleGardenGuard';
 import { DeviceService } from './device.service';
-import { ChangeDeviceStatusDto } from './dto/device.dto';
+import { ChangeDeviceStatusDto, UpdateDeviceDto } from './dto/device.dto';
 
 @UseGuards(RoleGardenGuard)
 @Controller('api/v1/devices')
@@ -25,8 +26,13 @@ export class DeviceController {
   }
 
   @Get('/:deviceId')
-  async getDevicesById(@Param('deviceId', ParseIntPipe) deviceId: number) {
-    // return this.deviceService.getDevicesByGardenId(gardenId);
+  async getDeviceById(@Param('deviceId', ParseIntPipe) deviceId: number) {
+    return this.deviceService.getDeviceById(deviceId);
+  }
+
+  @Patch('update')
+  async updateDevice(@Body('dto') dto: UpdateDeviceDto) {
+    return this.deviceService.updateDevice(dto);
   }
 
   @Get('garden/:gardenId')
