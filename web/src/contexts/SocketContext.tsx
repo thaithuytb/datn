@@ -14,14 +14,11 @@ export const SocketContext = createContext<ISocketContext | undefined>(
 );
 
 export const SocketProvider: React.FC<PropsSocketContext> = ({ children }) => {
-  // const socket = socketIOClient(
-  //   process.env.SERVER_WEB_SOCKET || "http://localhost:7000/device"
-  // );
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
     const socket = socketIOClient(
-      process.env.SERVER_WEB_SOCKET || "http://localhost:5000/datn"
+      process.env.REACT_APP_SERVER_WEB_SOCKET || "http://localhost:5000/datn"
     );
     setSocket(socket);
 
