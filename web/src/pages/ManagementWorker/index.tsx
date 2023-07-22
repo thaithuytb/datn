@@ -218,15 +218,17 @@ const ManagementWorker = () => {
     {
       title: "Stt",
       dataIndex: "stt",
-      width: 10,
+      className:'row_garden'
     },
     {
       title: "Name",
       dataIndex: "name",
+      className:'row_garden'
     },
     {
       title: "Chức vụ",
       dataIndex: "roleInGarden",
+      className:'row_garden',
       render: (_, record: any) => {
         return getConvertedRole(record.roleInGarden)
       }
@@ -234,10 +236,12 @@ const ManagementWorker = () => {
     {
       title: "Khu vườn",
       dataIndex: "garden",
+      className:'row_garden'
     },
     {
       title: "Ngày tham gia khu vườn",
       dataIndex: "date",
+      className:'row_garden'
     },
   ];
   columns =
@@ -319,7 +323,7 @@ const ManagementWorker = () => {
                 Thêm người vào khu vườn:{" "}
                 {garden?.label || "Bạn hãy chọn khu vườn......."}
               </span>
-              <div style={{ width: "50%", float: "right" }}>
+              <div style={{ width: "50%", float: "right" }} id="add_people">
                 <span>Thêm người: </span>
                 <Select
                   suffixIcon={<SearchOutlined />}
@@ -343,6 +347,7 @@ const ManagementWorker = () => {
             {/* bảng user  */}
             <div>
               <Table
+              className="table_test"
                 onChange={changPagination}
                 bordered={true}
                 pagination={{

@@ -25,6 +25,7 @@ import { NotificationProvider } from "./contexts/NotificationContext";
 import CreateDevice from "./pages/ListDevice/CreateDevice";
 import CreateGarden from "./pages/Garden/Create";
 import RoadMap from "./pages/RoadMap";
+import '../src/pages/Responsive/responsive.css'
 
 const RouteMain = () => {
   return (
