@@ -1,7 +1,7 @@
 version: '3.8'
 services:
-  web_da2:
-    container_name: web_da2
+  web_datn:
+    container_name: web_datn
     build:
       context: .
       dockerfile: Dockerfile
