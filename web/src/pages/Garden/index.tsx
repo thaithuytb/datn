@@ -155,6 +155,7 @@ export default function Garden() {
           //   }}
           columns={columns}
           dataSource={gardens}
+          id="table_gardens"
         />
       )}
       {isModalOpen &&

@@ -158,7 +158,7 @@ export default function HeaderLayout() {
       <div className="header_left">
         <img style={{ width: "38px", height: "auto", marginRight: "0.5rem" }}
           src="https://upload.wikimedia.org/wikipedia/vi/thumb/e/ef/Logo_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_B%C3%A1ch_Khoa_H%C3%A0_N%E1%BB%99i.svg/1200px-Logo_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_B%C3%A1ch_Khoa_H%C3%A0_N%E1%BB%99i.svg.png" alt="" />
-        <h2>Đại học bách khoa hà nội</h2>
+        <h2>Đại học Bách Khoa Hà Nội</h2>
       </div>
 
       <div className="header_right">

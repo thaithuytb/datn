@@ -36,10 +36,7 @@ const Profile: React.FC<IShowModal> = ({ isModalOpen, setIsModalOpen, account })
             footer={[
                 <Button key="back" onClick={handleCancel}>
                     Đóng
-                </Button>,
-                <Button key="submit" type="primary" onClick={handleOk}>
-                    Sửa đổi
-                </Button>,
+                </Button>
             ]}
         >
             <div>

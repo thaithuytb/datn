@@ -54,7 +54,7 @@ export default function Home() {
   return (
     <div className="home">
       <div style={{marginBottom: '1rem'}}>
-        Chon ngay de xem:
+        Chọn ngày để xem:
         <DatePicker
           defaultValue={dayjs(currentDate, dateFormat)}
           format={dateFormat}
@@ -67,7 +67,7 @@ export default function Home() {
           return (
             <div key={data.id}>
               <div>Khu vườn: {data.name}</div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", justifyContent: "space-between" }} id="chart">
                 <LineChart
                   width={1050}
                   height={300}
@@ -169,7 +169,7 @@ export default function Home() {
                         dayjs(item.createdAt).hour() / 60;
                       return {
                         ...item,
-                        temp: item.temp.toFixed(2),
+                        temp: item.temperature.toFixed(2),
                         createdAt: hours.toFixed(2),
                       };
                     })}
@@ -188,7 +188,7 @@ export default function Home() {
                         dayjs(item.createdAt).hour() / 60;
                       return {
                         ...item,
-                        airHumidity: item.airHumidity.toFixed(2),
+                        airHumidity: item.humidityAir.toFixed(2),
                         createdAt: hours.toFixed(2),
                       };
                     })}
