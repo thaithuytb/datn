@@ -19,7 +19,7 @@ export class DataStatisticalRepository implements IDataStatisticalRepository {
         gardenId: gardenId,
         createdAt: {
           gt: dayjsVps(date.subtract(1, 'day').endOf('day')).toISOString(),
-          lt: dayjsVps(date.add(1, 'day')).startOf('day').toISOString(),
+          lt: dayjsVps(date.add(1, 'day').startOf('day')).toISOString(),
         },
       },
       orderBy: {
