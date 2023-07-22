@@ -57,14 +57,14 @@ const RouteMain = () => {
                   element={<ManagementWorker />}
                 />
               </Route>
-              <Route>
+              {/* <Route>
                 <Route path="/management-devices" element={<ListDevice />} />
                 <Route path="/management-devices/create" element={<CreateDevice />} />
                 <Route
                   path="/management-devices/:gardenId"
                   element={<ListDevice />}
                 />
-              </Route>
+              </Route> */}
               <Route>
                 <Route
                   path="/status-gardens/:gardenId"

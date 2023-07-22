@@ -4,14 +4,12 @@ import { GardenContext } from "../../contexts/GardenContext";
 import {
   DEVICE_TYPE,
   Device,
-  convertDevice2Type,
 } from "../../types/device.type";
-import { DeviceTypeEnum } from "../../types/enum.type";
 import { useNavigate, useParams } from "react-router-dom";
 import { DeviceContext } from "../../contexts/DeviceContext";
-import DeviceApi from "../../api/device";
 import { MessageContext } from "../../contexts/MessageContext";
 import {
+  Button,
   DatePicker,
   Empty,
   Modal,
@@ -23,6 +21,7 @@ import {
 import dayjs from "dayjs";
 import GardenApi from "../../api/garden";
 import Threshold from "./Threshold";
+import Setup from "./Setup";
 import { ColumnsType } from "antd/es/table";
 import { getMeasuredAndStatusDevice } from "../../common/status-device";
 import { SocketContext } from "../../contexts/SocketContext";
@@ -33,12 +32,11 @@ import localeData from "dayjs/plugin/localeData"
 dayjs.extend(weekday)
 dayjs.extend(localeData)
 
-interface DataType {
-  stt: any;
-  ip: string;
-  status: any;
-  type: string;
-  device: Device;
+export interface DataType {
+  stt: number;
+  id: number
+  type: string
+  value: any
 }
 interface IViewEmpty {
   selectGarden: any;
@@ -184,19 +182,6 @@ const ShowModal: React.FC<IShowModal> = ({
   );
 };
 
-const convertTypeDevice = (type: DeviceTypeEnum) => {
-  switch (type) {
-    case "FAN":
-    case "LAMP":
-    case "CURTAIN":
-    case "PUMP": {
-      return "actuator";
-    }
-    default:
-      return "sensor";
-  }
-};
-
 const ViewEmpty: React.FC<IViewEmpty> = ({ selectGarden, itemsOption }) => {
   return (
     <Empty
@@ -232,10 +217,12 @@ export default function StatusGardens() {
   const messageContext = useContext(MessageContext);
   const { gardenId } = useParams();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isModalOpenSetup, setIsModalOpenSetup] = useState<boolean>(false);
   const [garden, setGarden] = useState<any>();
   const [dataTable, setDataTable] = useState<any>();
   const socketContext = useContext(SocketContext);
   const socket = socketContext?.socket;
+  const [setup, setSetup] = useState<DataType | undefined>()
 
   const notificationContext = useContext(NotificationContext)
   const setCount = notificationContext?.setCount
@@ -325,6 +312,12 @@ export default function StatusGardens() {
     setIsModalOpen(true);
   };
 
+  const showModalSetup = (record: any) => {
+    // setSetup
+    console.log(record)
+    setIsModalOpenSetup(true);
+  };
+
   useEffect(() => {
     if (gardenId && getDevicesByGardenId) {
       getDevicesByGardenId(gardenId);
@@ -348,32 +341,6 @@ export default function StatusGardens() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [message]);
 
-  const changeStatusDevice = (device: Device) => {
-    if (!device.status || !gardenId) {
-      return;
-    }
-    const deviceApi = DeviceApi.registerDeviceApi();
-    if (convertTypeDevice(device.type) === "actuator") {
-      deviceApi.changeDeviceStatus(
-        {
-          status: !device.valueDevice.status,
-          ip: device.ip,
-          deviceId: device.id,
-          type: device.type,
-        },
-        gardenId
-      );
-    } else {
-      deviceApi.changeDeviceStatus(
-        {
-          ip: device.ip,
-          deviceId: device.id,
-          type: device.type,
-        },
-        gardenId
-      );
-    }
-  };
 
   //data table
   let columns: ColumnsType<DataType> = [
@@ -384,79 +351,85 @@ export default function StatusGardens() {
       align: "center",
     },
     {
-      title: "IP thiết bị",
-      dataIndex: "ip",
-      align: "center",
-    },
-    {
       title: "Loại thiết bị",
       dataIndex: "type",
       align: "center",
     },
     {
-      title: "Tình trạng",
-      dataIndex: "status",
-      align: "center",
-    },
-    {
-      title: "Trạng thái/giá trị đo",
+      title: "Gia tri",
       dataIndex: "value",
       align: "center",
     },
   ];
+
   columns =
     garden && !garden.isAuto
       ? [
         ...columns,
         {
-          title: "Điều khiển thiết bị",
+          title: "Điều khiển",
           dataIndex: "",
           align: "center",
           render: (_, record) =>
             dataTable.length > 0 ? (
-              convertDevice2Type(record.device.type) === "ACTUATOR" &&
-                record.device.status ? (
-                record.device.valueDevice?.status ? (
-                  <button
-                    className="control_device"
-                    onClick={() => changeStatusDevice(record.device)}
-                  >
-                    Tắt
-                  </button>
-                ) : (
-                  <button
-                    className="control_device"
-                    onClick={() => changeStatusDevice(record.device)}
-                  >
-                    Bật
-                  </button>
-                )
-              ) : (
-                "Không thể điều khiển"
-              )
+              <Button>Button</Button>
             ) : null,
+          width: 150
+        },
+        {
+          title: "Thiet lap",
+          dataIndex: "",
+          align: "center",
+          render: (_, record) =>
+            dataTable.length > 0 ? (
+              <Button onClick={() => showModalSetup(record)}>Setup</Button>
+            ) : null,
+          width: 150
         },
       ]
-      : columns;
+      :
+      [
+        ...columns,
+        {
+          title: "Thiet lap",
+          dataIndex: "",
+          align: "center",
+          render: (_, record) =>
+            dataTable.length > 0 ? (
+              <Button onClick={() => showModalSetup(record)}>Setup</Button>
+            ) : null,
+          width: 150
+        },
+      ];
 
   useEffect(() => {
-    const newData = devices?.map((device: Device, index: number) => ({
-      key: index,
-      stt: index + 1,
-      ip: device.ip,
-      status: device.status ? (
-        "Đang hoạt động"
-      ) : (
-        <div style={{ color: "#999" }}>Không hoạt động</div>
-      ),
-      type: DEVICE_TYPE[`${device.type}`],
-      value: getMeasuredAndStatusDevice(device),
-      device,
-    }));
+    let data: any = {}
+    if (devices) {
+      devices.map((device: Device, index: number) => (
+        data = {
+          ...data,
+          [device.type]: [...(data?.[device.type] || []),
+          {
+            key: index,
+            ip: device.ip,
+            status: device.status ? (
+              "Đang hoạt động"
+            ) : (
+              <div style={{ color: "#999" }}>Không hoạt động</div>
+            ),
+            type: DEVICE_TYPE[`${device.type}`],
+            value: getMeasuredAndStatusDevice(device),
+            device,
+          }
+          ]
+        }
+      ))
+      setDataTable(Object.values(data))
+    }
 
-    setDataTable(newData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [devices]);
+
   return (
     <>
       {!gardenId ? (
@@ -537,6 +510,14 @@ export default function StatusGardens() {
                   setIsModalOpen={setIsModalOpen}
                   garden={garden}
                   gardenId={gardenId}
+                />
+              }
+
+              {isModalOpenSetup &&
+                <Setup
+                  isModalOpenSetup={isModalOpenSetup}
+                  setIsModalOpenSetup={setIsModalOpenSetup}
+                  setup={setup}
                 />
               }
             </div>
