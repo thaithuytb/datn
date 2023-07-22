@@ -42,7 +42,7 @@ export const listSidebarInit: MenuItem[] = [
     url: "personal-information",
   },
   {
-    titleSidebar: "Chi dan duong di",
+    titleSidebar: "Chỉ dẫn đường đi",
     key: "road-map",
     url: "road-map",
   },

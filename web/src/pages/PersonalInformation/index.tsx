@@ -158,7 +158,7 @@ export default function PersonalInformation() {
               </Button>
               <span style={{ padding: '0 3rem' }} />
               <Button type="link" htmlType="button" onClick={change}>
-                {`Mat khau ->`}
+                {`Mật khẩu ->`}
               </Button>
             </Form.Item>
           </Form>
@@ -200,7 +200,7 @@ export default function PersonalInformation() {
 
             <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
               <Button type="link" htmlType="button" onClick={change}>
-                {`<- Thong tin`}
+                {`<- Thông tin`}
               </Button>
               <span style={{ padding: '0 3rem' }} />
               <Button type="primary" htmlType="submit">
