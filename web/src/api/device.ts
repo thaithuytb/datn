@@ -4,7 +4,7 @@ import axiosClient from "./axiosClient";
 
 class DeviceApi {
   getDevicesByGardenId(dto: { gardenId: string }) {
-    const url = `/devices/${dto.gardenId}`;
+    const url = `/devices/garden/${dto.gardenId}`;
     return axiosClient.get(url) as unknown as ApiResponse;
   }
 
@@ -18,7 +18,7 @@ class DeviceApi {
     gardenId: string
   ) {
     const url = `/devices/change-device/${gardenId}`;
-    return axiosClient.post(url, { dto })  as unknown as ApiResponse;
+    return axiosClient.post(url, { dto }) as unknown as ApiResponse;
   }
 
   changeThreshold(dto: {
@@ -29,6 +29,25 @@ class DeviceApi {
   }) {
     const url = `/gardens/change-threshold`;
     return axiosClient.post(url, { dto: dto }) as unknown as ApiResponse;
+  }
+
+  updateDevice(dto: {
+    id?: number,
+    type?: string,
+    duration?: number[],
+    time?: string[],
+    startAt?: string,
+    endAt?: string
+  }) {
+    const url = `/devices/update`;
+    return axiosClient.patch(url, { dto: dto }) as unknown as ApiResponse;
+  }
+
+  getDeviceById(dto: {
+    id: number,
+  }) {
+    const url = `/devices/${dto.id}`;
+    return axiosClient.get(url) as unknown as ApiResponse;
   }
 
   static registerDeviceApi() {

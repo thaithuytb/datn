@@ -1,14 +1,19 @@
 import { DeviceTypeEnum } from "./enum.type";
 
 export interface Device {
-  id: number;
-  ip: string;
-  status: boolean;
-  type: DeviceTypeEnum;
-  garden: any;
-  valueDevice?: any;
-  lowThreshold?: any;
-  highThreshold?: any;
+  id: number
+  type: string
+  createdAt: string
+  duration: string
+  endAt: string
+  gardenId: number
+  ip: string
+  isDeleted: boolean
+  startAt: string
+  status: boolean
+  time: string
+  updatedAt: string
+  valueDevice: any
 }
 
 export const DEVICE_TYPE = {

@@ -1,10 +1,13 @@
-import React from 'react';
-import { Button, Form, Modal, Space, TimePicker } from 'antd';
+import React, { useContext, useEffect, useState } from 'react';
+import { Button, Form, FormInstance, Modal, Space, TimePicker } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import DeviceApi from '../../api/device';
 import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { DataType } from '.';
+import { MessageContext } from '../../contexts/MessageContext';
+
 dayjs.extend(weekday)
 dayjs.extend(localeData)
 
@@ -19,50 +22,116 @@ const Setup: React.FC<ISetup> = ({
     setIsModalOpenSetup,
     setup
 }) => {
-    console.log(setup)
-    const handleOk = () => {
-        setIsModalOpenSetup(false);
-    };
+
+    const messageContext = useContext(MessageContext)
+    const success = messageContext?.success
+    const error = messageContext?.error
+
+    const [data, setData] = useState();
+    const formRef = React.useRef<FormInstance>(null);
+
+    let initialValues = {
+        device: data
+    }
+
+    const deviceApi = DeviceApi.registerDeviceApi();
 
     const handleCancel = () => {
         setIsModalOpenSetup(false);
     };
 
-    const onFinish = (values: any) => {
-        console.log('Received values of form:', values);
+    const onFinish = async (values: any) => {
+        let time: string[] = []
+        let duration: number[] = []
+        const todayStart = dayjs().startOf('day');
+
+        if (values.device) {
+            for (const item of values.device) {
+                const timeItem = dayjs(item.time).format("HH:mm:ss")
+                const newTime = (dayjs(item.duration)).diff(todayStart, 'second');
+                time.push(timeItem)
+                duration.push(newTime)
+            }
+        }
+        try {
+            const dto = {
+                id: setup?.device.id,
+                type: setup?.device.type,
+                time: time,
+                duration: duration,
+                startAt: '',
+                endAt: ''
+            }
+            const res = await deviceApi.updateDevice(dto)
+            if(res.success) {
+                success('cap nhap thanh cong!!!')
+            }
+        } catch (error) { }
     };
+
+    useEffect(() => {
+        (async () => {
+            if (setup) {
+                const res = await deviceApi.getDeviceById({ id: setup.id })
+                if (res) {
+                    const time = JSON.parse((res.data.time as string).replace(/'/g, '"'));
+                    const duration = JSON.parse(res.data.duration);
+
+                    const devive = duration.map((item: any, index: number) => {
+                        return ({
+                            time: dayjs(`01/01/2023 ${time[index]}`, { format: "HH:mm:ss" }),
+                            duration: dayjs().startOf('day').add(duration[index], 'second')
+                        })
+                    })
+                    setData(devive)
+                }
+            }
+        })()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    if (data) {
+        formRef.current?.setFieldsValue(initialValues)
+    }
+
     return (
-        <Modal title="Thiet lap trang thai" open={isModalOpenSetup} onOk={handleOk} onCancel={handleCancel}>
+        <Modal title="Thiet lap trang thai" width={650}
+            open={isModalOpenSetup} onCancel={handleCancel}
+            footer={[
+                <Button key="back" onClick={handleCancel}>
+                    Đóng
+                </Button>,
+            ]}
+        >
             <Form
                 name="dynamic_form_nest_item"
                 onFinish={onFinish}
                 style={{ maxWidth: 600 }}
+                ref={formRef}
             >
                 <Form.List name="device">
                     {(fields, { add, remove }) => (
                         <>
                             {fields.map(({ key, name, ...restField }) => (
-                                <Space key={key} style={{ display: 'flex', marginBottom: 5 }} align="baseline">
+                                <Space key={key} style={{ display: 'flex' }} align="baseline">
                                     <Form.Item
-                                        // {...restField}
+                                        {...restField}
                                         name={[name, 'time']}
                                         rules={[{ required: true, message: 'Chon thoi gian' }]}
                                         label='Thoi gian bat dau'
                                     >
                                         <TimePicker
                                             format={'HH:mm'}
-                                            value={dayjs('00:00', 'HH:mm')}
                                         />
                                     </Form.Item>
                                     <Form.Item
-                                        // {...restField}
-                                        name={[name, 'period']}
+                                        {...restField}
+                                        name={[name, 'duration']}
                                         rules={[{ required: true, message: 'Chon khoang thoi gian' }]}
-                                        label='Thoi gian ket thuc'
+                                        label='Thoi gian hoat dong'
                                     >
                                         <TimePicker
                                             format={'HH:mm'}
-                                            value={dayjs('00:00', 'HH:mm')}
                                         />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
@@ -78,7 +147,7 @@ const Setup: React.FC<ISetup> = ({
                 </Form.List>
                 <Form.Item>
                     <Button type="primary" htmlType="submit">
-                        Submit
+                        Cap nhap
                     </Button>
                 </Form.Item>
             </Form>
