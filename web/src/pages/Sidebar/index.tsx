@@ -1,10 +1,11 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Menu, Modal } from "antd";
 import { CloseOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { MenuItem, listSidebarInit } from "./routeSidebar";
 import { AuthContext } from "../../contexts/AuthContext";
 import { Squash as Hamburger } from 'hamburger-react'
+import { MessageContext } from "../../contexts/MessageContext";
 
 const { confirm } = Modal;
 
@@ -46,7 +47,11 @@ export default function SidebarLayout() {
     });
   };
 
+
   const listItemSidebar = ({ key }: { key: string }) => {
+    if(window.innerWidth <400){
+      setOpenHeader(false);
+    }
     const itemActive: MenuItem[] = [];
     for (const item of listSidebarInit) {
       if (item.key === key) {
@@ -70,14 +75,16 @@ export default function SidebarLayout() {
       }
     }
   };
-  const [isOpen, setOpen] = useState(false)
+  
+  const {isOpenHeader, setOpenHeader} = useContext(MessageContext)!; 
+
   return (
     <div style={{height: '100%'}}>
-      <div className="icon_close" style={{transform: isOpen ? 'translateX(256px)' : 'none'}}>
-        <Hamburger toggled={isOpen} toggle={setOpen}/>
+      <div className="icon_close" style={{transform: isOpenHeader ? 'translateX(256px)' : 'none'}}>
+        <Hamburger toggled={isOpenHeader} toggle={setOpenHeader}/>
       </div>
       <Menu
-        style={{ width: 256, height: '100%', transform: isOpen ? 'none' : 'translateX(-200%)' }}
+        style={{ width: 256, height: '100%', transform: isOpenHeader ? 'none' : 'translateX(-200%)' }}
         mode="inline"
         // theme={"light"}
         defaultSelectedKeys={["home"]}

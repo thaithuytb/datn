@@ -3,15 +3,19 @@
 }
 .icon_close{
     display: none;
-    position: absolute;
+    position:fixed;
     transition: all 0.6s;
 }
 @media screen and (max-width: 400px){
+    .icon_close {
+        display: block;
+    }
     .header{
         z-index: 10;
+        padding-left: 0px;
     }
     .header_left h2{
-        font-size: 16px;
+        font-size: 14px;
     }
     .header_right h3{
         display: none;
@@ -22,6 +26,7 @@
     }
     .SidebarLayout ul{
         width: 100px;
+        height: calc(100% - 90px) !important;
     }
     .icon_close{
         display: block;
@@ -86,6 +91,9 @@
     }
     .login{
         width: 100%;
+        background: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
     }
     .ant-empty-image img{
         width: 100%;
@@ -97,5 +105,9 @@
     .custom-dropdown{
         border: none;
         overflow: hidden;
+    }
+    .app{
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
     }
 }
