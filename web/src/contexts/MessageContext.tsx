@@ -21,7 +21,7 @@ const MessageContextProvider: React.FC<PropsMessageContext> = ({
   children,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
-  const [isOpenHeader, setOpenHeader] = useState(true); 
+  const [isOpenHeader, setOpenHeader] = useState(false); 
 
   const success = (message: string) => {
     messageApi.open({

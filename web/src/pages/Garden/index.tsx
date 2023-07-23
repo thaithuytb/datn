@@ -64,35 +64,36 @@ export default function Garden() {
       title: "Stt",
       align: "center",
       dataIndex: "id",
+      className:'responsive'
     },
     {
       title: "Tên khu vườn",
       align: "center",
       dataIndex: "name",
-      className:'row_garden'
+      className: 'row_garden'
     },
     {
       title: "Địa chỉ",
       align: "center",
       dataIndex: "address",
-      className:'row_garden'
+      className: 'row_garden'
     },
     {
       title: "Ngày bắt đầu",
       align: "center",
       render: (_, record) => dayjs(record.createdAt).format("YYYY-MM-DD"),
-      className:'row_garden'
+      className: 'row_garden responsive'
     },
     {
       title: "Chế độ chăm sóc hiện tại",
       align: "center",
       render: (_, record) => (record.isAuto ? "Tự chăm sóc" : "Tự điều chỉnh"),
-      className:'row_garden'
+      className: 'row_garden responsive'
     },
     {
       title: "Số lượng thiết bị",
       align: "center",
-      className:'row_garden',
+      className: 'row_garden',
       render: (_, record) => {
         const countDevices = record.devices.length;
         const countDeviceAction = record.devices.filter(
@@ -109,7 +110,7 @@ export default function Garden() {
       title: "Số người tham gia",
       align: "center",
       render: (_, record) => record.users.length,
-      className:'row_garden'
+      className: 'row_garden'
     },
     {
       title: "Thao tác",
@@ -128,6 +129,7 @@ export default function Garden() {
         </>
       ),
       align: "center",
+      className: 'row_garden-action'
     },
   ];
 
@@ -151,14 +153,9 @@ export default function Garden() {
       </div>
       {gardens && (
         <Table
-          //   onChange={changPagination}
+        style={{maxWidth:'100%'}}
           pagination={false}
           bordered={true}
-          //   pagination={{
-          //     pageSize: 7,
-          //     total: totalPage,
-          //     current: currentPage
-          //   }}
           columns={columns}
           dataSource={gardens}
           id="table_gardens"
