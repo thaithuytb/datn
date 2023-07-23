@@ -1,112 +1,136 @@
-.hamburger-react{
+.hamburger-react {
     z-index: 3;
 }
-.icon_close{
+
+.icon_close {
     display: none;
-    position:fixed;
+    position: fixed;
     transition: all 0.6s;
 }
-@media screen and (max-width: 400px){
+
+@media screen and (max-width: 400px) {
     .icon_close {
         display: block;
     }
-    .header{
+
+    .header {
         z-index: 10;
         padding-left: 0px;
     }
-    .header_left h2{
+
+    .header_left h2 {
         font-size: 14px;
     }
-    .header_right h3{
+
+    .header_right h3 {
         display: none;
     }
-    .SidebarLayout{
+
+    .SidebarLayout {
         z-index: 2;
         margin-top: 4px;
     }
-    .SidebarLayout ul{
+
+    .SidebarLayout ul {
         width: 100px;
         height: calc(100% - 90px) !important;
     }
-    .icon_close{
+
+    .icon_close {
         display: block;
     }
-    .ant-menu{
+
+    .ant-menu {
         position: absolute;
         width: 200px;
         transition: all 0.6s;
     }
-    .content{
+
+    .content {
         padding-top: 30px;
         /* overflow: hidden; */
         overflow-x: hidden;
     }
-    .app_content{
+
+    .app_content {
         overflow: hidden;
     }
-    #chart{
+
+    #chart {
         overflow-x: auto;
         padding-bottom: 40px;
     }
-    .recharts-legend-wrapper{
+
+    .recharts-legend-wrapper {
         left: 0px;
         top: 220px !important;
     }
-    .ant-form-item button{
+
+    .ant-form-item button {
         margin-left: -25px;
     }
-    .ant-table-content{
+
+    /* .ant-table-content{
         overflow: auto;
-    }
+    } */
+
     /* #table_gardens tr{
         width: 150%;
     } */
-    .ant-empty-image{
+    .ant-empty-image {
         width: 100%;
     }
-    .row_garden{
-        min-width: 100px;
-    }
-    #add_people button{
-        margin-left: 0px !important; 
+
+    #add_people button {
+        margin-left: 0px !important;
         width: 82px;
     }
-    .login_form{
+
+    .login_form {
         margin: auto;
         width: 100%;
     }
-    .login_form form{ 
+
+    .login_form form {
         margin: auto;
         width: 50%;
     }
-    .login_form input{
+
+    .login_form input {
         width: 100%;
     }
-    .login_form h3{
+
+    .login_form h3 {
         width: 100%;
     }
-    .login_form header{
+
+    .login_form header {
         width: 100%;
         transform: translateY(-150px);
     }
-    .login{
+
+    .login {
         width: 100%;
         background: none;
         -webkit-box-shadow: none;
         box-shadow: none;
     }
-    .ant-empty-image img{
+
+    .ant-empty-image img {
         width: 100%;
     }
-    #Dropdown_before{
+
+    #Dropdown_before {
         width: 75%;
         transform: translateX(34%);
     }
-    .custom-dropdown{
+
+    .custom-dropdown {
         border: none;
         overflow: hidden;
     }
-    .app{
+
+    .app {
         background-repeat: no-repeat;
         background-size: 100% 100%;
     }

@@ -29,7 +29,9 @@ import '../src/pages/Responsive/responsive.css'
 import { useContext, useEffect, useState } from "react";
 
 const RouteMain = () => {
-  const {isOpenHeader, setOpenHeader} = useContext(MessageContext)!;
+  const width = window.innerWidth;
+  console.log(width)
+  const {setOpenHeader} = useContext(MessageContext)!;
 
   const closeHeader = () => {
     if(window.innerWidth <400){
@@ -38,13 +40,11 @@ const RouteMain = () => {
   };
 
   useEffect(() => {
-    // Thêm bộ lắng nghe sự kiện để xử lý sự kiện thay đổi kích thước cửa sổ
     window.addEventListener('resize', closeHeader);
-
-    // Dọn dẹp bộ lắng nghe sự kiện khi thành phần bị unmount để tránh rò rỉ bộ nhớ
     return () => {
       window.removeEventListener('resize', closeHeader);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

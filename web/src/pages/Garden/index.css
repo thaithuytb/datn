@@ -12,7 +12,7 @@
 
 .garden .garden_header h3 {
 	color: #777;
-	font-size: 20px;
+	font-size: 1.5rem;
 	font-weight: 500;
 }
 
@@ -48,10 +48,53 @@
 	display: flex;
 	justify-content: space-between;
 }
-.ModalUpdateGarden_left, .ModalUpdateGarden_right {
+
+.ModalUpdateGarden_left,
+.ModalUpdateGarden_right {
 	width: 45%;
 }
+
 .ModalUpdateGarden_right div,
-.ModalUpdateGarden_left div{
+.ModalUpdateGarden_left div {
 	margin: 0.7rem 0;
+}
+
+/* ///////////////////// */
+@media screen and (max-width: 400px) {
+	* {
+		font-size: 99%;
+	}
+
+	.garden {
+		padding: .6rem;
+		/* overflow: auto; */
+	}
+
+	.garden .garden_header h3 {
+		font-size: 1rem;
+	}
+
+	.garden_header {
+		margin: .5rem 0 .4rem 0;
+	}
+
+	.responsive {
+		display: none;
+	}
+
+	.row_garden {
+		padding: 0.4rem !important;
+	}
+
+	.row_garden-action {
+		max-width: 5rem;
+		padding: 0.5rem !important;
+	}
+
+	.row_garden-action button {
+		font-size: 80%;
+		width: 4rem;
+		margin: .1rem 0 !important;
+	}
+
 }

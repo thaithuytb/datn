@@ -5,6 +5,10 @@
   --color-header: #71d3f7;
 }
 
+* {
+  font-size: 16px;
+}
+
 .app {
   background-image: url("../public/Background.png");
   background-size: 100%;

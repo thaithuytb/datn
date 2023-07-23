@@ -81,15 +81,12 @@ export default function SidebarLayout() {
   return (
     <div style={{height: '100%'}}>
       <div className="icon_close" style={{transform: isOpenHeader ? 'translateX(256px)' : 'none'}}>
-        <Hamburger toggled={isOpenHeader} toggle={setOpenHeader}/>
+        <Hamburger size={27} toggled={isOpenHeader} toggle={setOpenHeader}/>
       </div>
       <Menu
         style={{ width: 256, height: '100%', transform: isOpenHeader ? 'none' : 'translateX(-200%)' }}
         mode="inline"
-        // theme={"light"}
         defaultSelectedKeys={["home"]}
-        // defaultOpenKeys={["sub1"]}
-        // defaultChecked={true}
         onClick={listItemSidebar}
         items={items}
       />    
