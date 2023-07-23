@@ -10,7 +10,7 @@ import NotFound from "./components/NotFound";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import AuthContextProvider from "./contexts/AuthContext";
-import MessageContextProvider from "./contexts/MessageContext";
+import MessageContextProvider, { MessageContext } from "./contexts/MessageContext";
 import GardenContextProvider from "./contexts/GardenContext";
 import StatusGardens from "./pages/StatusGarden";
 import ListDevice from "./pages/ListDevice";
@@ -26,8 +26,27 @@ import CreateDevice from "./pages/ListDevice/CreateDevice";
 import CreateGarden from "./pages/Garden/Create";
 import RoadMap from "./pages/RoadMap";
 import '../src/pages/Responsive/responsive.css'
+import { useContext, useEffect, useState } from "react";
 
 const RouteMain = () => {
+  const {isOpenHeader, setOpenHeader} = useContext(MessageContext)!;
+
+  const closeHeader = () => {
+    if(window.innerWidth <400){
+      setOpenHeader(false);
+    }
+  };
+
+  useEffect(() => {
+    // Thêm bộ lắng nghe sự kiện để xử lý sự kiện thay đổi kích thước cửa sổ
+    window.addEventListener('resize', closeHeader);
+
+    // Dọn dẹp bộ lắng nghe sự kiện khi thành phần bị unmount để tránh rò rỉ bộ nhớ
+    return () => {
+      window.removeEventListener('resize', closeHeader);
+    };
+  }, []);
+
   return (
     <>
       <HeaderLayout />
@@ -35,7 +54,7 @@ const RouteMain = () => {
         <div className="SidebarLayout">
           <SidebarLayout />
         </div>
-        <div className="content">
+        <div className="content" onClick={closeHeader}>
           <Routes>
             <Route element={<ProtectedMain />}>
               <Route path="/home" element={<Home />} />
