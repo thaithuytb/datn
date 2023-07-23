@@ -2,8 +2,7 @@ import "./index.css";
 import { useContext, useEffect, useState } from "react";
 import { GardenContext } from "../../contexts/GardenContext";
 import {
-  DEVICE_TYPE,
-  Device,
+  Device
 } from "../../types/device.type";
 import { useNavigate, useParams } from "react-router-dom";
 import { DeviceContext } from "../../contexts/DeviceContext";
@@ -23,20 +22,41 @@ import GardenApi from "../../api/garden";
 import Threshold from "./Threshold";
 import Setup from "./Setup";
 import { ColumnsType } from "antd/es/table";
-import { getMeasuredAndStatusDevice } from "../../common/status-device";
 import { SocketContext } from "../../contexts/SocketContext";
 import { NotificationContext } from "../../contexts/NotificationContext";
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
+import { getMeasuredAndStatusDevice } from "../../common/status-device";
 
 dayjs.extend(weekday)
 dayjs.extend(localeData)
 
+const DEVICE_TYPE = {
+  FAN: "Quạt",
+  LAMP: "Đèn",
+  CURTAIN: "Rèm",
+  PUMP: "Máy bơm",
+  LIGHT_SENSOR: "Cảm biến ánh sáng",
+  HUMIDITY_SENSOR: "Cảm biến độ ẩm đất",
+  TEMPERATURE_HUMIDITY_AIR_SENSOR: "Cảm biến nhiệt độ, độ ẩm",
+}
+
+enum Type {
+  FAN = 'FAN',
+  LAMP = 'LAMP',
+  CURTAIN = 'CURTAIN',
+  PUMP = 'PUMP',
+  LIGHT_SENSOR = 'LIGHT_SENSOR',
+  HUMIDITY_SENSOR = 'HUMIDITY_SENSOR',
+  TEMPERATURE_HUMIDITY_AIR_SENSOR = 'TEMPERATURE_HUMIDITY_AIR_SENSOR',
+}
+
 export interface DataType {
   stt: number;
   id: number
-  type: string
-  value: any
+  type: Type
+  valueDevice: any
+  device: Device
 }
 interface IViewEmpty {
   selectGarden: any;
@@ -312,9 +332,8 @@ export default function StatusGardens() {
     setIsModalOpen(true);
   };
 
-  const showModalSetup = (record: any) => {
-    // setSetup
-    console.log(record)
+  const showModalSetup = (record: DataType) => {
+    setSetup(record)
     setIsModalOpenSetup(true);
   };
 
@@ -354,10 +373,15 @@ export default function StatusGardens() {
       title: "Loại thiết bị",
       dataIndex: "type",
       align: "center",
+      render: (_, record: DataType) =>
+        dataTable.length > 0 ? (
+          // <>{record.type}</>
+          <>{DEVICE_TYPE[record.type]}</>
+        ) : null,
     },
     {
       title: "Gia tri",
-      dataIndex: "value",
+      dataIndex: "valueDevice",
       align: "center",
     },
   ];
@@ -372,59 +396,53 @@ export default function StatusGardens() {
           align: "center",
           render: (_, record) =>
             dataTable.length > 0 ? (
-              <Button>Button</Button>
+              <Button ghost type="primary" >Button</Button>
             ) : null,
           width: 150
         },
         {
-          title: "Thiet lap",
+          title: "Thiet lap trang thai",
           dataIndex: "",
           align: "center",
-          render: (_, record) =>
+          render: (_, record: DataType) =>
             dataTable.length > 0 ? (
-              <Button onClick={() => showModalSetup(record)}>Setup</Button>
+              record.type === 'FAN' || record.type === 'LAMP' || record.type === 'PUMP' ?
+                <Button ghost type="primary" onClick={() => showModalSetup(record)}>Thiet lap</Button>
+                : null
             ) : null,
-          width: 150
+          width: 200
         },
       ]
       :
       [
         ...columns,
         {
-          title: "Thiet lap",
+          title: "Thiet lap trang thai",
           dataIndex: "",
           align: "center",
-          render: (_, record) =>
+          render: (_, record: DataType) =>
             dataTable.length > 0 ? (
-              <Button onClick={() => showModalSetup(record)}>Setup</Button>
+              record.type === 'FAN' || record.type === 'LAMP' || record.type === 'PUMP' ?
+                <Button ghost type="primary" onClick={() => showModalSetup(record)}>Thiet lap</Button>
+                : null
             ) : null,
-          width: 150
+          width: 200
         },
       ];
 
   useEffect(() => {
-    let data: any = {}
     if (devices) {
-      devices.map((device: Device, index: number) => (
-        data = {
-          ...data,
-          [device.type]: [...(data?.[device.type] || []),
-          {
-            key: index,
-            ip: device.ip,
-            status: device.status ? (
-              "Đang hoạt động"
-            ) : (
-              <div style={{ color: "#999" }}>Không hoạt động</div>
-            ),
-            type: DEVICE_TYPE[`${device.type}`],
-            value: getMeasuredAndStatusDevice(device),
-            device,
-          }
-          ]
+      const newData = devices.map((device: Device, index: number) => (
+        {
+          key: index,
+          stt: index + 1,
+          id: device.id,
+          type: device.type,
+          valueDevice: getMeasuredAndStatusDevice(device.valueDevice, device.type),
+          device: device
         }
       ))
-      setDataTable(Object.values(data))
+      setDataTable(newData)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
