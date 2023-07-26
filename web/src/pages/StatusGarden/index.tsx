@@ -26,6 +26,7 @@ import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { getMeasuredAndStatusDevice } from "../../common/status-device";
 import DeviceApi from "../../api/device";
+import StatusDevices from "./Status";
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -349,6 +350,7 @@ export default function StatusGardens() {
   };
 
   const changeStatusDevice = (device: DataType) => {
+    console.log(gardenId)
     if (!gardenId) {
       return;
     }
@@ -533,6 +535,11 @@ export default function StatusGardens() {
                   </div>
                 </header>
               </div>
+
+              {/* Trang thai thiet bi */}
+              <StatusDevices 
+                devices={devices}
+              />
 
               {/* xét ngưỡng các thiết bị */}
               {gardenId && (

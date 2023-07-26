@@ -4,7 +4,7 @@ import { IInformationUserLogin } from "../../types/login.type";
 import { Navigate, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
 import { MessageContext } from "../../contexts/MessageContext";
-import background from "../../../public/Background.png";
+// import background from "../../../public/Background.png";
 
 export default function Login() {
   const authContext = useContext(AuthContext);
