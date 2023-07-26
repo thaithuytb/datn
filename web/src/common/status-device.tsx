@@ -1,3 +1,5 @@
+import { Button } from "antd";
+
 export const getMeasuredAndStatusDevice = (device: any, type: string): any => {
   if (type === "TEMPERATURE_HUMIDITY_AIR_SENSOR") {
     return (
@@ -12,9 +14,16 @@ export const getMeasuredAndStatusDevice = (device: any, type: string): any => {
     return <div>Độ ẩm đất: {device.value.toFixed(2)}lux</div>;
   }
 
-  // if (!device.status) {
-  //   return <div style={{ color: "#999" }}>Không hoạt động</div>;
-  // }
-
-  return device?.status ? "Bật" : "Tắt";
+  // return device?.status ?
+  //   <Button type="primary" ghost size="small"
+  //     style={{ padding: '0 1.2rem' }}
+  //   >
+  //     Bật
+  //   </Button>
+  //   :
+  //   <Button type="primary" ghost size="small"
+  //     style={{ padding: '0 1.2rem' }}
+  //   >
+  //     Tắt
+  //   </Button>
 };

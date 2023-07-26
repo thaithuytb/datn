@@ -5,8 +5,8 @@ import DeviceApi from "../../api/device";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
-import { DataType } from ".";
 import { MessageContext } from "../../contexts/MessageContext";
+import { Device } from "../../types/device.type";
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -14,7 +14,7 @@ dayjs.extend(localeData);
 interface ISetup {
   isModalOpenSetup: boolean;
   setIsModalOpenSetup: (isModalOpenSetup: boolean) => void;
-  setup: DataType | undefined;
+  setup: Device | undefined;
 }
 
 const Setup: React.FC<ISetup> = ({
@@ -24,7 +24,6 @@ const Setup: React.FC<ISetup> = ({
 }) => {
   const messageContext = useContext(MessageContext);
   const success = messageContext?.success;
-  const error = messageContext?.error;
 
   const [data, setData] = useState();
   const formRef = React.useRef<FormInstance>(null);
@@ -54,8 +53,8 @@ const Setup: React.FC<ISetup> = ({
     }
     try {
       const dto = {
-        id: setup?.device.id,
-        type: setup?.device.type,
+        id: setup?.id,
+        type: setup?.type,
         time: time,
         duration: duration,
         startAt: "",
