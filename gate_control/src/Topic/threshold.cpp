@@ -8,10 +8,12 @@ void __threshold(String topic, DynamicJsonDocument doc, DynamicJsonDocument docJ
     return;
   }
 
-  String device = doc["ip"].as<String>();
+  String device = doc["name"].as<String>();
+  int create = doc["createdBy"].as<int>();
+  bool first = doc["first"].as<bool>();
   
   // sensor update
-  if (device == sen_temp_air_IP) {
+  if (device == sen_temp_air_thresh) {
     JsonArray lowThreshold = doc["lowThreshold"].as<JsonArray>();
     JsonArray highThreshold = doc["highThreshold"].as<JsonArray>();
     
@@ -20,14 +22,18 @@ void __threshold(String topic, DynamicJsonDocument doc, DynamicJsonDocument docJ
     airThresh[0] = lowThreshold[1].as<float>();
     airThresh[1] = highThreshold[1].as<float>();
 
-    String json = "{ \"ip\": \"" + device + 
+    String json = "{ \"name\": \"" + device + 
                   "\", \"lowThreshold\": " + "[" + String(tempThresh[0]) + "," + String(airThresh[0]) + "]" + 
                   ", \"highThreshold\": " + "[" + String(tempThresh[1]) + "," + String(airThresh[1]) + "]" + 
                    + ", \"gardenId\": 1"
+                    + ", \"createdBy\": " + create +
                     "}";
-    mqttSend(topic, json);
-    Serial.println(json); 
-    Serial.println(topic); 
+
+    if(!first) {
+      mqttSend(topic, json);
+      Serial.println(json); 
+      Serial.println(topic); 
+    }
 
     Serial.println("tempThresh");
     Serial.print(tempThresh[0]);
@@ -39,42 +45,48 @@ void __threshold(String topic, DynamicJsonDocument doc, DynamicJsonDocument docJ
     Serial.print("-");
     Serial.println(airThresh[1]);
   }
-  if (device == sen_humi_IP) {
+  if (device == sen_humi_thresh) {
     JsonArray lowThreshold = doc["lowThreshold"].as<JsonArray>();
     JsonArray highThreshold = doc["highThreshold"].as<JsonArray>();
 
     humiThresh[0] = lowThreshold[0].as<float>();
     humiThresh[1] = highThreshold[0].as<float>();
 
-    String json = "{ \"ip\": \"" + device + 
+    String json = "{ \"name\": \"" + device + 
                   "\", \"lowThreshold\": " + "[" + String(humiThresh[0]) + "]" + 
                   ", \"highThreshold\": " + "[" + String(humiThresh[1]) + "]" + 
                    + ", \"gardenId\": 1"
+                    + ", \"createdBy\": " + create +
                     "}";
-    mqttSend(topic, json);
-    Serial.println(json); 
-    Serial.println(topic); 
+    if(!first) {
+      mqttSend(topic, json);
+      Serial.println(json); 
+      Serial.println(topic); 
+    }
 
     Serial.println("humiThresh");
     Serial.print(humiThresh[0]);
     Serial.print("-");
     Serial.println(humiThresh[1]);
   }
-  if (device == sen_light_IP) {
+  if (device == sen_light_thresh) {
     JsonArray lowThreshold = doc["lowThreshold"].as<JsonArray>();
     JsonArray highThreshold = doc["highThreshold"].as<JsonArray>();
 
     lightThresh[0] = lowThreshold[0].as<float>();
     lightThresh[1] = highThreshold[0].as<float>();
   
-    String json = "{ \"ip\": \"" + device + 
+    String json = "{ \"name\": \"" + device + 
                   "\", \"lowThreshold\": " + "[" + String(lightThresh[0]) + "]" + 
                   ", \"highThreshold\": " + "[" + String(lightThresh[1]) + "]" + 
                    + ", \"gardenId\": 1"
+                    + ", \"createdBy\": " + create +
                     "}";
-    mqttSend(topic, json);
-    Serial.println(json); 
-    Serial.println(topic); 
+    if(!first) {
+      mqttSend(topic, json);
+      Serial.println(json); 
+      Serial.println(topic); 
+    }
 
     Serial.println("lightThresh");
     Serial.print(lightThresh[0]);

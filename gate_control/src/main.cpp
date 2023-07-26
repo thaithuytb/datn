@@ -43,13 +43,14 @@ void generateTopics() {
 
 void setup() {
   Serial.begin(115200);
-  
+  initButton();
   initRealTime();
   initMQTT();
   initLora();
 }
 
 void loop() {
+  buttonRead();
   loraRead();
 
   while (isLoraBusy) {
@@ -63,7 +64,7 @@ void loop() {
   } else {
     if (isTimeUp()) {
       controlMode = false;
-      String json = "{ \"isAuto\": " + (controlMode ? String("false") : String("true")) + ", \"gardenId\": 1" + "}";
+      String json = "{ \"isAuto\": " + (controlMode ? String("false") : String("true")) + ", \"gardenId\": 1" + ", \"createdBy\": " + 1 + "}";
       mqttSend(trueTopics[2], json);
       Serial.println(json); 
       Serial.println(trueTopics[2]); 
@@ -85,23 +86,25 @@ void handleLoraString() {
     float _air = doc["air"].as<float>();
     float _humi = doc["humi"].as<float>();
     float _light = doc["light"].as<float>();
+    
+    int create = doc["createdBy"].as<int>();
 
     temp = _temp;
     air = _air;
     humi = _humi;
     light = _light;
 
-    String json = "{ \"ip\": \"" + String(sen_temp_air_IP) + "\", \"temp\": " + (temp) + ", \"airHumidity\": " + (air) + ", \"gardenId\": 1" + "}";
+    String json = "{ \"ip\": \"" + String(sen_temp_air_IP) + "\", \"temp\": " + (temp) + ", \"airHumidity\": " + (air) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + "}";
     mqttSend("datn/" + uuid + "/sensor", json);
     Serial.println(json); 
     Serial.println("datn/" + uuid + "/sensor"); 
 
-    String json1 = "{ \"ip\": \"" + String(sen_light_IP) + "\", \"value\": " + (light) + ", \"gardenId\": 1" + "}";
+    String json1 = "{ \"ip\": \"" + String(sen_light_IP) + "\", \"value\": " + (light) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + "}";
     mqttSend("datn/" + uuid + "/sensor", json1);
     Serial.println(json1); 
     Serial.println("datn/" + uuid + "/sensor"); 
 
-    String json2 = "{ \"ip\": \"" + String(sen_humi_IP) + "\", \"value\": " + (humi) + ", \"gardenId\": 1" + "}";
+    String json2 = "{ \"ip\": \"" + String(sen_humi_IP) + "\", \"value\": " + (humi) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + "}";
     mqttSend("datn/" + uuid + "/sensor", json2);
     Serial.println(json2); 
     Serial.println("datn/" + uuid + "/sensor"); 

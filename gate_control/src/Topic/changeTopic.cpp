@@ -20,8 +20,8 @@ void __changeTopic(String topic, DynamicJsonDocument doc, DynamicJsonDocument do
 
   delay(2000);
 
-  publish("datn/" + uuid + "/initStatusDevice", "{ \"gardenId\": 1 }");
-  Serial.println("This: " + String("datn/" + uuid + "/initStatusDevice") + String("{ \"gardenId\": 1 }"));
+  publish("datn/" + uuid + "/initStatusDevice", "{ \"gardenId\": 1, \"createdBy\": 1}");
+  Serial.println("This: " + String("datn/" + uuid + "/initStatusDevice") + String("{ \"gardenId\": 1, \"createdBy\": 1 }"));
 
   Serial.println(uuid);
 }

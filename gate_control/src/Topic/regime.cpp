@@ -8,6 +8,8 @@ void __regime(String topic, DynamicJsonDocument doc, DynamicJsonDocument docJWT)
   }
 
   bool isAuto = doc["isAuto"].as<bool>();
+  int create = doc["createdBy"].as<int>();
+  bool first = doc["first"].as<bool>();
 
   controlMode = !isAuto;
 
@@ -21,15 +23,23 @@ void __regime(String topic, DynamicJsonDocument doc, DynamicJsonDocument docJWT)
 
     String devices[4] = { FAN_IP, PUMP_IP, CURTAIN_IP, LAMP_IP };
 
+    if(first) {
+      return;
+    }
+
     for(int i = 0; i < 4; i++) {
-      String json = "{ \"ip\": \"" + devices[i] + "\", \"status\": false, \"gardenId\": 1" + "}";
+      String json = "{ \"ip\": \"" + devices[i] + "\", \"status\": false, \"gardenId\": 1" + ", \"createdBy\": " + create + "}";
       mqttSend(trueTopics[1], json);
       Serial.println(json); 
       Serial.println(topic); 
     }
   }
 
-  String json = "{ \"isAuto\": " + (controlMode ? String("false") : String("true")) + ", \"gardenId\": 1" + "}";
+  if(first) {
+    return;
+  }
+
+  String json = "{ \"isAuto\": " + (controlMode ? String("false") : String("true")) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + "}";
   mqttSend(topic, json);
   Serial.println(json); 
   Serial.println(topic); 

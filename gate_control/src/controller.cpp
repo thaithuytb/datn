@@ -2,16 +2,23 @@
 
 extern String ip[];
 
+bool fan = false;
+bool lamp = false;
+bool pump = false;
+bool curtain = false;
+
 // quat
 void fanSpeed(int pin, float percent) {
     pinMode(pin, OUTPUT);
     digitalWrite(pin, percent);
+    fan = percent == 1;
 }
 
 // bom
 void pumpStrength(int pin, float percent) {
     pinMode(pin, OUTPUT);
-    analogWrite(pin, percent * 255);
+    digitalWrite(pin, percent);
+    pump = percent == 1;
 }
 
 // phun suong
@@ -23,7 +30,9 @@ void mistStrength(int pin, float percent) {
 // man che
 void curtainOpen(int pin, float percent) {
     pinMode(pin, OUTPUT);
-    analogWrite(pin, percent * 255);
+    digitalWrite(pin, percent);
+    curtain = percent == 1;
+    // analogWrite(pin, percent * 255);
 }
 
 // bong den
@@ -34,5 +43,6 @@ void lampToggle(int pin) {
 
 void lampOn(int pin, bool on) {
     pinMode(pin, OUTPUT);
-    digitalWrite(pin, on ? LOW : HIGH);
+    digitalWrite(pin, on ? HIGH : LOW);
+    lamp = on;
 }

@@ -3,6 +3,11 @@
 
 #include <Arduino.h>
 
+extern bool fan;
+extern bool lamp;
+extern bool pump;
+extern bool curtain;
+
 void fanSpeed(int pin, float percent);
 void pumpStrength(int pin, float percent);
 void mistStrength(int pin, float percent);

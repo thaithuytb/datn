@@ -9,6 +9,7 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <realtime.h>
+#include <button.h>
 
 #define DHT_PIN 25
 #define LIGHT_PIN 26
@@ -29,6 +30,10 @@
 #define sen_temp_air_IP "temp_air_sensor_1_1"
 #define sen_humi_IP "humi_sensor_1_1"
 #define sen_light_IP "light_sensor_1_1"
+
+#define sen_temp_air_thresh "TEMPAIRSENSOR"
+#define sen_humi_thresh "HUMISENSOR"
+#define sen_light_thresh "LIGHTSENSOR"
 
 extern bool controlMode;
 
