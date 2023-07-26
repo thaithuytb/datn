@@ -54,7 +54,6 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
   useEffect(() => {
     if (socket) {
       socket.on("newThreshold", (data: any) => {
-        console.log("aaaaaaa", data);
         setMessage(data);
         messageContext?.success("Thay đổi ngưỡng thành công !!!");
       });
@@ -75,7 +74,6 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
   useEffect(() => {
     if (thresholds && message) {
       const newThreshold = thresholds?.map((threshold) => {
-        console.log({ threshold });
         if (threshold.name === message.name) {
           return {
             ...threshold,
@@ -95,7 +93,6 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
     thresholdNameEnum: ThresholdNameEnum,
     numberOfTempAir?: 1 | 2
   ) => {
-    console.log(value, thresholdNameEnum, numberOfTempAir);
     if (!numberOfTempAir) {
       setOnChangeThresholdSlider({
         ...onChangeThresholdSlider,

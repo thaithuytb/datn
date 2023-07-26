@@ -1,18 +1,16 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Menu, Modal } from "antd";
 import { CloseOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import { MenuItem, listSidebarInit } from "./routeSidebar";
 import { AuthContext } from "../../contexts/AuthContext";
 import { Squash as Hamburger } from 'hamburger-react'
-import { CloseSidebarContextContext } from "../../contexts/CloseSidebarContext";
-
 const { confirm } = Modal;
 
 export default function SidebarLayout() {
   const close: any = useRef()
   const authContext = useContext(AuthContext);
-  const { isOpenHeader, setOpenHeader } = useContext(CloseSidebarContextContext)!;
+  const [isOpenHeader, setOpenHeader] = useState<boolean>(false);
   const items: any = listSidebarInit.map((item: MenuItem) => {
     return {
       key: item.key,
@@ -71,7 +69,7 @@ export default function SidebarLayout() {
     }
 
     if (itemActive.length) {
-      if (itemActive[0].url === "logout") {
+      if (itemActive[0].url === "#") {
         logout();
       } else {
         navigate(`${itemActive[0].url}`);
@@ -96,16 +94,13 @@ export default function SidebarLayout() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    document.addEventListener('click', (event) => {
-      const { target } = event
-      if (!close.current.contains(target)) {
-        console.log(1111111)
-        closeHeader()
-      }
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+
+  // document.addEventListener('click', (event) => {
+  //   const { target } = event
+  //   if ((close.current?.children[1] !== target)) {
+  //     closeHeader()
+  //   }
+  // })
 
   return (
     <div className="SidebarLayout" ref={close}>

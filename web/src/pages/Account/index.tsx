@@ -133,7 +133,6 @@ const Account = () => {
       if (page) {
         stt = (page - 1) * limit;
       }
-      console.log(res?.data?.users)
       const data = res?.data?.users.map(({ user }: any, index: number) => {
         return {
           key: index,

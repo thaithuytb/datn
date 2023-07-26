@@ -29,7 +29,6 @@ const ItemNotification: React.FC<IItemNotification> = ({ noti }) => {
         notificationId: noti.notification.id,
       });
       if (res.success) {
-        console.log(res);
         setCount((count: number) => count - 1);
       }
     } catch (error) {
@@ -121,7 +120,6 @@ export default function HeaderLayout() {
   });
 
   const getNotificationByType = async (type: string) => {
-    console.log(page);
     setTypeNotification(type);
     try {
       const dto = {

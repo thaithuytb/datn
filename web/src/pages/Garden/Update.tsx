@@ -14,12 +14,11 @@ const Update: React.FC<IShowModal> = ({
   setIsModalOpen,
   garden,
 }) => {
-  console.log(garden);
   const countDevices = garden?.devices.length;
   const countDeviceAction = garden?.devices.filter(
     (device: any) => device.status
   ).length;
-  const handleOk = () => {};
+  const handleOk = () => { };
   const handleCancel = () => {
     setIsModalOpen(false);
   };

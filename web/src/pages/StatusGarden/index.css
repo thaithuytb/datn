@@ -65,6 +65,13 @@
 	width: 100px;
 }
 
+.StatusDevices {
+	display: flex;
+	justify-content: space-around;
+	margin: .5rem 0;
+} 
+
+
 /* ///////////////////// */
 @media screen and (max-width: 500px) {
 
@@ -100,6 +107,10 @@
 
 	#dynamic_form_nest_item :where(.css-dev-only-do-not-override-15rg2km).ant-row {
 		display: block;
+	}
+
+	.StatusDevices {
+		flex-wrap: wrap;
 	}
 
 }

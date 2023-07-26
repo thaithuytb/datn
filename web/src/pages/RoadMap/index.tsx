@@ -27,8 +27,6 @@ export default function RoadMap() {
     }
   };
 
-  console.log(garden);
-
   return (
     <div style={{ padding: "1rem" }}>
       <header>

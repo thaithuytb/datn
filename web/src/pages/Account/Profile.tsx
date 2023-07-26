@@ -26,7 +26,6 @@ const Profile: React.FC<IShowModal> = ({ isModalOpen, setIsModalOpen, account })
     const handleCancel = () => {
         setIsModalOpen(false)
     }
-    console.log(account)
     return (
         <Modal
             title="Thông tin chi tiết"

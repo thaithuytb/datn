@@ -57,8 +57,7 @@ const ChangeRole: React.FC<IShowModal> = ({
   const handleOk = async () => {
     try {
       const authApi = AuthApi.registerAuthApi();
-      const res = await authApi.upsertGardensOnUser(dto);
-      console.log(res);
+      await authApi.upsertGardensOnUser(dto);
       setIsModalOpen(false);
     } catch (error) {
       console.log(error);
