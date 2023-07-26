@@ -21,7 +21,6 @@ import Account from "./pages/Account";
 import UpdateAccount from "./pages/Account/Update";
 import { SocketProvider } from "./contexts/SocketContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
-import CloseHeaderProvider from "./contexts/CloseSidebarContext";
 import CreateGarden from "./pages/Garden/Create";
 import RoadMap from "./pages/RoadMap";
 import '../src/pages/Responsive/responsive.css'
@@ -83,15 +82,13 @@ const RouteMain = () => {
                   element={<UpdateAccount />}
                 />
               </Route>
-              <Route>
-                <Route path="/road-map" element={<RoadMap />} />
-              </Route>
               <Route
                 path="/logout"
                 element={<ProtectedRoute componentRedirect={Logout} />}
               />
               <Route path="/*" element={<NotFound />} />
             </Route>
+            <Route path="/road-map" element={<RoadMap />} />
           </Routes>
         </div>
       </div>
@@ -101,26 +98,24 @@ const RouteMain = () => {
 
 const App = () => {
   return (
-    <CloseHeaderProvider>
-      <NotificationProvider>
-        <SocketProvider>
-          <AuthContextProvider>
-            <MessageContextProvider>
-              <GardenContextProvider>
-                <DeviceContextProvider>
-                  <div className="app">
-                    <Routes>
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/*" element={<RouteMain />} />
-                    </Routes>
-                  </div>
-                </DeviceContextProvider>
-              </GardenContextProvider>
-            </MessageContextProvider>
-          </AuthContextProvider>
-        </SocketProvider>
-      </NotificationProvider>
-    </CloseHeaderProvider>
+    <NotificationProvider>
+      <SocketProvider>
+        <AuthContextProvider>
+          <MessageContextProvider>
+            <GardenContextProvider>
+              <DeviceContextProvider>
+                <div className="app">
+                  <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/*" element={<RouteMain />} />
+                  </Routes>
+                </div>
+              </DeviceContextProvider>
+            </GardenContextProvider>
+          </MessageContextProvider>
+        </AuthContextProvider>
+      </SocketProvider>
+    </NotificationProvider>
   );
 };
 

@@ -36,7 +36,6 @@ const conver = (type: string) => {
 }
 
 const CardComponent: React.FC<PropsCardComponent> = ({ device }) => {
-    console.log(device)
     return (
         <div className='CardComponent'>
             {conver(device.type)}

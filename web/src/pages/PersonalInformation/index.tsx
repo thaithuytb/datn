@@ -31,7 +31,6 @@ export default function PersonalInformation() {
   };
 
   const updateInformation = async (values: any) => {
-    console.log(values)
     const { id, fullName, email, phoneNumber, address, gender, createdAt, dateOfBrith } =
       values;
     const data = {
@@ -69,7 +68,6 @@ export default function PersonalInformation() {
       const authApi = AuthApi.registerAuthApi();
       try {
         const res = await authApi.updateInformation(data);
-        console.log(res);
         if (res.success) {
           navigate("/login");
           authContext?.logout();

@@ -262,7 +262,6 @@ export default function StatusGardens() {
   useEffect(() => {
     socket.on("newStatus", (data: any) => {
       setMessage(data);
-      console.log({ data });
       messageContext?.success("Cập nhập trạng thái mới thành công !!!");
     });
     socket.on("newStatusGarden", (data: any) => {
@@ -350,7 +349,6 @@ export default function StatusGardens() {
   };
 
   const changeStatusDevice = (device: DataType) => {
-    console.log(gardenId)
     if (!gardenId) {
       return;
     }

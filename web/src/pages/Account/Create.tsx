@@ -8,7 +8,6 @@ const CreateAccount = () => {
   const authApi = AuthApi.registerAuthApi();
 
   const createAccount = async (values: any) => {
-    console.log(values)
     const { email, password, confirmPassword, fullName, phoneNumber, address, gender } = values;
     if (password !== confirmPassword) {
       messageContext?.error("mật khẩu nhập lại sai")
@@ -24,8 +23,7 @@ const CreateAccount = () => {
         gender
       }
       try {
-        const res = await authApi.createAccount(dto)
-        console.log(res)
+        await authApi.createAccount(dto)
         messageContext?.success("Tạo thành công");
       } catch (error: any) {
         messageContext?.error(error?.message);
