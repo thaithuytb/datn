@@ -22,12 +22,12 @@ const prismaByDeviceType = (deviceType: DeviceTypeEnum) => {
 };
 
 export const convertData = {
-  FAN: 'fanData',
-  LAMP: 'lampData',
-  PUMP: 'pumpData',
-  LIGHT_SENSOR: 'lightData',
-  HUMIDITY_SENSOR: 'humiData',
-  TEMPERATURE_HUMIDITY_AIR_SENSOR: 'tempAirData',
+  FAN: 'actuatorData',
+  LAMP: 'actuatorData',
+  PUMP: 'actuatorData',
+  LIGHT_SENSOR: 'lightLuxData',
+  HUMIDITY_SENSOR: 'humidityDataData',
+  TEMPERATURE_HUMIDITY_AIR_SENSOR: 'temperatureHumidityAirData',
 };
 
 const convertTypeDevice = (type: DeviceTypeEnum) => {

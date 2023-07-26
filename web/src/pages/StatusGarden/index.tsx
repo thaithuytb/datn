@@ -1,9 +1,7 @@
 import "./index.css";
 import { useContext, useEffect, useState } from "react";
 import { GardenContext } from "../../contexts/GardenContext";
-import {
-  Device
-} from "../../types/device.type";
+import { Device } from "../../types/device.type";
 import { useNavigate, useParams } from "react-router-dom";
 import { DeviceContext } from "../../contexts/DeviceContext";
 import { MessageContext } from "../../contexts/MessageContext";
@@ -24,13 +22,13 @@ import Setup from "./Setup";
 import { ColumnsType } from "antd/es/table";
 import { SocketContext } from "../../contexts/SocketContext";
 import { NotificationContext } from "../../contexts/NotificationContext";
-import weekday from "dayjs/plugin/weekday"
-import localeData from "dayjs/plugin/localeData"
+import weekday from "dayjs/plugin/weekday";
+import localeData from "dayjs/plugin/localeData";
 import { getMeasuredAndStatusDevice } from "../../common/status-device";
 import DeviceApi from "../../api/device";
 
-dayjs.extend(weekday)
-dayjs.extend(localeData)
+dayjs.extend(weekday);
+dayjs.extend(localeData);
 
 export const DEVICE_TYPE = {
   FAN: "Quạt",
@@ -40,24 +38,24 @@ export const DEVICE_TYPE = {
   LIGHT_SENSOR: "Cảm biến ánh sáng",
   HUMIDITY_SENSOR: "Cảm biến độ ẩm đất",
   TEMPERATURE_HUMIDITY_AIR_SENSOR: "Cảm biến nhiệt độ, độ ẩm",
-}
+};
 
 export enum Type {
-  FAN = 'FAN',
-  LAMP = 'LAMP',
-  CURTAIN = 'CURTAIN',
-  PUMP = 'PUMP',
-  LIGHT_SENSOR = 'LIGHT_SENSOR',
-  HUMIDITY_SENSOR = 'HUMIDITY_SENSOR',
-  TEMPERATURE_HUMIDITY_AIR_SENSOR = 'TEMPERATURE_HUMIDITY_AIR_SENSOR',
+  FAN = "FAN",
+  LAMP = "LAMP",
+  CURTAIN = "CURTAIN",
+  PUMP = "PUMP",
+  LIGHT_SENSOR = "LIGHT_SENSOR",
+  HUMIDITY_SENSOR = "HUMIDITY_SENSOR",
+  TEMPERATURE_HUMIDITY_AIR_SENSOR = "TEMPERATURE_HUMIDITY_AIR_SENSOR",
 }
 
 export interface DataType {
   stt: number;
-  id: number
-  type: Type
-  valueDevice: any
-  device: Device
+  id: number;
+  type: Type;
+  valueDevice: any;
+  device: Device;
 }
 interface IViewEmpty {
   selectGarden: any;
@@ -88,9 +86,9 @@ const ShowModal: React.FC<IShowModal> = ({
   gardenId,
   garden,
 }) => {
-  const dateFormat = 'YYYY-MM-DD'
-  const timeFormat = 'HH:mm'
-  const currentDate = dayjs()
+  const dateFormat = "YYYY-MM-DD";
+  const timeFormat = "HH:mm";
+  const currentDate = dayjs();
   const [timeRemaining, setTimeRemaining] = useState<string>("00:00");
   const [date, setDate] = useState<string>(currentDate.format(dateFormat));
   const [time, setTime] = useState<string>(currentDate.format(timeFormat));
@@ -100,7 +98,7 @@ const ShowModal: React.FC<IShowModal> = ({
     if (!date || !time) {
       console.log("check time");
     } else {
-      const [hours, minute] = time.split(":")
+      const [hours, minute] = time.split(":");
       const [year, month, day] = date.split("-");
 
       // Xóa số 0 ở đầu ngày và tháng nếu có
@@ -108,8 +106,8 @@ const ShowModal: React.FC<IShowModal> = ({
       const formattedMonth = parseInt(month, 10).toString();
       const formattedDate = `${formattedDay}-${formattedMonth}`;
 
-      const formatHours = parseInt(hours, 10).toString()
-      const formatMinute = parseInt(minute, 10).toString()
+      const formatHours = parseInt(hours, 10).toString();
+      const formatMinute = parseInt(minute, 10).toString();
       const formattedTime = `${formatHours}:${formatMinute}`;
 
       const dto = {
@@ -124,7 +122,7 @@ const ShowModal: React.FC<IShowModal> = ({
         await gardenApi.changeStatusGarden(dto);
         setIsModalOpen(false);
         setTimeRemaining("00:00");
-      } catch (error) { }
+      } catch (error) {}
     }
   };
   const handleCancel = () => {
@@ -134,10 +132,10 @@ const ShowModal: React.FC<IShowModal> = ({
 
   //hàm tính thời gian được chọn trừ đi thời gian hiện tại
   const duration = () => {
-    const startTime = dayjs(`${currentDate.format('YYYY-MM-DD HH:mm')}`);
+    const startTime = dayjs(`${currentDate.format("YYYY-MM-DD HH:mm")}`);
     const endTime = dayjs(`${date} ${time}`);
 
-    const newTime = endTime.diff(startTime, 'minute');
+    const newTime = endTime.diff(startTime, "minute");
     const hours = Math.floor(newTime / 60);
     const minutes = newTime % 60;
 
@@ -255,14 +253,15 @@ export default function StatusGardens() {
   const [dataTable, setDataTable] = useState<any>();
   const socketContext = useContext(SocketContext);
   const socket = socketContext?.socket;
-  const [setup, setSetup] = useState<DataType | undefined>()
+  const [setup, setSetup] = useState<DataType | undefined>();
 
-  const notificationContext = useContext(NotificationContext)
-  const setCount = notificationContext?.setCount
+  const notificationContext = useContext(NotificationContext);
+  const setCount = notificationContext?.setCount;
 
   useEffect(() => {
     socket.on("newStatus", (data: any) => {
       setMessage(data);
+      console.log({ data });
       messageContext?.success("Cập nhập trạng thái mới thành công !!!");
     });
     socket.on("newStatusGarden", (data: any) => {
@@ -279,20 +278,19 @@ export default function StatusGardens() {
             return garden;
           })
         );
-
       }
       messageContext?.success("Cập nhập trạng thái mới thành công !!!");
     });
     socket.on("newCountNotification", (data: any) => {
       if (data) {
-        setCount((count: number) => count + 1)
+        setCount((count: number) => count + 1);
       }
     });
     //note return
     return () => {
       socket.off("newStatus");
       socket.off("newStatusGarden");
-      socket.off("newCountNotification")
+      socket.off("newCountNotification");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
@@ -346,10 +344,9 @@ export default function StatusGardens() {
   };
 
   const showModalSetup = (record: DataType) => {
-    setSetup(record)
+    setSetup(record);
     setIsModalOpenSetup(true);
   };
-
 
   const changeStatusDevice = (device: DataType) => {
     if (!gardenId) {
@@ -359,7 +356,7 @@ export default function StatusGardens() {
     if (convertTypeDevice(device.type) === "actuator") {
       deviceApi.changeDeviceStatus(
         {
-          status: !device.valueDevice.status,
+          status: device.valueDevice === "Bật" ? false : true,
           ip: device.device.ip,
           deviceId: device.id,
           type: device.type,
@@ -377,7 +374,7 @@ export default function StatusGardens() {
       );
     }
   };
-  
+
   useEffect(() => {
     if (gardenId && getDevicesByGardenId) {
       getDevicesByGardenId(gardenId);
@@ -401,7 +398,6 @@ export default function StatusGardens() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [message]);
 
-
   //data table
   let columns: ColumnsType<DataType> = [
     {
@@ -409,48 +405,62 @@ export default function StatusGardens() {
       dataIndex: "stt",
       width: 10,
       align: "center",
-      className: "responsive-hiden"
+      className: "responsive-hiden",
     },
     {
       title: "Loại thiết bị",
       dataIndex: "type",
       align: "center",
       render: (_, record: DataType) => DEVICE_TYPE[record.type],
-      className: "columns-table_status_devices columns-table_status_devices-type"
+      className:
+        "columns-table_status_devices columns-table_status_devices-type",
     },
     {
-      title: "Gia tri",
+      title: "Giá trị",
       dataIndex: "valueDevice",
       align: "center",
-      className: 'columns-table_status_devices'
+      className: "columns-table_status_devices",
+    },
+    {
+      title: "Thiết lập trạng thái",
+      dataIndex: "",
+      align: "center",
+      render: (_, record: DataType) =>
+        dataTable.length > 0 ? (
+          record.type === "FAN" ||
+          record.type === "LAMP" ||
+          record.type === "PUMP" ? (
+            <Button
+              size="small"
+              ghost
+              type="primary"
+              onClick={() => showModalSetup(record)}
+            >
+              Thiết lập
+            </Button>
+          ) : (
+            <span style={{ color: "#999" }}>Không thể thiết lập</span>
+          )
+        ) : null,
+      // width: 200
+      className: "columns-table_status_devices-button",
     },
   ];
 
   columns =
     garden && !garden.isAuto
       ? [
-        ...columns,
-        {
-          title: "Điều khiển",
-          dataIndex: "",
-          align: "center",
-          render: (_, record: DataType) =>
-            dataTable.length > 0 ? (
-              record.device.type === "TEMPERATURE_HUMIDITY_AIR_SENSOR" ?
-                <button
-                  className="control_device"
-                  onClick={() => changeStatusDevice(record)}
-                >
-                  Đo giá trị
-                </button>
-                :
-                record.device.valueDevice?.value ? (
-                  <button
-                    className="control_device"
-                    onClick={() => changeStatusDevice(record)}
-                  >
-                    Đo giá trị
-                  </button>
+          ...columns,
+          {
+            title: "Điều khiển",
+            dataIndex: "",
+            align: "center",
+            render: (_, record: DataType) =>
+              dataTable.length > 0 ? (
+                record.device.type === "TEMPERATURE_HUMIDITY_AIR_SENSOR" ? (
+                  <div style={{ color: "#999" }}>Không thể điều khiển</div>
+                ) : record.device.valueDevice?.value ? (
+                  <div style={{ color: "#999" }}>Không thể điều khiển</div>
                 ) : record.device.valueDevice?.status ? (
                   <button
                     className="control_device"
@@ -466,55 +476,27 @@ export default function StatusGardens() {
                     Bật
                   </button>
                 )
-            ) : null,
-          // width: 150
-          className: 'columns-table_status_devices'
-        },
-        {
-          title: "Thiet lap trang thai",
-          dataIndex: "",
-          align: "center",
-          render: (_, record: DataType) =>
-            dataTable.length > 0 ? (
-              record.type === 'FAN' || record.type === 'LAMP' || record.type === 'PUMP' ?
-                <Button size="small" ghost type="primary" onClick={() => showModalSetup(record)}>Thiet lap</Button>
-                : null
-            ) : null,
-          // width: 200
-          className: 'columns-table_status_devices-button'
-        },
-      ]
-      :
-      [
-        ...columns,
-        {
-          title: "Thiet lap trang thai",
-          dataIndex: "",
-          align: "center",
-          render: (_, record: DataType) =>
-            dataTable.length > 0 ? (
-              record.type === 'FAN' || record.type === 'LAMP' || record.type === 'PUMP' ?
-                <Button size="small" ghost type="primary" onClick={() => showModalSetup(record)}>Thiet lap</Button>
-                : null
-            ) : null,
-          // width: 200
-          className: 'columns-table_status_devices-button'
-        },
-      ];
+              ) : null,
+            // width: 150
+            className: "columns-table_status_devices",
+          },
+        ]
+      : columns;
 
   useEffect(() => {
     if (devices) {
-      const newData = devices.map((device: Device, index: number) => (
-        {
-          key: index,
-          stt: index + 1,
-          id: device.id,
-          type: device.type,
-          valueDevice: getMeasuredAndStatusDevice(device.valueDevice, device.type),
-          device: device
-        }
-      ))
-      setDataTable(newData)
+      const newData = devices.map((device: Device, index: number) => ({
+        key: index,
+        stt: index + 1,
+        id: device.id,
+        type: device.type,
+        valueDevice: getMeasuredAndStatusDevice(
+          device.valueDevice,
+          device.type
+        ),
+        device: device,
+      }));
+      setDataTable(newData);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -527,11 +509,10 @@ export default function StatusGardens() {
       ) : (
         <>
           {gardens && devices && (
-
             <div className="status_devices">
               {/* header */}
               <div className="list_device_select">
-                <h3>Cham soc khu vuon</h3>
+                <h3>Chăm sóc khu vườn</h3>
                 <header className="list_device_select__header">
                   <div className="list_device_select__div_first">
                     <label className="responsive-hiden">Chọn vườn: </label>
@@ -596,22 +577,22 @@ export default function StatusGardens() {
               </div>
 
               {/* ---------------- */}
-              {isModalOpen &&
+              {isModalOpen && (
                 <ShowModal
                   isModalOpen={isModalOpen}
                   setIsModalOpen={setIsModalOpen}
                   garden={garden}
                   gardenId={gardenId}
                 />
-              }
+              )}
 
-              {isModalOpenSetup &&
+              {isModalOpenSetup && (
                 <Setup
                   isModalOpenSetup={isModalOpenSetup}
                   setIsModalOpenSetup={setIsModalOpenSetup}
                   setup={setup}
                 />
-              }
+              )}
             </div>
           )}
         </>

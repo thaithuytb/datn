@@ -15,13 +15,13 @@ import { MessageContext } from "../../contexts/MessageContext";
 const { confirm } = Modal;
 
 const convertRoleGarden = {
-  MANAGER: 'Quan ly',
-  USER: 'Nhan vien'
-}
+  MANAGER: "Quản lý",
+  USER: "Nhân viên",
+};
 
 const getConvertedRole = (roleInGarden: any) => {
   return convertRoleGarden[roleInGarden as keyof typeof convertRoleGarden];
-}
+};
 
 interface DataType {
   stt: any;
@@ -95,7 +95,7 @@ const ManagementWorker = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { gardenId } = useParams();
   const roleUserOfPage = authContext?.authInformation.user.role;
-  const messageContext = useContext(MessageContext)
+  const messageContext = useContext(MessageContext);
 
   //lấy tất cả khu vườn về-------------------------------------------
   useEffect(() => {
@@ -140,8 +140,7 @@ const ManagementWorker = () => {
           key: index,
           stt: index + 1 + stt,
           name: item.user.fullName,
-          roleInGarden:
-            item.gardens[0].role,
+          roleInGarden: item.gardens[0].role,
           garden: garden.garden.name,
           gardenId: garden.id,
           date: dayjs(item.gardens[0].createdAt).format("YYYY-MM-DD"),
@@ -151,7 +150,7 @@ const ManagementWorker = () => {
         };
       });
       setLisUser(data);
-    } catch (error) { }
+    } catch (error) {}
   };
   const itemsOption: SelectProps["options"] =
     gardens?.map((garden) => ({
@@ -205,7 +204,7 @@ const ManagementWorker = () => {
       const dto = { ...dtoAddUser };
       const res = await authApi.upsertGardensOnUser(dto);
       if (res.success) {
-        messageContext?.success("Them nguoi thanh cong")
+        messageContext?.success("Them nguoi thanh cong");
         getAllUserByGardenId(garden);
       }
     } catch (error) {
@@ -218,62 +217,63 @@ const ManagementWorker = () => {
     {
       title: "Stt",
       dataIndex: "stt",
-      className: 'responsive-hiden'
+      className: "responsive-hiden",
     },
     {
       title: "Name",
       dataIndex: "name",
-      className: 'row_ManagementWorker row_ManagementWorker-name'
+      className: "row_ManagementWorker row_ManagementWorker-name",
     },
     {
       title: "Chức vụ",
       dataIndex: "roleInGarden",
-      className: 'row_ManagementWorker',
+      className: "row_ManagementWorker",
       render: (_, record: any) => {
-        return getConvertedRole(record.roleInGarden)
-      }
+        return getConvertedRole(record.roleInGarden);
+      },
     },
     {
       title: "Khu vườn",
       dataIndex: "garden",
-      className: 'responsive-hiden'
+      className: "responsive-hiden",
     },
     {
       title: "Ngày tham gia khu vườn",
       dataIndex: "date",
-      className: 'responsive-hiden'
+      className: "responsive-hiden",
     },
   ];
   columns =
     roleUserOfPage === "ADMIN"
       ? [
-        ...columns,
-        {
-          title: "Thao tác",
-          className: 'row_ManagementWorker-action',
-          align: 'center',
-          render: (_, record) =>
-            listUser.length > 0 ? (
-              <>
-                <Button
-                  onClick={() => showModal(record)}
-                  type="primary"
-                  ghost size="small"
-                >
-                  Cập nhật
-                </Button>
-                <Button
-                  onClick={showDeleteConfirm}
-                  style={{ marginLeft: "0.5rem" }}
-                  danger
-                  size="small"
-                >
-                  Xóa
-                </Button>
-              </>
-            ) : null,
-        },
-      ]
+          ...columns,
+          {
+            title: "Thao tác",
+            className: "row_ManagementWorker-action",
+            align: "center",
+            render: (_, record) =>
+              listUser.length > 0 ? (
+                <>
+                  <Button
+                    onClick={() => showModal(record)}
+                    type="primary"
+                    ghost
+                    size="small"
+                  >
+                    Cập nhật
+                  </Button>
+                  <Button
+                    onClick={showDeleteConfirm}
+                    style={{ marginLeft: "0.5rem" }}
+                    danger
+                    size="small"
+                  >
+                    Xóa
+                  </Button>
+                </>
+              ) : null,
+          },
+        ]
       : columns;
 
   const showModal = (record: any) => {
@@ -299,7 +299,7 @@ const ManagementWorker = () => {
         <ViewEmpty selectGarden={selectGarden} itemsOption={itemsOption} />
       ) : (
         <div className="ManagementWorker">
-          <h3>Quản lý nhan vien</h3>
+          <h3>Quản lý nhân viên</h3>
           <header>
             <label className="responsive-hiden">Chọn vườn: </label>
             <Select
@@ -356,14 +356,14 @@ const ManagementWorker = () => {
               />
             </div>
           </div>
-          {isModalOpen &&
+          {isModalOpen && (
             <ChangeRole
               isModalOpen={isModalOpen}
               setIsModalOpen={setIsModalOpen}
               itemsOption={itemsOption}
               changeRole={changeRole}
             />
-          }
+          )}
         </div>
       )}
     </>

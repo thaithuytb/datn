@@ -38,8 +38,9 @@ export class ThresholdService {
       this.mqttService.sendMessage(
         `datn/${topic}/threshold`,
         JSON.stringify({
-          from: 'web',
+          // from: 'web',
           ...dto,
+          gardenId: 1, //change after have phan cung
           createdBy: userId,
         }),
       );

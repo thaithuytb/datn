@@ -144,6 +144,9 @@ export async function subscribeMqtt(
     }
 
     if (topic.slice(15) === '/threshold') {
+      if (!parseMessage['gardenId']) {
+        return console.log('ERROR: no have gardenId');
+      }
       socketGateway.emitToGarden(
         parseMessage['gardenId'].toString(),
         'newThreshold',
@@ -221,11 +224,15 @@ export async function subscribeMqtt(
             'newStatus',
             parseMessage,
           );
-          return prisma[convertData[device.type]].create({
+          return prisma.actuatorData.create({
             data: {
               status: parseMessage['status'],
-              deviceId,
               gardenId: device.gardenId,
+              device: {
+                connect: {
+                  id: deviceId,
+                },
+              },
             },
           });
         }

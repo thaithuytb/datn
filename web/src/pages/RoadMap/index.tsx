@@ -37,11 +37,11 @@ export default function RoadMap() {
           id="garden-select"
           style={{ width: 200 }}
           onChange={selectGarden}
-          defaultValue={"Tat ca"}
+          defaultValue={"Tất cả"}
           options={[
             {
               value: "",
-              label: "Tat ca",
+              label: "Tất cả",
             },
             ...itemsOption,
           ]}
