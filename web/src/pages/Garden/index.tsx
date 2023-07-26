@@ -64,7 +64,7 @@ export default function Garden() {
       title: "Stt",
       align: "center",
       dataIndex: "id",
-      className:'responsive'
+      className: 'responsive-hiden'
     },
     {
       title: "Tên khu vườn",
@@ -82,13 +82,13 @@ export default function Garden() {
       title: "Ngày bắt đầu",
       align: "center",
       render: (_, record) => dayjs(record.createdAt).format("YYYY-MM-DD"),
-      className: 'row_garden responsive'
+      className: 'row_garden responsive-hiden'
     },
     {
       title: "Chế độ chăm sóc hiện tại",
       align: "center",
       render: (_, record) => (record.isAuto ? "Tự chăm sóc" : "Tự điều chỉnh"),
-      className: 'row_garden responsive'
+      className: 'row_garden responsive-hiden'
     },
     {
       title: "Số lượng thiết bị",
@@ -116,13 +116,14 @@ export default function Garden() {
       title: "Thao tác",
       render: (_, record) => (
         <>
-          <Button type="primary" ghost onClick={() => showModal(record)}>
+          <Button type="primary" size="small"
+           ghost onClick={() => showModal(record)}>
             Cập nhật
           </Button>
           <Button
+            size="small"
             onClick={() => showDeleteConfirm(record)}
-            style={{ marginLeft: "0.5rem" }}
-            danger
+            style={{ marginLeft: "0.5rem" }} danger
           >
             Xóa
           </Button>
@@ -153,12 +154,11 @@ export default function Garden() {
       </div>
       {gardens && (
         <Table
-        style={{maxWidth:'100%'}}
+          style={{ maxWidth: '100%' }}
           pagination={false}
           bordered={true}
           columns={columns}
           dataSource={gardens}
-          id="table_gardens"
         />
       )}
       {isModalOpen &&

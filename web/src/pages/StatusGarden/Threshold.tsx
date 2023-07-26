@@ -9,14 +9,15 @@ import {
   ThresholdNameEnum,
 } from "../../types/threshold";
 import dayjs from "dayjs";
-import { DEVICE_TYPE } from "../../types/device.type";
+import { DEVICE_TYPE, Type } from ".";
 import ThresholdApi from "../../api/threshold";
 import { MessageContext } from "../../contexts/MessageContext";
 import { SocketContext } from "../../contexts/SocketContext";
-import { NotificationContext } from "../../contexts/NotificationContext";
+// import { NotificationContext } from "../../contexts/NotificationContext";
 
 const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [message, setMessage] = useState<any>(null);
   const deviceContext = useContext(DeviceContext);
   const messageContext = useContext(MessageContext);
   const getThresholdsByGardenId = deviceContext?.getThresholdsByGardenId;
@@ -24,20 +25,20 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
   const socketContext = useContext(SocketContext);
   const socket = socketContext?.socket;
   const setThresholds = deviceContext?.setThresholds;
-  const notificationContext = useContext(NotificationContext)
-  const count = notificationContext?.count
-  const setCount = notificationContext?.setCount
+  // const notificationContext = useContext(NotificationContext)
+  // const count = notificationContext?.count
+  // const setCount = notificationContext?.setCount
 
   const [onChangeThresholdSlider, setOnChangeThresholdSlider] = useState({
-    LIGHTSENSOR: {
+    LIGHT_SENSOR: {
       lowThreshold: null,
       highThreshold: null,
     },
-    HUMISENSOR: {
+    HUMIDITY_SENSOR: {
       lowThreshold: null,
       highThreshold: null,
     },
-    TEMPAIRSENSOR: {
+    TEMPERATURE_HUMIDITY_AIR_SENSOR: {
       lowThreshold: [-100, -100],
       highThreshold: [-100, -100],
     },
@@ -54,7 +55,7 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
     if (socket) {
       socket.on("newThreshold", (data: any) => {
         console.log("aaaaaaa", data);
-        // setThresholds(data);
+        setMessage(data);
         messageContext?.success("Thay đổi ngưỡng thành công !!!");
       });
       // socket.on("newCountNotification", (data: any) => {
@@ -71,11 +72,30 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
+  useEffect(() => {
+    if (thresholds && message) {
+      const newThreshold = thresholds?.map((threshold) => {
+        console.log({ threshold });
+        if (threshold.name === message.name) {
+          return {
+            ...threshold,
+            lowThreshold: JSON.stringify(message.lowThreshold),
+            highThreshold: JSON.stringify(message.highThreshold),
+          };
+        }
+        return threshold;
+      });
+      setThresholds(newThreshold);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [message]);
+
   const onChangeThreshold = (
     value: number[],
     thresholdNameEnum: ThresholdNameEnum,
     numberOfTempAir?: 1 | 2
   ) => {
+    console.log(value, thresholdNameEnum, numberOfTempAir);
     if (!numberOfTempAir) {
       setOnChangeThresholdSlider({
         ...onChangeThresholdSlider,
@@ -88,27 +108,31 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
       if (numberOfTempAir === 1) {
         setOnChangeThresholdSlider({
           ...onChangeThresholdSlider,
-          [ThresholdNameEnum.TEMPAIRSENSOR]: {
+          [Type.TEMPERATURE_HUMIDITY_AIR_SENSOR]: {
             lowThreshold: [
               value[0],
-              onChangeThresholdSlider.TEMPAIRSENSOR.lowThreshold[1],
+              onChangeThresholdSlider.TEMPERATURE_HUMIDITY_AIR_SENSOR
+                .lowThreshold[1],
             ],
             highThreshold: [
               value[1],
-              onChangeThresholdSlider.TEMPAIRSENSOR.highThreshold[1],
+              onChangeThresholdSlider.TEMPERATURE_HUMIDITY_AIR_SENSOR
+                .highThreshold[1],
             ],
           },
         });
       } else {
         setOnChangeThresholdSlider({
           ...onChangeThresholdSlider,
-          [ThresholdNameEnum.TEMPAIRSENSOR]: {
+          [Type.TEMPERATURE_HUMIDITY_AIR_SENSOR]: {
             lowThreshold: [
-              onChangeThresholdSlider.TEMPAIRSENSOR.lowThreshold[0],
+              onChangeThresholdSlider.TEMPERATURE_HUMIDITY_AIR_SENSOR
+                .lowThreshold[0],
               value[0],
             ],
             highThreshold: [
-              onChangeThresholdSlider.TEMPAIRSENSOR.highThreshold[0],
+              onChangeThresholdSlider.TEMPERATURE_HUMIDITY_AIR_SENSOR
+                .highThreshold[0],
               value[1],
             ],
           },
@@ -117,7 +141,7 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
     }
   };
 
-  const updateThresholdAPi = (thresholdNameEnum: ThresholdNameEnum) => {
+  const updateThresholdAPi = async (thresholdNameEnum: Type) => {
     const thresholdApi = ThresholdApi.registerThresholdApi();
     if (thresholds) {
       const oldThresholdTemAir = thresholds.find(
@@ -126,16 +150,17 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
       if (!oldThresholdTemAir) {
         return;
       }
+
       if (
-        thresholdNameEnum === ThresholdNameEnum.LIGHTSENSOR ||
-        thresholdNameEnum === ThresholdNameEnum.HUMISENSOR
+        thresholdNameEnum === Type.LIGHT_SENSOR ||
+        thresholdNameEnum === Type.HUMIDITY_SENSOR
       ) {
         if (
           onChangeThresholdSlider[thresholdNameEnum].lowThreshold ||
           onChangeThresholdSlider[thresholdNameEnum].highThreshold
         ) {
-          //UPDATE HERE
-          return thresholdApi.changeThreshold({
+          // UPDATE HERE
+          return await thresholdApi.changeThreshold({
             lowThreshold:
               onChangeThresholdSlider[thresholdNameEnum].lowThreshold ||
               JSON.parse(oldThresholdTemAir.lowThreshold.toString()),
@@ -154,19 +179,22 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
         oldThresholdTemAir.highThreshold.toString()
       );
       const newThresholdTemAir: IChangeThresholdDto = {
-        name: ThresholdNameEnum.TEMPAIRSENSOR,
-        lowThreshold: onChangeThresholdSlider.TEMPAIRSENSOR.lowThreshold.map(
-          (x, index) =>
-            (x !== -100 ? x : lowThresholdTemAirOld[index]) as number
-        ),
-        highThreshold: onChangeThresholdSlider.TEMPAIRSENSOR.highThreshold.map(
-          (x, index) =>
-            x !== -100 ? x : (highThresholdTemAirOld[index] as number)
-        ),
+        name: Type.TEMPERATURE_HUMIDITY_AIR_SENSOR,
+        // name: thresholdNameEnum.TEMPERATURE_HUMIDITY_AIR_SENSOR,
+        lowThreshold:
+          onChangeThresholdSlider.TEMPERATURE_HUMIDITY_AIR_SENSOR.lowThreshold.map(
+            (x, index) =>
+              (x !== -100 ? x : lowThresholdTemAirOld[index]) as number
+          ),
+        highThreshold:
+          onChangeThresholdSlider.TEMPERATURE_HUMIDITY_AIR_SENSOR.highThreshold.map(
+            (x, index) =>
+              x !== -100 ? x : (highThresholdTemAirOld[index] as number)
+          ),
       };
+
       // UPDATE
-      return thresholdApi.changeThreshold({ ...newThresholdTemAir });
-      // console.log({ newThresholdTemAir });
+      return await thresholdApi.changeThreshold({ ...newThresholdTemAir });
     }
   };
 
@@ -176,19 +204,24 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
       dataIndex: "id",
       align: "center",
       width: 10,
+      className: "responsive-hiden",
     },
     {
       title: "Cảm biến",
       align: "center",
       render: (_, threshold) => {
+        // return DEVICE_TYPE[threshold.name];
         return DEVICE_TYPE[threshold.name];
       },
+      className: "columns-table_threshold-type columns-table_status_devices",
     },
     {
       title: "Ngưỡng hiện tại",
       align: "center",
+      className: "columns-table_status_devices",
       render: (_, threshold) => {
-        if (threshold.name === ThresholdNameEnum.TEMPAIRSENSOR) {
+        // if (threshold.name === ThresholdNameEnum.TEMPAIRSENSOR) {
+        if (threshold.name === Type.TEMPERATURE_HUMIDITY_AIR_SENSOR) {
           return (
             <>
               <div>
@@ -209,7 +242,7 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
             {JSON.parse(threshold.lowThreshold.toString())[0]}
             <span> &ndash; </span>
             {JSON.parse(threshold.highThreshold.toString())[0]}
-            {threshold.name === ThresholdNameEnum.HUMISENSOR ? "%" : "lux"}
+            {threshold.name === Type.HUMIDITY_SENSOR ? "%" : "lux"}
           </div>
         );
       },
@@ -217,17 +250,17 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
     {
       title: "Cập nhật ngưỡng",
       align: "center",
-      width: "35%",
+      className: "columns-table_status_devices",
       render: (_, threshold) => {
         switch (threshold.name) {
-          case ThresholdNameEnum.HUMISENSOR: {
+          case Type.HUMIDITY_SENSOR: {
             const low = JSON.parse(threshold.lowThreshold.toString())[0];
             const hight = JSON.parse(threshold.highThreshold.toString())[0];
             return (
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <div className="threshold-children">
                   <span>0</span>
-                  <div style={{ margin: 4, width: 200 }}>
+                  <div>
                     <Slider
                       style={{ margin: "0" }}
                       min={0}
@@ -243,23 +276,21 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
                 </div>
                 <button
                   className="button_threshold"
-                  onClick={() =>
-                    updateThresholdAPi(ThresholdNameEnum.HUMISENSOR)
-                  }
+                  onClick={() => updateThresholdAPi(Type.HUMIDITY_SENSOR)}
                 >
                   Cập nhật
                 </button>
               </div>
             );
           }
-          case ThresholdNameEnum.LIGHTSENSOR: {
+          case Type.LIGHT_SENSOR: {
             const low = JSON.parse(threshold.lowThreshold.toString())[0];
             const hight = JSON.parse(threshold.highThreshold.toString())[0];
             return (
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <div className="threshold-children">
                   <span>0</span>
-                  <div style={{ margin: 4, width: 200 }}>
+                  <div>
                     <Slider
                       style={{ margin: "0" }}
                       min={0}
@@ -275,16 +306,14 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
                 </div>
                 <button
                   className="button_threshold"
-                  onClick={() =>
-                    updateThresholdAPi(ThresholdNameEnum.LIGHTSENSOR)
-                  }
+                  onClick={() => updateThresholdAPi(Type.LIGHT_SENSOR)}
                 >
                   Cập nhật
                 </button>
               </div>
             );
           }
-          case ThresholdNameEnum.TEMPAIRSENSOR: {
+          case Type.TEMPERATURE_HUMIDITY_AIR_SENSOR: {
             const lowTemp = JSON.parse(threshold.lowThreshold.toString())[0];
             const hightTemp = JSON.parse(threshold.highThreshold.toString())[0];
             const lowHumi = JSON.parse(threshold.lowThreshold.toString())[1];
@@ -301,7 +330,7 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
                   <div className="threshold-children">
                     {/* <span style={{ paddingRight: 13 }}>Nhiệt độ:</span> */}
                     <span> 0</span>
-                    <div style={{ margin: 4, width: 200 }}>
+                    <div>
                       <Slider
                         style={{ margin: "0" }}
                         min={0}
@@ -324,7 +353,7 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
                       Độ ẩm k2:
                     </span> */}
                     <span> 0</span>
-                    <div style={{ margin: 4, width: 200 }}>
+                    <div>
                       <Slider
                         style={{ margin: "0" }}
                         min={0}
@@ -347,7 +376,7 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
                 <button
                   className="button_threshold"
                   onClick={() =>
-                    updateThresholdAPi(ThresholdNameEnum.TEMPAIRSENSOR)
+                    updateThresholdAPi(Type.TEMPERATURE_HUMIDITY_AIR_SENSOR)
                   }
                 >
                   Cập nhật
@@ -367,6 +396,7 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
       render: (_, threshold) => {
         return dayjs(threshold.updatedAt).format("YYYY-MM-DD");
       },
+      className: "responsive-hiden",
     },
   ];
   return (

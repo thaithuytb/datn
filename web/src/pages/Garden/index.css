@@ -11,7 +11,6 @@
 }
 
 .garden .garden_header h3 {
-	color: #777;
 	font-size: 1.5rem;
 	font-weight: 500;
 }
@@ -60,14 +59,9 @@
 }
 
 /* ///////////////////// */
-@media screen and (max-width: 400px) {
-	* {
-		font-size: 99%;
-	}
-
+@media screen and (max-width: 500px) {
 	.garden {
 		padding: .6rem;
-		/* overflow: auto; */
 	}
 
 	.garden .garden_header h3 {
@@ -78,22 +72,17 @@
 		margin: .5rem 0 .4rem 0;
 	}
 
-	.responsive {
-		display: none;
-	}
-
 	.row_garden {
 		padding: 0.4rem !important;
 	}
 
 	.row_garden-action {
 		max-width: 5rem;
-		padding: 0.5rem !important;
+		padding: .2rem !important;
 	}
 
 	.row_garden-action button {
-		font-size: 80%;
-		width: 4rem;
+		width: 4.5rem;
 		margin: .1rem 0 !important;
 	}
 

@@ -4,6 +4,14 @@
     align-items: center;
 }
 
+.titleAccount h3 {
+    font-size: 1.5rem;
+}
+
+.account {
+    padding: 15px 25px;
+}
+
 .SearchAccount {
     display: flex;
     align-items: center;
@@ -30,4 +38,33 @@
     padding: 0.7rem 0;
     font-size: 1.05rem;
     color: rgb(77, 77, 77);
+}
+
+@media screen and (max-width: 500px) {
+    .account {
+        padding: .6rem;
+    }
+
+    .titleAccount h3 {
+        font-size: 1rem;
+    }
+
+    .row-acount-name {
+        width: 35%;
+    }
+
+    .row-acount {
+        padding: 0.4rem !important;
+    }
+
+    .row-acount-action {
+        max-width: 5rem;
+        padding: .2rem !important;
+    }
+
+    .row-acount-action button {
+        width: 4.5rem;
+        margin: .1rem 0 !important;
+    }
+
 }

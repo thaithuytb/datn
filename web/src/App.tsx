@@ -10,10 +10,9 @@ import NotFound from "./components/NotFound";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import AuthContextProvider from "./contexts/AuthContext";
-import MessageContextProvider, { MessageContext } from "./contexts/MessageContext";
+import MessageContextProvider from "./contexts/MessageContext";
 import GardenContextProvider from "./contexts/GardenContext";
 import StatusGardens from "./pages/StatusGarden";
-import ListDevice from "./pages/ListDevice";
 import DeviceContextProvider from "./contexts/DeviceContext";
 import CreateAccount from "./pages/Account/Create";
 import ManagementWorker from "./pages/ManagementWorker";
@@ -22,39 +21,19 @@ import Account from "./pages/Account";
 import UpdateAccount from "./pages/Account/Update";
 import { SocketProvider } from "./contexts/SocketContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
-import CreateDevice from "./pages/ListDevice/CreateDevice";
+import CloseHeaderProvider from "./contexts/CloseSidebarContext";
 import CreateGarden from "./pages/Garden/Create";
 import RoadMap from "./pages/RoadMap";
 import '../src/pages/Responsive/responsive.css'
-import { useContext, useEffect, useState } from "react";
 
 const RouteMain = () => {
-  const width = window.innerWidth;
-  console.log(width)
-  const {setOpenHeader} = useContext(MessageContext)!;
-
-  const closeHeader = () => {
-    if(window.innerWidth <400){
-      setOpenHeader(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', closeHeader);
-    return () => {
-      window.removeEventListener('resize', closeHeader);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <>
       <HeaderLayout />
       <div className="app_content">
-        <div className="SidebarLayout">
-          <SidebarLayout />
-        </div>
-        <div className="content" onClick={closeHeader}>
+        <SidebarLayout />
+        <div className="content">
           <Routes>
             <Route element={<ProtectedMain />}>
               <Route path="/home" element={<Home />} />
@@ -77,14 +56,6 @@ const RouteMain = () => {
                   element={<ManagementWorker />}
                 />
               </Route>
-              {/* <Route>
-                <Route path="/management-devices" element={<ListDevice />} />
-                <Route path="/management-devices/create" element={<CreateDevice />} />
-                <Route
-                  path="/management-devices/:gardenId"
-                  element={<ListDevice />}
-                />
-              </Route> */}
               <Route>
                 <Route
                   path="/status-gardens/:gardenId"
@@ -130,24 +101,26 @@ const RouteMain = () => {
 
 const App = () => {
   return (
-    <NotificationProvider>
-      <SocketProvider>
-        <AuthContextProvider>
-          <MessageContextProvider>
-            <GardenContextProvider>
-              <DeviceContextProvider>
-                <div className="app">
-                  <Routes>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/*" element={<RouteMain />} />
-                  </Routes>
-                </div>
-              </DeviceContextProvider>
-            </GardenContextProvider>
-          </MessageContextProvider>
-        </AuthContextProvider>
-      </SocketProvider>
-    </NotificationProvider>
+    <CloseHeaderProvider>
+      <NotificationProvider>
+        <SocketProvider>
+          <AuthContextProvider>
+            <MessageContextProvider>
+              <GardenContextProvider>
+                <DeviceContextProvider>
+                  <div className="app">
+                    <Routes>
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/*" element={<RouteMain />} />
+                    </Routes>
+                  </div>
+                </DeviceContextProvider>
+              </GardenContextProvider>
+            </MessageContextProvider>
+          </AuthContextProvider>
+        </SocketProvider>
+      </NotificationProvider>
+    </CloseHeaderProvider>
   );
 };
 

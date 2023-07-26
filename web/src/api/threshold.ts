@@ -1,4 +1,5 @@
-import { IChangeThresholdDto, IGetThresholds } from "../types/threshold";
+import { Type } from "../pages/StatusGarden";
+import { IGetThresholds } from "../types/threshold";
 import axiosClient from "./axiosClient";
 
 export interface ApiResponse {
@@ -15,7 +16,11 @@ class ThresholdApi {
     return axiosClient.get(url) as unknown as ApiResponse;
   }
 
-  changeThreshold(dto: IChangeThresholdDto) {
+  changeThreshold(dto: {
+    lowThreshold: number[];
+    highThreshold: number[];
+    name: Type;
+  }) {
     const url = `/thresholds/change-threshold`;
     // validation
     return axiosClient.post(url, { dto }) as unknown as ApiResponse;

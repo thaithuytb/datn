@@ -59,6 +59,7 @@ export default function Home() {
           defaultValue={dayjs(currentDate, dateFormat)}
           format={dateFormat}
           onChange={changeDate}
+          inputReadOnly={true}
         />
       </div>
       {context?.authInformation?.isAuthenticated ? (

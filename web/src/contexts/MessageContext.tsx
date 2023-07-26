@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode } from "react";
 import { message } from "antd";
 
 interface PropsMessageContext {
@@ -9,8 +9,6 @@ interface IMessageContext {
   success: any;
   error: any;
   warning: any;
-  isOpenHeader: boolean;
-   setOpenHeader: any
 }
 
 export const MessageContext = createContext<IMessageContext | undefined>(
@@ -21,7 +19,6 @@ const MessageContextProvider: React.FC<PropsMessageContext> = ({
   children,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
-  const [isOpenHeader, setOpenHeader] = useState(false); 
 
   const success = (message: string) => {
     messageApi.open({
@@ -50,8 +47,6 @@ const MessageContextProvider: React.FC<PropsMessageContext> = ({
     success,
     warning,
     error,
-    isOpenHeader, 
-    setOpenHeader
   };
 
   return (

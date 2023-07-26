@@ -1,4 +1,3 @@
-import { DeviceTypeEnum } from "../types/enum.type";
 import { ApiResponse } from "./auth";
 import axiosClient from "./axiosClient";
 
@@ -13,7 +12,7 @@ class DeviceApi {
       status?: boolean;
       ip: string;
       deviceId: number;
-      type: DeviceTypeEnum;
+      type: string;
     },
     gardenId: string
   ) {
@@ -32,20 +31,18 @@ class DeviceApi {
   }
 
   updateDevice(dto: {
-    id?: number,
-    type?: string,
-    duration?: number[],
-    time?: string[],
-    startAt?: string,
-    endAt?: string
+    id?: number;
+    type?: string;
+    duration?: number[];
+    time?: string[];
+    startAt?: string;
+    endAt?: string;
   }) {
     const url = `/devices/update`;
     return axiosClient.patch(url, { dto: dto }) as unknown as ApiResponse;
   }
 
-  getDeviceById(dto: {
-    id: number,
-  }) {
+  getDeviceById(dto: { id: number }) {
     const url = `/devices/${dto.id}`;
     return axiosClient.get(url) as unknown as ApiResponse;
   }

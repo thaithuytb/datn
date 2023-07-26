@@ -21,11 +21,11 @@ export const listSidebarInit: MenuItem[] = [
     key: "management-worker",
     url: "management-worker",
   },
-  {
-    titleSidebar: "Quản lý thiết bị",
-    key: "management-devices",
-    url: "management-devices",
-  },
+  // {
+  //   titleSidebar: "Quản lý thiết bị",
+  //   key: "management-devices",
+  //   url: "management-devices",
+  // },
   {
     titleSidebar: "Quản lý tài khoản",
     key: "account",
@@ -49,6 +49,6 @@ export const listSidebarInit: MenuItem[] = [
   {
     titleSidebar: "Đăng xuất",
     key: "logout",
-    url: "logout",
+    url: "#",
   },
 ];

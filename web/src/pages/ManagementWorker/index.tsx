@@ -15,13 +15,13 @@ import { MessageContext } from "../../contexts/MessageContext";
 const { confirm } = Modal;
 
 const convertRoleGarden = {
-  MANAGER: 'Quan ly',
-  USER: 'Nhan vien'
-}
+  MANAGER: "Quản lý",
+  USER: "Nhân viên",
+};
 
 const getConvertedRole = (roleInGarden: any) => {
   return convertRoleGarden[roleInGarden as keyof typeof convertRoleGarden];
-}
+};
 
 interface DataType {
   stt: any;
@@ -95,7 +95,7 @@ const ManagementWorker = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { gardenId } = useParams();
   const roleUserOfPage = authContext?.authInformation.user.role;
-  const messageContext = useContext(MessageContext)
+  const messageContext = useContext(MessageContext);
 
   //lấy tất cả khu vườn về-------------------------------------------
   useEffect(() => {
@@ -140,8 +140,7 @@ const ManagementWorker = () => {
           key: index,
           stt: index + 1 + stt,
           name: item.user.fullName,
-          roleInGarden:
-            item.gardens[0].role,
+          roleInGarden: item.gardens[0].role,
           garden: garden.garden.name,
           gardenId: garden.id,
           date: dayjs(item.gardens[0].createdAt).format("YYYY-MM-DD"),
@@ -151,7 +150,7 @@ const ManagementWorker = () => {
         };
       });
       setLisUser(data);
-    } catch (error) { }
+    } catch (error) {}
   };
   const itemsOption: SelectProps["options"] =
     gardens?.map((garden) => ({
@@ -204,8 +203,8 @@ const ManagementWorker = () => {
     try {
       const dto = { ...dtoAddUser };
       const res = await authApi.upsertGardensOnUser(dto);
-      if(res.success) {
-        messageContext?.success("Them nguoi thanh cong")
+      if (res.success) {
+        messageContext?.success("Them nguoi thanh cong");
         getAllUserByGardenId(garden);
       }
     } catch (error) {
@@ -218,60 +217,63 @@ const ManagementWorker = () => {
     {
       title: "Stt",
       dataIndex: "stt",
-      className:'row_garden'
+      className: "responsive-hiden",
     },
     {
       title: "Name",
       dataIndex: "name",
-      className:'row_garden'
+      className: "row_ManagementWorker row_ManagementWorker-name",
     },
     {
       title: "Chức vụ",
       dataIndex: "roleInGarden",
-      className:'row_garden',
+      className: "row_ManagementWorker",
       render: (_, record: any) => {
-        return getConvertedRole(record.roleInGarden)
-      }
+        return getConvertedRole(record.roleInGarden);
+      },
     },
     {
       title: "Khu vườn",
       dataIndex: "garden",
-      className:'row_garden'
+      className: "responsive-hiden",
     },
     {
       title: "Ngày tham gia khu vườn",
       dataIndex: "date",
-      className:'row_garden'
+      className: "responsive-hiden",
     },
   ];
   columns =
     roleUserOfPage === "ADMIN"
       ? [
-        ...columns,
-        {
-          title: "Thao tác",
-          render: (_, record) =>
-            listUser.length > 0 ? (
-              <>
-                <Button
-                  onClick={() => showModal(record)}
-                  type="primary"
-                  ghost
-                >
-                  Cập nhật
-                </Button>
-                <Button
-                  onClick={showDeleteConfirm}
-                  style={{ marginLeft: "0.5rem" }}
-                  danger
-                >
-                  Xóa
-                </Button>
-              </>
-            ) : null,
-          width: 230,
-        },
-      ]
+          ...columns,
+          {
+            title: "Thao tác",
+            className: "row_ManagementWorker-action",
+            align: "center",
+            render: (_, record) =>
+              listUser.length > 0 ? (
+                <>
+                  <Button
+                    onClick={() => showModal(record)}
+                    type="primary"
+                    ghost
+                    size="small"
+                  >
+                    Cập nhật
+                  </Button>
+                  <Button
+                    onClick={showDeleteConfirm}
+                    style={{ marginLeft: "0.5rem" }}
+                    danger
+                    size="small"
+                  >
+                    Xóa
+                  </Button>
+                </>
+              ) : null,
+          },
+        ]
       : columns;
 
   const showModal = (record: any) => {
@@ -297,11 +299,12 @@ const ManagementWorker = () => {
         <ViewEmpty selectGarden={selectGarden} itemsOption={itemsOption} />
       ) : (
         <div className="ManagementWorker">
+          <h3>Quản lý nhân viên</h3>
           <header>
-            <label>Chọn vườn: </label>
+            <label className="responsive-hiden">Chọn vườn: </label>
             <Select
               id="garden-select"
-              style={{ width: 200 }}
+              style={{ width: 290 }}
               value={garden}
               onChange={selectGarden}
               options={itemsOption}
@@ -311,24 +314,17 @@ const ManagementWorker = () => {
 
           <div className="body-ManagementWorker">
             {/* thêm người vào khu vườn */}
-            <div
-              style={{
-                margin: "1rem 0",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <span>
+            <div className="add_people">
+              <span className="responsive-hiden">
                 Thêm người vào khu vườn:{" "}
                 {garden?.label || "Bạn hãy chọn khu vườn......."}
               </span>
-              <div style={{ width: "50%", float: "right" }} id="add_people">
-                <span>Thêm người: </span>
+              <div className="add_people-input">
+                <span className="responsive-hiden">Thêm người: </span>
                 <Select
                   suffixIcon={<SearchOutlined />}
                   showSearch
-                  style={{ width: "60%" }}
+                  style={{ width: 300 }}
                   onChange={handleChange}
                   options={listSearch}
                   placeholder="Tìm kiếm người"
@@ -347,7 +343,7 @@ const ManagementWorker = () => {
             {/* bảng user  */}
             <div>
               <Table
-              className="table_test"
+                className="table_test"
                 onChange={changPagination}
                 bordered={true}
                 pagination={{
@@ -360,14 +356,14 @@ const ManagementWorker = () => {
               />
             </div>
           </div>
-          {isModalOpen &&
+          {isModalOpen && (
             <ChangeRole
               isModalOpen={isModalOpen}
               setIsModalOpen={setIsModalOpen}
               itemsOption={itemsOption}
               changeRole={changeRole}
             />
-          }
+          )}
         </div>
       )}
     </>

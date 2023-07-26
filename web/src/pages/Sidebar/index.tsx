@@ -1,26 +1,29 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { Menu, Modal } from "antd";
 import { CloseOutlined, ExclamationCircleFilled } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MenuItem, listSidebarInit } from "./routeSidebar";
 import { AuthContext } from "../../contexts/AuthContext";
 import { Squash as Hamburger } from 'hamburger-react'
-import { MessageContext } from "../../contexts/MessageContext";
+import { CloseSidebarContextContext } from "../../contexts/CloseSidebarContext";
 
 const { confirm } = Modal;
 
 export default function SidebarLayout() {
+  const close: any = useRef()
   const authContext = useContext(AuthContext);
+  const { isOpenHeader, setOpenHeader } = useContext(CloseSidebarContextContext)!;
   const items: any = listSidebarInit.map((item: MenuItem) => {
     return {
       key: item.key,
-      label: item.titleSidebar,
+      // label: item.titleSidebar,
+      label: <Link to={`/${item.url}`}>{item.titleSidebar}</Link>,
       children:
         item.children &&
         item.children.map((childrenItem) => {
           return {
             key: childrenItem.key,
-            label: childrenItem.titleSidebar,
+            label: <Link to={`/${childrenItem.url}`}>{childrenItem.titleSidebar}</Link>,
           };
         }),
     };
@@ -49,7 +52,7 @@ export default function SidebarLayout() {
 
 
   const listItemSidebar = ({ key }: { key: string }) => {
-    if(window.innerWidth <400){
+    if (window.innerWidth <= 500) {
       setOpenHeader(false);
     }
     const itemActive: MenuItem[] = [];
@@ -75,21 +78,47 @@ export default function SidebarLayout() {
       }
     }
   };
-  
-  const {isOpenHeader, setOpenHeader} = useContext(MessageContext)!; 
+
+  ////////edit///////////////////
+  const closeHeader = () => {
+    if (window.innerWidth <= 500) {
+      setOpenHeader(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', () => {
+      closeHeader()
+    });
+    return () => {
+      window.removeEventListener('resize', closeHeader);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('click', (event) => {
+      const { target } = event
+      if (!close.current.contains(target)) {
+        console.log(1111111)
+        closeHeader()
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
-    <div style={{height: '100%'}}>
-      <div className="icon_close" style={{transform: isOpenHeader ? 'translateX(256px)' : 'none'}}>
-        <Hamburger size={27} toggled={isOpenHeader} toggle={setOpenHeader}/>
+    <div className="SidebarLayout" ref={close}>
+      <div className="icon_close" style={{ transform: isOpenHeader ? 'translateX(256px)' : 'none' }}>
+        <Hamburger size={27} toggled={isOpenHeader} toggle={setOpenHeader} />
       </div>
       <Menu
-        style={{ width: 256, height: '100%', transform: isOpenHeader ? 'none' : 'translateX(-200%)' }}
+        id={`${isOpenHeader ? '' : 'SidebarLayout-transform'}`}
         mode="inline"
         defaultSelectedKeys={["home"]}
         onClick={listItemSidebar}
         items={items}
-      />    
+      />
     </div>
   );
 }

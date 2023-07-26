@@ -1,0 +1,17 @@
+#personall_form {
+    max-width: 60%;
+}
+
+@media screen and (max-width: 500px) {
+
+    #personall_form {
+        max-width: 100%;
+    }
+    #personall_form :where(.css-dev-only-do-not-override-15rg2km).ant-row {
+        flex-wrap: nowrap;
+    }
+
+    #personall_form :where(.css-dev-only-do-not-override-15rg2km).ant-form .ant-form-item .ant-form-item-label, :where(.css-dev-only-do-not-override-15rg2km).ant-form .ant-form-item .ant-form-item-control {
+        flex: 0 0 80%;
+    }
+}
