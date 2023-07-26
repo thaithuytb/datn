@@ -204,7 +204,7 @@ const ManagementWorker = () => {
     try {
       const dto = { ...dtoAddUser };
       const res = await authApi.upsertGardensOnUser(dto);
-      if(res.success) {
+      if (res.success) {
         messageContext?.success("Them nguoi thanh cong")
         getAllUserByGardenId(garden);
       }
@@ -218,17 +218,17 @@ const ManagementWorker = () => {
     {
       title: "Stt",
       dataIndex: "stt",
-      className:'row_garden'
+      className: 'responsive-hiden'
     },
     {
       title: "Name",
       dataIndex: "name",
-      className:'row_garden'
+      className: 'row_ManagementWorker row_ManagementWorker-name'
     },
     {
       title: "Chức vụ",
       dataIndex: "roleInGarden",
-      className:'row_garden',
+      className: 'row_ManagementWorker',
       render: (_, record: any) => {
         return getConvertedRole(record.roleInGarden)
       }
@@ -236,12 +236,12 @@ const ManagementWorker = () => {
     {
       title: "Khu vườn",
       dataIndex: "garden",
-      className:'row_garden'
+      className: 'responsive-hiden'
     },
     {
       title: "Ngày tham gia khu vườn",
       dataIndex: "date",
-      className:'row_garden'
+      className: 'responsive-hiden'
     },
   ];
   columns =
@@ -250,13 +250,15 @@ const ManagementWorker = () => {
         ...columns,
         {
           title: "Thao tác",
+          className: 'row_ManagementWorker-action',
+          align: 'center',
           render: (_, record) =>
             listUser.length > 0 ? (
               <>
                 <Button
                   onClick={() => showModal(record)}
                   type="primary"
-                  ghost
+                  ghost size="small"
                 >
                   Cập nhật
                 </Button>
@@ -264,12 +266,12 @@ const ManagementWorker = () => {
                   onClick={showDeleteConfirm}
                   style={{ marginLeft: "0.5rem" }}
                   danger
+                  size="small"
                 >
                   Xóa
                 </Button>
               </>
             ) : null,
-          width: 230,
         },
       ]
       : columns;
@@ -297,11 +299,12 @@ const ManagementWorker = () => {
         <ViewEmpty selectGarden={selectGarden} itemsOption={itemsOption} />
       ) : (
         <div className="ManagementWorker">
+          <h3>Quản lý nhan vien</h3>
           <header>
-            <label>Chọn vườn: </label>
+            <label className="responsive-hiden">Chọn vườn: </label>
             <Select
               id="garden-select"
-              style={{ width: 200 }}
+              style={{ width: 290 }}
               value={garden}
               onChange={selectGarden}
               options={itemsOption}
@@ -311,24 +314,17 @@ const ManagementWorker = () => {
 
           <div className="body-ManagementWorker">
             {/* thêm người vào khu vườn */}
-            <div
-              style={{
-                margin: "1rem 0",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <span>
+            <div className="add_people">
+              <span className="responsive-hiden">
                 Thêm người vào khu vườn:{" "}
                 {garden?.label || "Bạn hãy chọn khu vườn......."}
               </span>
-              <div style={{ width: "50%", float: "right" }} id="add_people">
-                <span>Thêm người: </span>
+              <div className="add_people-input">
+                <span className="responsive-hiden">Thêm người: </span>
                 <Select
                   suffixIcon={<SearchOutlined />}
                   showSearch
-                  style={{ width: "60%" }}
+                  style={{ width: 300 }}
                   onChange={handleChange}
                   options={listSearch}
                   placeholder="Tìm kiếm người"
@@ -347,7 +343,7 @@ const ManagementWorker = () => {
             {/* bảng user  */}
             <div>
               <Table
-              className="table_test"
+                className="table_test"
                 onChange={changPagination}
                 bordered={true}
                 pagination={{

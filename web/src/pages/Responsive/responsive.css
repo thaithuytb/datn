@@ -8,7 +8,27 @@
     transition: all 0.6s;
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 500px) {
+    * {
+		font-size: 99%;
+	}
+
+    .responsive-hiden {
+		display: none;
+	}
+
+    /* -----side-bar------ */
+    .SidebarLayout ul {
+        width: 256px;
+        height: 100%;
+        transform: none;
+    }
+
+    #SidebarLayout-transform {
+        transform: translateX(-200%);
+    }
+    /* --------------------- */
+
     .icon_close {
         display: block;
     }
@@ -24,20 +44,6 @@
 
     .header_right h3 {
         display: none;
-    }
-
-    .SidebarLayout {
-        z-index: 2;
-        margin-top: 4px;
-    }
-
-    .SidebarLayout ul {
-        width: 100px;
-        height: calc(100% - 90px) !important;
-    }
-
-    .icon_close {
-        display: block;
     }
 
     .ant-menu {
@@ -66,24 +72,12 @@
         top: 220px !important;
     }
 
-    .ant-form-item button {
-        margin-left: -25px;
-    }
-
     /* .ant-table-content{
         overflow: auto;
     } */
 
-    /* #table_gardens tr{
-        width: 150%;
-    } */
     .ant-empty-image {
         width: 100%;
-    }
-
-    #add_people button {
-        margin-left: 0px !important;
-        width: 82px;
     }
 
     .login_form {

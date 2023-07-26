@@ -1,4 +1,3 @@
-import { DeviceTypeEnum } from "../types/enum.type";
 import { ApiResponse } from "./auth";
 import axiosClient from "./axiosClient";
 
@@ -13,7 +12,7 @@ class DeviceApi {
       status?: boolean;
       ip: string;
       deviceId: number;
-      type: DeviceTypeEnum;
+      type: string;
     },
     gardenId: string
   ) {

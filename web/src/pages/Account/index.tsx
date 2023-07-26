@@ -52,6 +52,7 @@ const Account = () => {
   const create = () => {
     navigate("/account/create-account");
   };
+  
   //hàm tìm kiếm theo tên
   const onSearch = (value: string) => console.log(value);
 
@@ -61,30 +62,38 @@ const Account = () => {
       title: "Stt",
       dataIndex: "stt",
       width: 10,
+      className:'responsive-hiden'
     },
     {
       title: "Tên đầy đủ",
       dataIndex: "fullName",
+      className:'row-acount row-acount-name'
     },
     {
       title: "Email",
       dataIndex: "email",
+      className:'row-acount'
     },
     {
       title: "Địa chỉ",
       dataIndex: "address",
+      className:'responsive-hiden'
     },
     {
       title: "Ngày tham gia",
       dataIndex: "dateCreateAccount",
+      className:'responsive-hiden'
     },
     {
       title: "Giới tính",
       dataIndex: "gender",
+      className:'responsive-hiden'
     },
     {
       title: "",
       dataIndex: "",
+      align:'center',
+      className:'row-acount-action',
       render: (_, record) =>
         listAccount.length > 0 ? (
           <>
@@ -100,8 +109,8 @@ const Account = () => {
             </Button>
           </>
         ) : null,
-      width: 180,
     },
+    
   ];
 
   //thay đổi page
@@ -147,7 +156,7 @@ const Account = () => {
     getAccount(1);
   }, []);
   return (
-    <div style={{ padding: "1rem" }}>
+    <div className="account">
       <header className="titleAccount">
         <h3>Quản lý tài khoản</h3>
         <Button type="primary" ghost onClick={create}>
@@ -156,7 +165,7 @@ const Account = () => {
       </header>
 
       <div className="SearchAccount">
-        <span style={{ marginRight: "100px" }}>Tìm kiếm: </span>
+        <span className="responsive-hiden" style={{ marginRight: "100px" }}>Tìm kiếm: </span>
         <Search
           placeholder="Nhập tên muốn tìm..."
           allowClear

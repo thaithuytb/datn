@@ -9,7 +9,7 @@ const CreateAccount = () => {
 
   const createAccount = async (values: any) => {
     console.log(values)
-    const { email, password, confirmPassword, fullName, phoneNumber, address , gender} = values;
+    const { email, password, confirmPassword, fullName, phoneNumber, address, gender } = values;
     if (password !== confirmPassword) {
       messageContext?.error("mật khẩu nhập lại sai")
     } else {
@@ -35,10 +35,13 @@ const CreateAccount = () => {
 
   return (
     <Form
-      className="form_left"
       name="basic"
-      labelCol={{ span: 7 }}
-      style={{ maxWidth: 700 }}
+      labelCol={{ flex: '110px' }}
+      labelAlign="left"
+      labelWrap
+      wrapperCol={{ flex: 1 }}
+      colon={false}
+      style={{ maxWidth: 700, padding:'1rem' }}
       onFinish={createAccount}
     >
       <Form.Item

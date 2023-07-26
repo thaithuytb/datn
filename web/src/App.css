@@ -29,20 +29,15 @@
   margin: 1rem;
 }
 
-.form_left :where(.css-dev-only-do-not-override-15rg2km).ant-form-item .ant-form-item-label {
-  text-align: left;
-}
-
 .SidebarLayout {
   height: 90vh;
-
+  /* background-color: #d9f4fe; */
 }
 
 .SidebarLayout>ul {
   height: 100%;
-  /* opacity: 0.5; */
   background-color: #d9f4fe;
-  /* background-color: rgb(211, 232, 252); */
+  z-index: 1;
 }
 
 /* ----------------------------- */

@@ -17,15 +17,21 @@ interface IItemNotification {
 }
 
 const ItemNotification: React.FC<IItemNotification> = ({ noti }) => {
+  const notificationContext = useContext(NotificationContext);
+  const setCount = notificationContext?.setCount;
+  // const count = notificationContext?.count;
   const notification = noti.notification
   const notificationStatus = noti.notificationStatus
   const update = async () => {
     const notificationApi = new NotificationApi();
     try {
       const res = await notificationApi.updateNotificationsOnUsers({ notificationId: noti.notification.id })
-      console.log(res)
+      if (res.success) {
+        console.log(res)
+        setCount((count: number) => count - 1)
+      }
     } catch (error) {
-
+      console.log('error: ', error)
     }
   }
   return (
@@ -65,7 +71,7 @@ const { useToken } = theme;
 
 
 export default function HeaderLayout() {
-  const [typeNotification, setTypeNotification] = useState<string>("GARDEN")
+  const [typeNotification, setTypeNotification] = useState<string>("")
   const authContext = useContext(AuthContext)
   const notificationContext = useContext(NotificationContext)
   const notifications = notificationContext?.notifications
@@ -98,7 +104,7 @@ export default function HeaderLayout() {
     )
   }
   )
-  
+
   const getNotificationByType = async (type: string) => {
     console.log(page)
     setTypeNotification(type)
@@ -111,7 +117,7 @@ export default function HeaderLayout() {
       }
       const res = await notificationApi.getNotification(dto)
       if (res && setNotifilcations) {
-        if(page === 1 || type === typeNotification) {
+        if (page === 1 || type === typeNotification) {
           setNotifilcations([...res.data.notifications])
         } else {
           setNotifilcations((notifications: any) => ([...notifications, ...res.data.notifications]))
@@ -126,17 +132,17 @@ export default function HeaderLayout() {
     }
   }
 
-  const throttle = useMemo(() =>{
+  const throttle = useMemo(() => {
     let lastCall = 0;
     return function () {
-        const now = new Date().getTime();
-        if (now - lastCall < 500) {
-            return;
-        }
-        lastCall = now;
-        getNotificationByType(typeNotification);
+      const now = new Date().getTime();
+      if (now - lastCall < 500) {
+        return;
+      }
+      lastCall = now;
+      getNotificationByType(typeNotification);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleScroll = () => {
@@ -145,7 +151,7 @@ export default function HeaderLayout() {
     node?.parentElement?.addEventListener('scroll', (event: any) => {
       if (event.target.scrollTop > scrollTop && event.target.offsetHeight + event.target.scrollTop > event.target.scrollHeight) {
         throttle()
-        setPage(page+1)
+        setPage(page + 1)
       }
       scrollTop = event.target.scrollTop
     })
@@ -170,13 +176,19 @@ export default function HeaderLayout() {
             overlayClassName="custom-dropdown"
             trigger={['click']}
             menu={{ items }}
+            // getPopupContainer={}
             dropdownRender={(menu) => (
               <div style={contentStyle}
                 id="Dropdown_before"
-              // onScroll={handleScroll}
               >
                 <h3 style={{ margin: "0", padding: 8 }}>Thông báo</h3>
                 <Space style={{ padding: 8 }}>
+                  <button onClick={() => getNotificationByType("")}
+                    className='slectNotification'
+                    style={{ backgroundColor: typeNotification === '' ? colorHeader : '', color: typeNotification === 'GARDEN' ? 'white' : '' }}
+                  >
+                    Tat ca
+                  </button>
                   <button onClick={() => getNotificationByType("GARDEN")}
                     className='slectNotification'
                     style={{ backgroundColor: typeNotification === 'GARDEN' ? colorHeader : '', color: typeNotification === 'GARDEN' ? 'white' : '' }}

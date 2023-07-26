@@ -27,11 +27,12 @@ import { NotificationContext } from "../../contexts/NotificationContext";
 import weekday from "dayjs/plugin/weekday"
 import localeData from "dayjs/plugin/localeData"
 import { getMeasuredAndStatusDevice } from "../../common/status-device";
+import DeviceApi from "../../api/device";
 
 dayjs.extend(weekday)
 dayjs.extend(localeData)
 
-const DEVICE_TYPE = {
+export const DEVICE_TYPE = {
   FAN: "Quạt",
   LAMP: "Đèn",
   CURTAIN: "Rèm",
@@ -41,7 +42,7 @@ const DEVICE_TYPE = {
   TEMPERATURE_HUMIDITY_AIR_SENSOR: "Cảm biến nhiệt độ, độ ẩm",
 }
 
-enum Type {
+export enum Type {
   FAN = 'FAN',
   LAMP = 'LAMP',
   CURTAIN = 'CURTAIN',
@@ -68,6 +69,18 @@ interface IShowModal {
   garden: any;
   gardenId: any;
 }
+
+const convertTypeDevice = (type: Type) => {
+  switch (type) {
+    case "FAN":
+    case "LAMP":
+    case "PUMP": {
+      return "actuator";
+    }
+    default:
+      return "sensor";
+  }
+};
 
 const ShowModal: React.FC<IShowModal> = ({
   isModalOpen,
@@ -337,6 +350,34 @@ export default function StatusGardens() {
     setIsModalOpenSetup(true);
   };
 
+
+  const changeStatusDevice = (device: DataType) => {
+    if (!gardenId) {
+      return;
+    }
+    const deviceApi = DeviceApi.registerDeviceApi();
+    if (convertTypeDevice(device.type) === "actuator") {
+      deviceApi.changeDeviceStatus(
+        {
+          status: !device.valueDevice.status,
+          ip: device.device.ip,
+          deviceId: device.id,
+          type: device.type,
+        },
+        gardenId
+      );
+    } else {
+      deviceApi.changeDeviceStatus(
+        {
+          ip: device.device.ip,
+          deviceId: device.id,
+          type: device.type,
+        },
+        gardenId
+      );
+    }
+  };
+  
   useEffect(() => {
     if (gardenId && getDevicesByGardenId) {
       getDevicesByGardenId(gardenId);
@@ -368,21 +409,20 @@ export default function StatusGardens() {
       dataIndex: "stt",
       width: 10,
       align: "center",
+      className: "responsive-hiden"
     },
     {
       title: "Loại thiết bị",
       dataIndex: "type",
       align: "center",
-      render: (_, record: DataType) =>
-        dataTable.length > 0 ? (
-          // <>{record.type}</>
-          <>{DEVICE_TYPE[record.type]}</>
-        ) : null,
+      render: (_, record: DataType) => DEVICE_TYPE[record.type],
+      className: "columns-table_status_devices columns-table_status_devices-type"
     },
     {
       title: "Gia tri",
       dataIndex: "valueDevice",
       align: "center",
+      className: 'columns-table_status_devices'
     },
   ];
 
@@ -394,11 +434,41 @@ export default function StatusGardens() {
           title: "Điều khiển",
           dataIndex: "",
           align: "center",
-          render: (_, record) =>
+          render: (_, record: DataType) =>
             dataTable.length > 0 ? (
-              <Button ghost type="primary" >Button</Button>
+              record.device.type === "TEMPERATURE_HUMIDITY_AIR_SENSOR" ?
+                <button
+                  className="control_device"
+                  onClick={() => changeStatusDevice(record)}
+                >
+                  Đo giá trị
+                </button>
+                :
+                record.device.valueDevice?.value ? (
+                  <button
+                    className="control_device"
+                    onClick={() => changeStatusDevice(record)}
+                  >
+                    Đo giá trị
+                  </button>
+                ) : record.device.valueDevice?.status ? (
+                  <button
+                    className="control_device"
+                    onClick={() => changeStatusDevice(record)}
+                  >
+                    Tắt
+                  </button>
+                ) : (
+                  <button
+                    className="control_device"
+                    onClick={() => changeStatusDevice(record)}
+                  >
+                    Bật
+                  </button>
+                )
             ) : null,
-          width: 150
+          // width: 150
+          className: 'columns-table_status_devices'
         },
         {
           title: "Thiet lap trang thai",
@@ -407,10 +477,11 @@ export default function StatusGardens() {
           render: (_, record: DataType) =>
             dataTable.length > 0 ? (
               record.type === 'FAN' || record.type === 'LAMP' || record.type === 'PUMP' ?
-                <Button ghost type="primary" onClick={() => showModalSetup(record)}>Thiet lap</Button>
+                <Button size="small" ghost type="primary" onClick={() => showModalSetup(record)}>Thiet lap</Button>
                 : null
             ) : null,
-          width: 200
+          // width: 200
+          className: 'columns-table_status_devices-button'
         },
       ]
       :
@@ -423,10 +494,11 @@ export default function StatusGardens() {
           render: (_, record: DataType) =>
             dataTable.length > 0 ? (
               record.type === 'FAN' || record.type === 'LAMP' || record.type === 'PUMP' ?
-                <Button ghost type="primary" onClick={() => showModalSetup(record)}>Thiet lap</Button>
+                <Button size="small" ghost type="primary" onClick={() => showModalSetup(record)}>Thiet lap</Button>
                 : null
             ) : null,
-          width: 200
+          // width: 200
+          className: 'columns-table_status_devices-button'
         },
       ];
 
@@ -455,23 +527,25 @@ export default function StatusGardens() {
       ) : (
         <>
           {gardens && devices && (
+
             <div className="status_devices">
               {/* header */}
               <div className="list_device_select">
+                <h3>Cham soc khu vuon</h3>
                 <header className="list_device_select__header">
                   <div className="list_device_select__div_first">
-                    <label>Chọn vườn: </label>
+                    <label className="responsive-hiden">Chọn vườn: </label>
                     <Select
                       id="garden-select"
                       value={garden}
-                      style={{ width: 150 }}
+                      style={{ width: 200 }}
                       onChange={selectGarden}
                       options={itemsOption}
                       placeholder={"Chọn khu vườn"}
                     />
                   </div>
                   <div className="list_device_select__div_second">
-                    <span>Chế độ chăm sóc :</span>
+                    <span className="responsive-hiden">Chế độ chăm sóc :</span>
                     <button className="Button" onClick={changeMode}>
                       {garden && garden.isAuto ? "Tự động" : "Tự điều chỉnh"}
                     </button>
@@ -501,7 +575,7 @@ export default function StatusGardens() {
                 </div>
               )}
               {/* bảng trạng thái thiết bị */}
-              <div style={{ marginTop: 10 }}>
+              <div className="table-status_devices">
                 <h3
                   style={{
                     fontWeight: 500,

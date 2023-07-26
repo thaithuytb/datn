@@ -1,3 +1,4 @@
+import './index.css';
 import { Button, DatePicker, Form, Input, Radio } from "antd";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -16,7 +17,7 @@ export default function PersonalInformation() {
   const messageContext = useContext(MessageContext);
   const [changeDisplay, setChangeDisplay] = useState<boolean>(true)
   const navigate = useNavigate();
-  const dateFormat ="DD-MM-YYYY"
+  const dateFormat = "DD-MM-YYYY"
 
   const initialValues = {
     email: user.email,
@@ -26,9 +27,8 @@ export default function PersonalInformation() {
     id: user.id,
     gender: user.gender,
     dateCreateAccount: dayjs(user.createdAt).format("DD-MM-YYYY"),
-    dateOfBrith: user.dateOfBrith? dayjs(user.dateOfBrith, dateFormat) : null
+    dateOfBrith: user.dateOfBrith ? dayjs(user.dateOfBrith, dateFormat) : null
   };
-  console.log(user)
 
   const updateInformation = async (values: any) => {
     console.log(values)
@@ -99,7 +99,6 @@ export default function PersonalInformation() {
   return (
     <div className="form_left">
       <label htmlFor="avatar">
-        {/* {result && <Avatar />} */}
         <Avatar width="100px" url={urlImage || ''} />
       </label>
       <input
@@ -109,106 +108,114 @@ export default function PersonalInformation() {
         name="postImg"
       />
       <br /><br />
-     
-        {changeDisplay ?
-           <Form
-           name="basic"
-           labelCol={{ span: 5 }}
-           style={{ maxWidth: 600 }}
-           onFinish={updateInformation}
-           initialValues={initialValues}
-         >
-            <Form.Item label="Tên đầy đủ" name="fullName">
-              <Input />
-            </Form.Item>
 
-            <Form.Item label="Email" name="email">
-              <Input />
-            </Form.Item>
+      {changeDisplay ?
+        <Form
+          name="personall_form"
+          labelCol={{ flex: '110px' }}
+          labelAlign="left"
+          labelWrap
+          wrapperCol={{ flex: 1 }}
+          colon={false}
+          style={{ maxWidth: 700 }}
+          onFinish={updateInformation}
+          initialValues={initialValues}
+        >
+          <Form.Item label="Tên đầy đủ" name="fullName">
+            <Input />
+          </Form.Item>
 
-            <Form.Item label="Số điện thoại" name="phoneNumber">
-              <Input />
-            </Form.Item>
+          <Form.Item label="Email" name="email">
+            <Input />
+          </Form.Item>
 
-            <Form.Item label="Địa chỉ" name="address">
-              <Input />
-            </Form.Item>
+          <Form.Item label="Số điện thoại" name="phoneNumber">
+            <Input />
+          </Form.Item>
 
-            <Form.Item label="Ngày sinh" name="dateOfBrith">
-              <DatePicker 
-                // defaultValue={dayjs(currentDate, dateFormat)}
-                format={dateFormat}
-              />
-            </Form.Item>
+          <Form.Item label="Địa chỉ" name="address">
+            <Input />
+          </Form.Item>
 
-            <Form.Item label="Ngày tạo tài khoản" name="dateCreateAccount">
-              <Input disabled />
-            </Form.Item>
+          <Form.Item label="Ngày sinh" name="dateOfBrith">
+            <DatePicker
+              // defaultValue={dayjs(currentDate, dateFormat)}
+              inputReadOnly={true}
+              format={dateFormat}
+            />
+          </Form.Item>
 
-            <Form.Item name="gender" label="Giới tính">
-              <Radio.Group value={user.gender}>
-                <Radio value="MALE">Nam</Radio>
-                <Radio value="FEMALE">Nữ</Radio>
-              </Radio.Group>
-            </Form.Item>
+          <Form.Item label="Ngày tạo tài khoản" name="dateCreateAccount">
+            <Input disabled />
+          </Form.Item>
 
-            <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
-              <Button type="primary" htmlType="submit">
-                Thay đổi thông tin
-              </Button>
-              <span style={{ padding: '0 3rem' }} />
-              <Button type="link" htmlType="button" onClick={change}>
-                {`Mật khẩu ->`}
-              </Button>
-            </Form.Item>
-          </Form>
-          :
-          <Form
-      className="form_left"
-      name="basic"
-      labelCol={{ span: 7 }}
-      style={{ maxWidth: 700 }}
-      onFinish={onChangPassword}
-      initialValues={initialValues}
-    >
-      <Form.Item label="Email" name="email">
-        <Input disabled />
-      </Form.Item>
+          <Form.Item name="gender" label="Giới tính">
+            <Radio.Group value={user.gender}>
+              <Radio value="MALE">Nam</Radio>
+              <Radio value="FEMALE">Nữ</Radio>
+            </Radio.Group>
+          </Form.Item>
 
-      <Form.Item
-        label="Mật khẩu"
-        name="password"
-        rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
-      >
-        <Input.Password />
-      </Form.Item>
+          <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
+            <Button type="primary" htmlType="submit">
+              Thay đổi thông tin
+            </Button>
+            <span style={{ padding: '0 1rem' }} />
+            <Button type="link" htmlType="button" onClick={change}>
+              {`Mật khẩu ->`}
+            </Button>
+          </Form.Item>
+        </Form>
+        :
+        <Form
+          name="basic"
+          labelCol={{ flex: '110px' }}
+          labelAlign="left"
+          labelWrap
+          wrapperCol={{ flex: 1 }}
+          colon={false}
+          style={{ maxWidth: 700 }}
+          onFinish={onChangPassword}
+          initialValues={initialValues}
+        >
+          <Form.Item label="Email" name="email">
+            <Input disabled />
+          </Form.Item>
 
-      <Form.Item
-        label="Mật khẩu mới"
-        name="newPassword"
-        rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
-      >
-        <Input.Password />
-      </Form.Item>
-      <Form.Item
-        label="Nhập lại mật khẩu mới"
-        name="authenticationPassword"
-        rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
-      >
-        <Input.Password />
-      </Form.Item>
+          <Form.Item
+            label="Mật khẩu"
+            name="password"
+            rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
+          >
+            <Input.Password />
+          </Form.Item>
 
-            <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
-              <Button type="link" htmlType="button" onClick={change}>
-                {`<- Thông tin`}
-              </Button>
-              <span style={{ padding: '0 3rem' }} />
-              <Button type="primary" htmlType="submit">
-                Thay đổi mật khẩu
-              </Button>
-            </Form.Item>
-      </Form>
-}
+          <Form.Item
+            label="Mật khẩu mới"
+            name="newPassword"
+            rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item
+            label="Nhập lại mật khẩu mới"
+            name="authenticationPassword"
+            rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+          >
+            <Input.Password />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
+            <Button type="link" htmlType="button" onClick={change}>
+              {`<- Thông tin`}
+            </Button>
+            <span style={{ padding: '0 1rem' }} />
+            <Button type="primary" htmlType="submit">
+              Thay đổi mật khẩu
+            </Button>
+          </Form.Item>
+        </Form>
+      }
     </ div>
 
   );
