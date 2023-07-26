@@ -201,6 +201,7 @@ model NotificationsOnUsers {
 enum Role {
   USER
   ADMIN
+  VIEWER
 }
 
 enum RoleGarden {

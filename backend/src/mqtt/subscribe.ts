@@ -1,4 +1,5 @@
 import {
+  Device,
   DeviceTypeEnum,
   NotificationType,
   PrismaClient,
@@ -70,13 +71,17 @@ export async function subscribeMqtt(
 
     if (topic.slice(15) === '/initStatusDevice') {
       const gardenId = parseMessage['gardenId'];
+      if (typeof parseMessage['gardenId'] != 'number') {
+        return console.log(`${parseMessage['gardenId']} is not number`);
+      }
       const garden = await getGarden(prisma, gardenId);
       if (garden) {
-        const statusDevices = await getStatusDevicesByGardenId(
-          prisma,
-          garden.id,
-        );
+        const actuators = await getActuatorsByGardenId(prisma, garden.id);
         const thresholds = await getThresholdsByGardenId(prisma, garden.id);
+        const latestStatusActuators = await getLatestStatusActuators(
+          prisma,
+          actuators,
+        );
         const newTopic = await redis.get('newTopic');
         client.publish(
           `datn/${newTopic}/regime`,
@@ -86,16 +91,6 @@ export async function subscribeMqtt(
             first: true,
           }),
         );
-        for (const statusDevice of statusDevices) {
-          client.publish(
-            `datn/${newTopic}/actuator`,
-            JSON.stringify({
-              from: 'web',
-              ...statusDevice,
-              first: true,
-            }),
-          );
-        }
         for (const threshold of thresholds) {
           client.publish(
             `datn/${newTopic}/threshold`,
@@ -104,6 +99,29 @@ export async function subscribeMqtt(
               lowThreshold: JSON.parse(threshold.lowThreshold.toString()),
               highThreshold: JSON.parse(threshold.highThreshold.toString()),
               name: threshold.name,
+              first: true,
+            }),
+          );
+        }
+        for (const actuator of actuators) {
+          client.publish(
+            `datn/${newTopic}/operator`,
+            JSON.stringify({
+              from: 'web',
+              first: true,
+              startAt: actuator.startAt,
+              endAt: actuator.endAt,
+              deviceId: actuator.id,
+              ip: actuator.ip,
+            }),
+          );
+        }
+        for (const latestStatusActuator of latestStatusActuators) {
+          client.publish(
+            `datn/${newTopic}/actuator`,
+            JSON.stringify({
+              from: 'web',
+              ...latestStatusActuator,
               first: true,
             }),
           );
@@ -119,7 +137,9 @@ export async function subscribeMqtt(
         'newStatusGarden',
         parseMessage,
       );
-      console.log('regime', parseMessage);
+      if (typeof parseMessage['gardenId'] != 'number') {
+        return console.log(`${parseMessage['gardenId']} is not number`);
+      }
       await updateStatusGarden(prisma, parseMessage);
       if (typeof parseMessage['createdBy'] != 'number') {
         return console.log(`${parseMessage['createdBy']} is not number`);
@@ -132,7 +152,7 @@ export async function subscribeMqtt(
         type: NotificationType.GARDEN,
         createdBy: parseMessage['createdBy'],
         // createdBy: 1,
-        gardenId: parseInt(parseMessage['gardenId']),
+        gardenId: parseMessage['gardenId'],
       });
       if (newNotification) {
         socketGateway.emitToGarden(
@@ -157,7 +177,7 @@ export async function subscribeMqtt(
         return console.log(`${parseMessage['createdBy']} is not number`);
       }
       const newNotification = await notificationService.createNotifications({
-        title: `Thay đổi ngưỡng thiết bị`,
+        title: `Thay đổi ngưỡng ${parseMessage['name']} của khu vườn`,
         description: `Thay đổi ngưỡng thiết bị ngày ${dayjs().format(
           'YYYY-MM-DD',
         )}`,
@@ -245,7 +265,7 @@ export async function subscribeMqtt(
   });
 }
 
-const getStatusDevicesByGardenId = async (
+const getActuatorsByGardenId = async (
   prisma: PrismaClient,
   gardenId: number,
 ) => {
@@ -253,11 +273,23 @@ const getStatusDevicesByGardenId = async (
     where: {
       gardenId,
       status: true,
+      type: {
+        in: [DeviceTypeEnum.FAN, DeviceTypeEnum.LAMP, DeviceTypeEnum.PUMP],
+      },
     },
   });
+  return devices;
+};
 
-  const promiseList = devices.map(async (device) => {
-    const valueDevice = await prisma[convertData[device.type]].findFirst({
+const getLatestStatusActuators = async (
+  prisma: PrismaClient,
+  actuators: Device[],
+) => {
+  const promiseList = actuators.map(async (device) => {
+    const valueDevice = await prisma.actuatorData.findFirst({
+      where: {
+        deviceId: device.id,
+      },
       orderBy: {
         createdAt: 'desc',
       },
@@ -269,7 +301,6 @@ const getStatusDevicesByGardenId = async (
       status: valueDevice.status,
     };
   });
-
   return await Promise.all([...promiseList]);
 };
 

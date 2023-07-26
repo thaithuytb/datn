@@ -301,7 +301,7 @@ const ManagementWorker = () => {
         <div className="ManagementWorker">
           <h3>Quản lý nhân viên</h3>
           <header>
-            <label className="responsive-hiden">Chọn vườn: </label>
+            {/* <label className="responsive-hiden">Chọn vườn: </label> */}
             <Select
               id="garden-select"
               style={{ width: 290 }}

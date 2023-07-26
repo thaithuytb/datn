@@ -30,7 +30,7 @@ export default function RoadMap() {
   return (
     <div style={{ padding: "1rem" }}>
       <header>
-        <label>Chọn vườn khu vuon: </label>
+        {/* <label>Chọn vườn khu vuon: </label> */}
         <Select
           id="garden-select"
           style={{ width: 200 }}

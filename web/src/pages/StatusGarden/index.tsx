@@ -349,6 +349,7 @@ export default function StatusGardens() {
   };
 
   const changeStatusDevice = (device: DataType) => {
+    console.log("aaaaaaaaaa", device);
     if (!gardenId) {
       return;
     }
@@ -515,7 +516,7 @@ export default function StatusGardens() {
                 <h3>Chăm sóc khu vườn</h3>
                 <header className="list_device_select__header">
                   <div className="list_device_select__div_first">
-                    <label className="responsive-hiden">Chọn vườn: </label>
+                    {/* <label className="responsive-hiden">Chọn vườn: </label> */}
                     <Select
                       id="garden-select"
                       value={garden}
@@ -526,7 +527,7 @@ export default function StatusGardens() {
                     />
                   </div>
                   <div className="list_device_select__div_second">
-                    <span className="responsive-hiden">Chế độ chăm sóc :</span>
+                    <span className="responsive-hiden">Chế độ chăm sóc:</span>
                     <button className="Button" onClick={changeMode}>
                       {garden && garden.isAuto ? "Tự động" : "Tự điều chỉnh"}
                     </button>
@@ -535,9 +536,7 @@ export default function StatusGardens() {
               </div>
 
               {/* Trang thai thiet bi */}
-              <StatusDevices 
-                devices={devices}
-              />
+              <StatusDevices devices={devices} />
 
               {/* xét ngưỡng các thiết bị */}
               {gardenId && (
