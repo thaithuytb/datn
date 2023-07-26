@@ -6,25 +6,21 @@ import { useNavigate, useParams } from "react-router-dom";
 import { DeviceContext } from "../../contexts/DeviceContext";
 import { MessageContext } from "../../contexts/MessageContext";
 import {
-  Button,
   DatePicker,
   Empty,
   Modal,
   Select,
   SelectProps,
-  Table,
   TimePicker,
 } from "antd";
 import dayjs from "dayjs";
 import GardenApi from "../../api/garden";
 import Threshold from "./Threshold";
 import Setup from "./Setup";
-import { ColumnsType } from "antd/es/table";
 import { SocketContext } from "../../contexts/SocketContext";
 import { NotificationContext } from "../../contexts/NotificationContext";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
-import { getMeasuredAndStatusDevice } from "../../common/status-device";
 import DeviceApi from "../../api/device";
 import StatusDevices from "./Status";
 
@@ -69,7 +65,7 @@ interface IShowModal {
   gardenId: any;
 }
 
-const convertTypeDevice = (type: Type) => {
+const convertTypeDevice = (type: string) => {
   switch (type) {
     case "FAN":
     case "LAMP":
@@ -123,7 +119,7 @@ const ShowModal: React.FC<IShowModal> = ({
         await gardenApi.changeStatusGarden(dto);
         setIsModalOpen(false);
         setTimeRemaining("00:00");
-      } catch (error) {}
+      } catch (error) { }
     }
   };
   const handleCancel = () => {
@@ -251,16 +247,16 @@ export default function StatusGardens() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isModalOpenSetup, setIsModalOpenSetup] = useState<boolean>(false);
   const [garden, setGarden] = useState<any>();
-  const [dataTable, setDataTable] = useState<any>();
   const socketContext = useContext(SocketContext);
   const socket = socketContext?.socket;
-  const [setup, setSetup] = useState<DataType | undefined>();
+  const [setup, setSetup] = useState<Device | undefined>();
 
   const notificationContext = useContext(NotificationContext);
   const setCount = notificationContext?.setCount;
 
   useEffect(() => {
     socket.on("newStatus", (data: any) => {
+      console.log(data)
       setMessage(data);
       messageContext?.success("Cập nhập trạng thái mới thành công !!!");
     });
@@ -343,13 +339,12 @@ export default function StatusGardens() {
     setIsModalOpen(true);
   };
 
-  const showModalSetup = (record: DataType) => {
+  const showModalSetup = (record: Device) => {
     setSetup(record);
     setIsModalOpenSetup(true);
   };
 
-  const changeStatusDevice = (device: DataType) => {
-    console.log("aaaaaaaaaa", device);
+  const changeStatusDevice = (device: Device) => {
     if (!gardenId) {
       return;
     }
@@ -357,8 +352,8 @@ export default function StatusGardens() {
     if (convertTypeDevice(device.type) === "actuator") {
       deviceApi.changeDeviceStatus(
         {
-          status: device.valueDevice === "Bật" ? false : true,
-          ip: device.device.ip,
+          status: !device.valueDevice.status,
+          ip: device.ip,
           deviceId: device.id,
           type: device.type,
         },
@@ -367,7 +362,7 @@ export default function StatusGardens() {
     } else {
       deviceApi.changeDeviceStatus(
         {
-          ip: device.device.ip,
+          ip: device.ip,
           deviceId: device.id,
           type: device.type,
         },
@@ -399,110 +394,6 @@ export default function StatusGardens() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [message]);
 
-  //data table
-  let columns: ColumnsType<DataType> = [
-    {
-      title: "Stt",
-      dataIndex: "stt",
-      width: 10,
-      align: "center",
-      className: "responsive-hiden",
-    },
-    {
-      title: "Loại thiết bị",
-      dataIndex: "type",
-      align: "center",
-      render: (_, record: DataType) => DEVICE_TYPE[record.type],
-      className:
-        "columns-table_status_devices columns-table_status_devices-type",
-    },
-    {
-      title: "Giá trị",
-      dataIndex: "valueDevice",
-      align: "center",
-      className: "columns-table_status_devices",
-    },
-    {
-      title: "Thiết lập trạng thái",
-      dataIndex: "",
-      align: "center",
-      render: (_, record: DataType) =>
-        dataTable.length > 0 ? (
-          record.type === "FAN" ||
-          record.type === "LAMP" ||
-          record.type === "PUMP" ? (
-            <Button
-              size="small"
-              ghost
-              type="primary"
-              onClick={() => showModalSetup(record)}
-            >
-              Thiết lập
-            </Button>
-          ) : (
-            <span style={{ color: "#999" }}>Không thể thiết lập</span>
-          )
-        ) : null,
-      // width: 200
-      className: "columns-table_status_devices-button",
-    },
-  ];
-
-  columns =
-    garden && !garden.isAuto
-      ? [
-          ...columns,
-          {
-            title: "Điều khiển",
-            dataIndex: "",
-            align: "center",
-            render: (_, record: DataType) =>
-              dataTable.length > 0 ? (
-                record.device.type === "TEMPERATURE_HUMIDITY_AIR_SENSOR" ? (
-                  <div style={{ color: "#999" }}>Không thể điều khiển</div>
-                ) : record.device.valueDevice?.value ? (
-                  <div style={{ color: "#999" }}>Không thể điều khiển</div>
-                ) : record.device.valueDevice?.status ? (
-                  <button
-                    className="control_device"
-                    onClick={() => changeStatusDevice(record)}
-                  >
-                    Tắt
-                  </button>
-                ) : (
-                  <button
-                    className="control_device"
-                    onClick={() => changeStatusDevice(record)}
-                  >
-                    Bật
-                  </button>
-                )
-              ) : null,
-            // width: 150
-            className: "columns-table_status_devices",
-          },
-        ]
-      : columns;
-
-  useEffect(() => {
-    if (devices) {
-      const newData = devices.map((device: Device, index: number) => ({
-        key: index,
-        stt: index + 1,
-        id: device.id,
-        type: device.type,
-        valueDevice: getMeasuredAndStatusDevice(
-          device.valueDevice,
-          device.type
-        ),
-        device: device,
-      }));
-      setDataTable(newData);
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [devices]);
-
   return (
     <>
       {!gardenId ? (
@@ -516,7 +407,6 @@ export default function StatusGardens() {
                 <h3>Chăm sóc khu vườn</h3>
                 <header className="list_device_select__header">
                   <div className="list_device_select__div_first">
-                    {/* <label className="responsive-hiden">Chọn vườn: </label> */}
                     <Select
                       id="garden-select"
                       value={garden}
@@ -536,7 +426,11 @@ export default function StatusGardens() {
               </div>
 
               {/* Trang thai thiet bi */}
-              <StatusDevices devices={devices} />
+              <StatusDevices
+                changeStatusDevice={changeStatusDevice}
+                showModalSetup={showModalSetup}
+                devices={devices}
+              />
 
               {/* xét ngưỡng các thiết bị */}
               {gardenId && (
@@ -559,26 +453,6 @@ export default function StatusGardens() {
                   </div>
                 </div>
               )}
-              {/* bảng trạng thái thiết bị */}
-              <div className="table-status_devices">
-                <h3
-                  style={{
-                    fontWeight: 500,
-                    fontSize: "18px",
-                    marginBottom: 10,
-                  }}
-                >
-                  <span style={{ color: "red" }}>&#10052;</span> Trạng thái hiện
-                  tại của thiết bị
-                </h3>
-                {/* phần bảng */}
-                <Table
-                  pagination={false}
-                  columns={columns}
-                  dataSource={dataTable}
-                  bordered={true}
-                />
-              </div>
 
               {/* ---------------- */}
               {isModalOpen && (

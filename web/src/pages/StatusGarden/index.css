@@ -70,8 +70,49 @@
 	display: flex;
 	justify-content: space-around;
 	margin: .5rem 0;
-} 
+}
 
+.CardComponent {
+	border: 1px solid var(--color-header);
+	padding: .5rem;
+	width: 14%;
+	border-radius: 1rem;
+}
+
+.CardComponent h2,
+p {
+	margin: 0;
+
+}
+
+.CardComponent p {
+	margin: .5rem 0;
+}
+
+.CardComponent p>div {
+	color: rebeccapurple;
+}
+
+.setup-status >div{
+	float: right;
+	display: grid;
+}
+
+.setup-status >div button{
+	margin-bottom:.1rem ;
+}
+
+@media screen and (max-width: 500px) {
+	.CardComponent {
+		width: 26%;
+		margin-bottom: .5rem;
+	}
+
+
+	.CardComponent p>div {
+		font-size: .7rem;
+	}
+}
 
 /* ///////////////////// */
 @media screen and (max-width: 500px) {

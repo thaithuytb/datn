@@ -3,6 +3,7 @@ import DeviceApi from "../api/device";
 import { MessageContext } from "./MessageContext";
 import ThresholdApi from "../api/threshold";
 import { IThreshold } from "../types/threshold";
+import { Device } from "../types/device.type";
 
 interface IValueDevice {
   createdAt: string
@@ -31,7 +32,7 @@ interface PropsDeviceContext {
 }
 
 interface IDeviceContext {
-  devices: any[];
+  devices: Device[];
   getDevicesByGardenId: (gardenId: string) => void;
   setDevices: any;
   getThresholdsByGardenId: (gardenId: number) => void;
