@@ -101,6 +101,19 @@ export class DeviceService {
   async updateDevice(dto: UpdateDeviceDto) {
     const device = await this.deviceRepository.updateDevice(dto);
     //pub
+    if (dto.startAt || dto.endAt) {
+      const topic = await this.redis.get('newTopic');
+      this.mqttService.sendMessage(
+        `datn/${topic}/operator`,
+        messageToMqtt({
+          from: 'web',
+          startAt: device.startAt,
+          endAt: device.endAt,
+          deviceId: device.id,
+          ip: device.ip,
+        }),
+      );
+    }
 
     return responseSuccess(200, device);
   }
