@@ -9,6 +9,7 @@ class DeviceApi {
 
   changeDeviceStatus(
     dto: {
+      time?: string,
       status?: boolean;
       ip: string;
       deviceId: number;
@@ -35,8 +36,8 @@ class DeviceApi {
     type?: string;
     duration?: number[];
     time?: string[];
-    startAt?: string;
-    endAt?: string;
+    startAt?: string [];
+    endAt?: string[];
   }) {
     const url = `/devices/update`;
     return axiosClient.patch(url, { dto: dto }) as unknown as ApiResponse;

@@ -68,7 +68,7 @@
 
 .StatusDevices {
 	display: flex;
-	justify-content: space-around;
+	justify-content: space-between;
 	margin: .5rem 0;
 }
 
@@ -77,12 +77,12 @@
 	padding: .5rem;
 	width: 14%;
 	border-radius: 1rem;
+	position: relative;
 }
 
 .CardComponent h2,
 p {
 	margin: 0;
-
 }
 
 .CardComponent p {
@@ -99,21 +99,31 @@ p {
 }
 
 .setup-status >div button{
-	margin-bottom:.1rem ;
+	margin-bottom:.2rem ;
+	background-color: #6dcfe7;
+	color: rgb(255, 255, 255);
 }
 
-@media screen and (max-width: 500px) {
-	.CardComponent {
-		width: 26%;
-		margin-bottom: .5rem;
-	}
-
-
-	.CardComponent p>div {
-		font-size: .7rem;
-	}
+.setup-status >div >span{
+	color: rebeccapurple;
+	text-decoration: underline;
+	cursor: pointer;
+	max-width: 4rem;
+}
+.setup-status img, .setup-status_img{
+	width: 35%;
 }
 
+.setup-status, .setup-status_img {
+	margin-bottom: 1rem;
+}
+
+.CardComponent-date {
+	position: absolute;
+	bottom: 0rem;
+	font-size: .7rem;
+	font-style: italic;
+}
 /* ///////////////////// */
 @media screen and (max-width: 500px) {
 
@@ -153,6 +163,20 @@ p {
 
 	.StatusDevices {
 		flex-wrap: wrap;
+	}
+
+	.CardComponent {
+		width: 28%;
+		margin-bottom: .5rem;
+	}
+
+
+	.CardComponent p>div {
+		font-size: .7rem;
+	}
+
+	.setup-status img, .setup-status_img{
+		width: 30%;
 	}
 
 }

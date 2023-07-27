@@ -23,6 +23,7 @@ import { SocketProvider } from "./contexts/SocketContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import CreateGarden from "./pages/Garden/Create";
 import RoadMap from "./pages/RoadMap";
+import Main from "./pages/Main";
 import '../src/pages/Responsive/responsive.css'
 
 const RouteMain = () => {
@@ -106,6 +107,7 @@ const App = () => {
               <DeviceContextProvider>
                 <div className="app">
                   <Routes>
+                    <Route path="/" element={<Main />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/*" element={<RouteMain />} />
                   </Routes>
