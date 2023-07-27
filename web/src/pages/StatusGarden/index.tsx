@@ -344,7 +344,7 @@ export default function StatusGardens() {
     setIsModalOpenSetup(true);
   };
 
-  const changeStatusDevice = (device: Device) => {
+  const changeStatusDevice = (device: Device, time:string) => {
     if (!gardenId) {
       return;
     }
@@ -352,6 +352,7 @@ export default function StatusGardens() {
     if (convertTypeDevice(device.type) === "actuator") {
       deviceApi.changeDeviceStatus(
         {
+          time: time,
           status: !device.valueDevice.status,
           ip: device.ip,
           deviceId: device.id,

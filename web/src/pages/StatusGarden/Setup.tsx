@@ -24,6 +24,7 @@ const Setup: React.FC<ISetup> = ({
 }) => {
   const messageContext = useContext(MessageContext);
   const success = messageContext?.success;
+  // const warning = messageContext?.warning
 
   const [data, setData] = useState();
   const formRef = React.useRef<FormInstance>(null);
@@ -41,30 +42,41 @@ const Setup: React.FC<ISetup> = ({
   const onFinish = async (values: any) => {
     let time: string[] = [];
     let duration: number[] = [];
+    let startAt: string[] = [];
+    let endAt: string[] = [];
     const todayStart = dayjs().startOf("day");
 
     if (values.device) {
       for (const item of values.device) {
+        // const check = (item.time).isAfter(item.duration)
+
         const timeItem = dayjs(item.time).format("HH:mm:ss");
         const newTime = dayjs(item.duration).diff(todayStart, "second");
+
+        const startAtItem = dayjs(item.time).format("HH:mm:ss");
+        const endAtItem = dayjs(item.duration).format("HH:mm:ss");
+
         time.push(timeItem);
         duration.push(newTime);
+
+        startAt.push(startAtItem)
+        endAt.push(endAtItem)
+        try {
+          const dto = {
+            id: setup?.id,
+            type: setup?.type,
+            time: time,
+            duration: duration,
+            startAt: startAt,
+            endAt: endAt,
+          };
+          const res = await deviceApi.updateDevice(dto);
+          if (res.success) {
+            success("Cập nhật thành công!!!");
+          }
+        } catch (error) { }
       }
     }
-    try {
-      const dto = {
-        id: setup?.id,
-        type: setup?.type,
-        time: time,
-        duration: duration,
-        startAt: "",
-        endAt: "",
-      };
-      const res = await deviceApi.updateDevice(dto);
-      if (res.success) {
-        success("Cập nhật thành công!!!");
-      }
-    } catch (error) {}
   };
 
   useEffect(() => {
@@ -129,7 +141,7 @@ const Setup: React.FC<ISetup> = ({
                     rules={[
                       { required: true, message: "Chọn khoảng thời gian" },
                     ]}
-                    label="Thời gian hoạt động"
+                    label="Thời gain kết thúc"
                   >
                     <TimePicker format={"HH:mm"} />
                   </Form.Item>
