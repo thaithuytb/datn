@@ -10,5 +10,6 @@ extern String timeStr;
 void initRealTime();
 bool isTimeUp();
 String getTime();
+String getShortTime();
 
 #endif

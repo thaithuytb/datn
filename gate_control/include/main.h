@@ -31,9 +31,9 @@
 #define sen_humi_IP "humi_sensor_1_1"
 #define sen_light_IP "light_sensor_1_1"
 
-#define sen_temp_air_thresh "TEMPAIRSENSOR"
-#define sen_humi_thresh "HUMISENSOR"
-#define sen_light_thresh "LIGHTSENSOR"
+#define sen_temp_air_thresh "TEMPERATURE_HUMIDITY_AIR_SENSOR"
+#define sen_humi_thresh "HUMIDITY_SENSOR"
+#define sen_light_thresh "LIGHT_SENSOR"
 
 extern bool controlMode;
 

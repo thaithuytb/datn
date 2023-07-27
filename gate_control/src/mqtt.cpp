@@ -7,8 +7,8 @@
 #include <ArduinoJson.h>
 #include <array>
 
-const char* ssid = "12345689\0";
-const char* password = "12345689\0";
+const char* ssid = "Azuby\0";
+const char* password = "desolator\0";
 
 // const char* ssid = "Tang 2\0";
 // const char* password = "long12345\0";
@@ -47,6 +47,8 @@ const char* mqtt_client_id = "Gateway";
 
 char secret[30] = "haithai";
 
+int limit = 5;
+
 CustomJWT jwt(secret, 256);
 
 WiFiClient espClient;
@@ -78,7 +80,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
 }
 
 void reconnect(String topic[]) {
-  
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     
@@ -100,6 +101,12 @@ void reconnect(String topic[]) {
       Serial.print("failed, rc=");
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
+      
+      limit = limit - 1;
+      if (limit < 0) {
+        digitalWrite(2, LOW);
+        return;
+      }
       
       delay(5000);
     }
@@ -124,8 +131,8 @@ void publish(String topic, String str) {
 }
 
 void initMQTT() {
-    setup_wifi();
-    client.setServer(mqtt_server, mqtt_port);
+  setup_wifi();
+  client.setServer(mqtt_server, mqtt_port);
 }
 
 void reconnectMQTTHandle(String topic[]) {

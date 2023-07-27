@@ -4,6 +4,7 @@
 #include <changeTopic.h>
 #include <regime.h>
 #include <threshold.h>
+#include <operator.h>
 
 String string = "";
 
@@ -14,6 +15,7 @@ String topics[] = {
   "actuator",
   "regime",
   "threshold",
+  "operator",
 };
 
 String trueTopics[] = {
@@ -21,11 +23,12 @@ String trueTopics[] = {
   "actuator",
   "regime",
   "threshold",
+  "operator",
 };
 
-int topicCount = 4;
+int topicCount = 5;
 
-bool controlMode = false;
+bool controlMode = true;
 
 bool isLoraBusy = false;
 
@@ -43,10 +46,16 @@ void generateTopics() {
 
 void setup() {
   Serial.begin(115200);
+
+  pinMode(2, OUTPUT);
+  digitalWrite(2, LOW);
+
   initButton();
   initRealTime();
   initMQTT();
   initLora();
+
+  digitalWrite(2, HIGH);
 }
 
 void loop() {
@@ -180,6 +189,13 @@ void mqttCallback(String topic, DynamicJsonDocument doc, DynamicJsonDocument doc
   // threshold
   if (topic == trueTopics[3]) {
     __threshold(topic, doc, docJWT);
+
+    return;
+  }
+
+    // operator
+  if (topic == trueTopics[4]) {
+    __operator(topic, doc, docJWT);
 
     return;
   }
