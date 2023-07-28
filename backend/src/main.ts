@@ -18,6 +18,6 @@ async function bootstrap() {
 
   const socketGateway = app.get(SocketGateway);
   const notificationService = app.get(NotificationService);
-  // await subscribeMqtt(socketGateway, notificationService);
+  await subscribeMqtt(socketGateway, notificationService);
 }
 bootstrap();

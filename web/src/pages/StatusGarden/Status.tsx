@@ -34,16 +34,25 @@ const ModalConfirm: React.FC<PropsModalConfirm> = ({
   device,
 }) => {
   const [times, setTimes] = useState<{ date: string; time: string }>({
-    date: dayjs().format("DD-MM-YYYY"),
-    time: '"99:99"',
+    date: "",
+    time: "",
   });
 
-  console.log(device.valueDevice.status);
-
   const handleOk = async () => {
-    const time = `${times.date}_${times.time}`;
+    const { date, time } = times;
+    let timeInput = "99";
+    if (date && time) {
+      timeInput = `${date} ${time}`;
+    }
+    if (date && !time) {
+      timeInput = `${date} ${dayjs().format("HH:ss")}`;
+    }
+    if (!date && time) {
+      timeInput = `${dayjs().format("DD-M")} ${time}`;
+    }
     try {
-      await changeStatusDevice(device, time);
+      await changeStatusDevice(device, timeInput);
+      setIsModalOpen(false);
     } catch (error) {}
   };
 
@@ -82,7 +91,7 @@ const ModalConfirm: React.FC<PropsModalConfirm> = ({
             Date
             <DatePicker
               defaultValue={dayjs(dayjs(), "DD-MM-YYYY")}
-              format={"DD-MM-YYYY"}
+              format={"DD-M"}
               onChange={changeDate}
             />
           </div>
@@ -100,7 +109,7 @@ const ModalConfirm: React.FC<PropsModalConfirm> = ({
   );
 };
 
-const converIcon = (
+const convertIcon = (
   device: Device,
   showModalSetup: (record: Device) => void,
   setIsModalOpen: (isModalOpen: boolean) => void,
@@ -221,13 +230,13 @@ const StatusDevices: React.FC<PropsStatusDevices> = ({
       {devices.map((device: any, index: number) => {
         return (
           <div className="CardComponent" key={index}>
-            {converIcon(device, showModalSetup, setIsModalOpen, setData)}
+            {convertIcon(device, showModalSetup, setIsModalOpen, setData)}
             <div style={{ marginBottom: "1rem" }}>
               {convertNameToShow(device)}
               {/* {getMeasuredAndStatusDevice(device.valueDevice, device.type)} */}
             </div>
             <p className="CardComponent-date">
-              {dayjs(device.updatedAt).format("HH:mm DD-MM-YYYY")}
+              {dayjs(device.createdAt).format("HH:mm DD-MM-YYYY")}
             </p>
           </div>
         );
