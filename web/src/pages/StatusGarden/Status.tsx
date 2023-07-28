@@ -222,7 +222,7 @@ const convertNameToShow = (device: Device) => {
       return (
         <>
           <div>Độ ẩm {device.valueDevice.humidityAir.toFixed(2)} % </div>
-          <div>Nhiệt độ {device.valueDevice.temperature.toFixed(2)} °C </div>
+          <div>Nhiệt độ {device.valueDevice.temperature.toFixed(1)}°C </div>
         </>
       );
     default:
