@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Menu, Modal } from "antd";
 import { CloseOutlined, ExclamationCircleFilled } from "@ant-design/icons";
-import { Link, useNavigate } from "react-router-dom";
-import { MenuItem, listSidebarInit } from "./routeSidebar";
+import { useNavigate } from "react-router-dom";
+import { MenuItem, listSidebarInit, } from "./routeSidebar";
+import { routesUser } from "./routeUser";
+import { routesViewer } from "./routeViewer";
 import { AuthContext } from "../../contexts/AuthContext";
 import { Squash as Hamburger } from 'hamburger-react'
 const { confirm } = Modal;
@@ -10,18 +12,21 @@ const { confirm } = Modal;
 export default function SidebarLayout() {
   const close: any = useRef()
   const authContext = useContext(AuthContext);
+
+  const list = authContext?.authInformation?.user?.role === "ADMIN" ? listSidebarInit :
+  authContext?.authInformation?.user?.role === "USER" ? routesUser : routesViewer
+
   const [isOpenHeader, setOpenHeader] = useState<boolean>(false);
-  const items: any = listSidebarInit.map((item: MenuItem) => {
+  const items: any = list.map((item: MenuItem) => {
     return {
       key: item.key,
-      // label: item.titleSidebar,
-      label: <Link to={`/${item.url}`}>{item.titleSidebar}</Link>,
+      label: item.titleSidebar,
       children:
         item.children &&
         item.children.map((childrenItem) => {
           return {
             key: childrenItem.key,
-            label: <Link to={`/${childrenItem.url}`}>{childrenItem.titleSidebar}</Link>,
+            label: childrenItem.titleSidebar,
           };
         }),
     };
@@ -41,7 +46,7 @@ export default function SidebarLayout() {
       closeIcon: <CloseOutlined />,
       cancelText: "Ở lại",
       onOk() {
-        navigate("/login");
+        navigate("/");
         authContext?.logout();
       },
       onCancel() { },
@@ -69,7 +74,7 @@ export default function SidebarLayout() {
     }
 
     if (itemActive.length) {
-      if (itemActive[0].url === "#") {
+      if (itemActive[0].url === "logout") {
         logout();
       } else {
         navigate(`${itemActive[0].url}`);

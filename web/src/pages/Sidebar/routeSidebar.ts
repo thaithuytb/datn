@@ -49,6 +49,6 @@ export const listSidebarInit: MenuItem[] = [
   {
     titleSidebar: "Đăng xuất",
     key: "logout",
-    url: "#",
+    url: "logout",
   },
 ];
