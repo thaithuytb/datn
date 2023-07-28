@@ -142,15 +142,18 @@ export async function subscribeMqtt(
       }
       await updateStatusGarden(prisma, parseMessage);
       if (typeof parseMessage['createdBy'] != 'number') {
-        return console.log(`${parseMessage['createdBy']} is not number`);
+        parseMessage['createdBy'] = 0;
+        // return console.log(`${parseMessage['createdBy']} is not number`);
       }
       const newNotification = await notificationService.createNotifications({
         title: `Thay đổi trạng thái khu vườn`,
-        description: `Thay đổi trạng thái khu vườn ${dayjs().format(
-          'YYYY-MM-DD',
-        )}`,
+        description: `${
+          parseMessage['createdBy'] ? 'Người dùng' : 'Hệ thống:'
+        } vừa thay đổi chế độ chăm sóc sang ${
+          parseMessage['isAuto'] ? 'tự động' : 'tự điều chỉnh'
+        }  ${dayjs().format('YYYY-MM-DD')}`,
         type: NotificationType.GARDEN,
-        createdBy: parseMessage['createdBy'],
+        createdBy: parseMessage['createdBy'] ? parseMessage['createdBy'] : 1,
         // createdBy: 1,
         gardenId: parseMessage['gardenId'],
       });

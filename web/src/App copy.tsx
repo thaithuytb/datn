@@ -35,6 +35,7 @@ const RouteMain = () => {
         <SidebarLayout />
         <div className="content">
           <Routes>
+          <Route path="/" element={<Main />} />
             <Route element={<ProtectedMain />}>
               <Route path="/home" element={<Home />} />
               <Route>
@@ -89,7 +90,6 @@ const RouteMain = () => {
               />
               <Route path="/*" element={<NotFound />} />
             </Route>
-            <Route path="/" element={<Main />} />
             <Route path="/road-map" element={<RoadMap />} />
           </Routes>
         </div>

@@ -87,14 +87,15 @@ const ShowModal: React.FC<IShowModal> = ({
   const timeFormat = "HH:mm";
   const currentDate = dayjs();
   const [timeRemaining, setTimeRemaining] = useState<string>("00:00");
-  const [date, setDate] = useState<string>(currentDate.format(dateFormat));
-  const [time, setTime] = useState<string>(currentDate.format(timeFormat));
+  const [date, setDate] = useState<string>("");
+  const [time, setTime] = useState<string>("");
   //hàm thay đổi chế độ
   const handleOk = async () => {
     const isAuto = garden && !garden.isAuto;
-    if (!date || !time) {
-      console.log("check time");
-    } else {
+
+    let timeInput = "99";
+
+    if (date && time) {
       const [hours, minute] = time.split(":");
       const [year, month, day] = date.split("-");
 
@@ -106,21 +107,30 @@ const ShowModal: React.FC<IShowModal> = ({
       const formatHours = parseInt(hours, 10).toString();
       const formatMinute = parseInt(minute, 10).toString();
       const formattedTime = `${formatHours}:${formatMinute}`;
-
-      const dto = {
-        id: `${gardenId}`,
-        body: {
-          isAuto,
-          time: `${formattedDate} ${formattedTime}`,
-        },
-      };
-      try {
-        const gardenApi = GardenApi.registerAuthApi();
-        await gardenApi.changeStatusGarden(dto);
-        setIsModalOpen(false);
-        setTimeRemaining("00:00");
-      } catch (error) { }
+      timeInput = `${formattedDate} ${formattedTime}`;
     }
+    if (date && !time) {
+      timeInput = `${date} ${dayjs().format("HH:ss")}`;
+    }
+    if (!date && time) {
+      timeInput = `${dayjs().format("DD-M")} ${time}`;
+    }
+
+    console.log(timeInput);
+
+    const dto = {
+      id: `${gardenId}`,
+      body: {
+        isAuto,
+        time: timeInput,
+      },
+    };
+    try {
+      const gardenApi = GardenApi.registerAuthApi();
+      await gardenApi.changeStatusGarden(dto);
+      setIsModalOpen(false);
+      setTimeRemaining("00:00");
+    } catch (error) {}
   };
   const handleCancel = () => {
     setTimeRemaining("00:00");
@@ -256,7 +266,7 @@ export default function StatusGardens() {
 
   useEffect(() => {
     socket.on("newStatus", (data: any) => {
-      console.log(data)
+      console.log(data);
       setMessage(data);
       messageContext?.success("Cập nhập trạng thái mới thành công !!!");
     });
@@ -275,7 +285,11 @@ export default function StatusGardens() {
           })
         );
       }
-      messageContext?.success("Cập nhập trạng thái mới thành công !!!");
+      messageContext?.success(
+        `Chế độ chăm sóc vừa chuyển sang ${
+          data?.isAuto ? "tự động" : "tự điều chỉnh"
+        } !!!`
+      );
     });
     socket.on("newCountNotification", (data: any) => {
       if (data) {
@@ -344,7 +358,7 @@ export default function StatusGardens() {
     setIsModalOpenSetup(true);
   };
 
-  const changeStatusDevice = (device: Device, time:string) => {
+  const changeStatusDevice = (device: Device, time: string) => {
     if (!gardenId) {
       return;
     }
@@ -385,6 +399,7 @@ export default function StatusGardens() {
         if (device.ip === message.ip) {
           return {
             ...device,
+            createdAt: dayjs(),
             valueDevice: message,
           };
         }

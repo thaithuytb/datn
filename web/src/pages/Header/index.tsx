@@ -1,7 +1,7 @@
 import React, { useContext, useMemo, useState } from "react";
 import "./index.css";
 import { Badge, Button, Divider, Dropdown, Space, Switch, theme } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BellFilled } from "@ant-design/icons";
 import { Header } from "antd/es/layout/layout";
 import type { MenuProps } from "antd";
@@ -96,6 +96,11 @@ export default function HeaderLayout() {
   const [page, setPage] = useState<number>(1);
 
   const name = authContext?.authInformation?.user?.fullName || "user";
+  const isAuthenticated = authContext?.authInformation.isAuthenticated
+  const navigate = useNavigate()
+  const openLogin= () => {
+    navigate('/login')
+  }
 
   const { token } = useToken();
   const contentStyle = {
@@ -139,7 +144,7 @@ export default function HeaderLayout() {
           ]);
         }
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const showNotification = async (open: boolean) => {
@@ -168,7 +173,7 @@ export default function HeaderLayout() {
       if (
         event.target.scrollTop > scrollTop &&
         event.target.offsetHeight + event.target.scrollTop >
-          event.target.scrollHeight
+        event.target.scrollHeight
       ) {
         throttle();
         setPage(page + 1);
@@ -190,115 +195,122 @@ export default function HeaderLayout() {
         <h2>Đại học Bách Khoa Hà Nội</h2>
       </div>
 
-      <div className="header_right">
-        <h3>Xin chào {name}</h3>
+      {!isAuthenticated ?
+        <div onClick={openLogin}>login</div>
+        :
+        <div className="header_right">
+          <h3>Xin chào {name}</h3>
 
-        <div>
-          <Dropdown
-            onOpenChange={showNotification}
-            overlayClassName="custom-dropdown"
-            trigger={["click"]}
-            menu={{ items }}
-            // getPopupContainer={}
-            dropdownRender={(menu) => (
-              <div style={contentStyle} id="Dropdown_before">
-                <h3 style={{ margin: "0", padding: 8 }}>Thông báo</h3>
-                <Space style={{ padding: 8 }}>
-                  <button
-                    onClick={() => getNotificationByType("")}
-                    className="slectNotification"
+          <div>
+            <Dropdown
+              onOpenChange={showNotification}
+              overlayClassName="custom-dropdown"
+              trigger={["click"]}
+              menu={{ items }}
+              // getPopupContainer={}
+              dropdownRender={(menu) => (
+                <div style={contentStyle} id="Dropdown_before">
+                  <h3 style={{ margin: "0", padding: 8 }}>Thông báo</h3>
+                  <Space style={{ padding: 8 }}>
+                    <button
+                      onClick={() => getNotificationByType("")}
+                      className="slectNotification"
+                      style={{
+                        backgroundColor:
+                          typeNotification === "" ? colorHeader : "",
+                        color: typeNotification === "GARDEN" ? "white" : "",
+                      }}
+                    >
+                      Tất cả
+                    </button>
+                    <button
+                      onClick={() => getNotificationByType("GARDEN")}
+                      className="slectNotification"
+                      style={{
+                        backgroundColor:
+                          typeNotification === "GARDEN" ? colorHeader : "",
+                        color: typeNotification === "GARDEN" ? "white" : "",
+                      }}
+                    >
+                      GARDEN
+                    </button>
+                    <button
+                      onClick={() => getNotificationByType("DEVICE")}
+                      className="slectNotification"
+                      style={{
+                        backgroundColor:
+                          typeNotification === "DEVICE" ? colorHeader : "",
+                        color: typeNotification === "DEVICE" ? "white" : "",
+                      }}
+                    >
+                      DEVICE
+                    </button>
+                    <button
+                      onClick={() => getNotificationByType("OTHER")}
+                      className="slectNotification"
+                      style={{
+                        backgroundColor:
+                          typeNotification === "OTHER" ? colorHeader : "",
+                        color: typeNotification === "OTHER" ? "white" : "",
+                      }}
+                    >
+                      OTHER
+                    </button>
+                  </Space>
+                  <Divider style={{ margin: 0 }} />
+                  {React.cloneElement(menu as React.ReactElement, {
+                    style: menuStyle,
+                  })}
+                </div>
+              )}
+            >
+              <Space size="middle">
+                <Badge count={count}>
+                  <BellFilled style={{ fontSize: 20 }} />
+                </Badge>
+              </Space>
+            </Dropdown>
+          </div>
+
+          <div>
+            <Dropdown
+              overlayClassName="custom-dropdownPrivate"
+              trigger={["click"]}
+              menu={{ items: items2 }}
+              dropdownRender={(menu) => (
+                <div style={contentStyle}>
+                  {React.cloneElement(menu as React.ReactElement, {
+                    style: menuStyle,
+                  })}
+                  <Divider style={{ margin: 0 }} />
+                  <Space
                     style={{
-                      backgroundColor:
-                        typeNotification === "" ? colorHeader : "",
-                      color: typeNotification === "GARDEN" ? "white" : "",
+                      padding: 8,
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
                     }}
                   >
-                    Tất cả
-                  </button>
-                  <button
-                    onClick={() => getNotificationByType("GARDEN")}
-                    className="slectNotification"
-                    style={{
-                      backgroundColor:
-                        typeNotification === "GARDEN" ? colorHeader : "",
-                      color: typeNotification === "GARDEN" ? "white" : "",
-                    }}
-                  >
-                    GARDEN
-                  </button>
-                  <button
-                    onClick={() => getNotificationByType("DEVICE")}
-                    className="slectNotification"
-                    style={{
-                      backgroundColor:
-                        typeNotification === "DEVICE" ? colorHeader : "",
-                      color: typeNotification === "DEVICE" ? "white" : "",
-                    }}
-                  >
-                    DEVICE
-                  </button>
-                  <button
-                    onClick={() => getNotificationByType("OTHER")}
-                    className="slectNotification"
-                    style={{
-                      backgroundColor:
-                        typeNotification === "OTHER" ? colorHeader : "",
-                      color: typeNotification === "OTHER" ? "white" : "",
-                    }}
-                  >
-                    OTHER
-                  </button>
-                </Space>
-                <Divider style={{ margin: 0 }} />
-                {React.cloneElement(menu as React.ReactElement, {
-                  style: menuStyle,
-                })}
-              </div>
-            )}
-          >
-            <Space size="middle">
-              <Badge count={count}>
-                <BellFilled style={{ fontSize: 20 }} />
-              </Badge>
-            </Space>
-          </Dropdown>
+                    <div>Màn hình sáng</div>
+                    <Switch defaultChecked onChange={() => <></>} />
+                  </Space>
+                  <Divider style={{ margin: 0 }} />
+                  <Space style={{ padding: 8 }}>
+                    <Button>Đăng Xuất</Button>
+                  </Space>
+                </div>
+              )}
+            >
+              <Space size="middle">
+                <Avatar />
+              </Space>
+            </Dropdown>
+          </div>
         </div>
 
-        <div>
-          <Dropdown
-            overlayClassName="custom-dropdownPrivate"
-            trigger={["click"]}
-            menu={{ items: items2 }}
-            dropdownRender={(menu) => (
-              <div style={contentStyle}>
-                {React.cloneElement(menu as React.ReactElement, {
-                  style: menuStyle,
-                })}
-                <Divider style={{ margin: 0 }} />
-                <Space
-                  style={{
-                    padding: 8,
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <div>Màn hình sáng</div>
-                  <Switch defaultChecked onChange={() => <></>} />
-                </Space>
-                <Divider style={{ margin: 0 }} />
-                <Space style={{ padding: 8 }}>
-                  <Button>Đăng Xuất</Button>
-                </Space>
-              </div>
-            )}
-          >
-            <Space size="middle">
-              <Avatar />
-            </Space>
-          </Dropdown>
-        </div>
-      </div>
+      }
+
+
     </Header>
   );
 }
