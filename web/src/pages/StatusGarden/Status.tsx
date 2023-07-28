@@ -20,6 +20,20 @@ interface PropsStatusDevices {
   showModalSetup: (record: Device) => void;
 }
 
+//can refactor
+export const convertActuatorTypeToVN = (type: string) => {
+  if (type === "FAN") {
+    return "quạt";
+  }
+  if (type === "PUMP") {
+    return "bơm";
+  }
+  if (type === "LAMP") {
+    return "đèn";
+  }
+  return "";
+};
+
 interface PropsModalConfirm {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
@@ -70,9 +84,9 @@ const ModalConfirm: React.FC<PropsModalConfirm> = ({
 
   return (
     <Modal
-      title={`Ban co muon ${
-        device.valueDevice.status ? "tat" : "bat"
-      } trang thai thiet bi`}
+      title={`Xác nhận ${
+        device.valueDevice.status ? "tắt" : "bật"
+      } ${convertActuatorTypeToVN(device.type)}`}
       // width={650}
       open={isModalOpen}
       onCancel={handleCancel}
@@ -86,24 +100,24 @@ const ModalConfirm: React.FC<PropsModalConfirm> = ({
       ]}
     >
       {device.valueDevice.status ? null : (
-        <>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
           <div>
-            Date
+            Ngày{" "}
             <DatePicker
               defaultValue={dayjs(dayjs(), "DD-MM-YYYY")}
               format={"DD-M"}
               onChange={changeDate}
             />
           </div>
-          <div style={{ margin: "0 1rem" }}>
-            Time
+          <div>
+            Giờ{" "}
             <TimePicker
               defaultValue={dayjs(dayjs(dayjs(), "HH:mm"))}
               format={"HH:mm"}
               onChange={changeTime}
             />
           </div>
-        </>
+        </div>
       )}
     </Modal>
   );
