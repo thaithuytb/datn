@@ -254,7 +254,7 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
             const low = JSON.parse(threshold.lowThreshold.toString())[0];
             const hight = JSON.parse(threshold.highThreshold.toString())[0];
             return (
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div className="threshold-update_action">
                 <div className="threshold-children">
                   <span>0</span>
                   <div>
@@ -284,7 +284,7 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
             const low = JSON.parse(threshold.lowThreshold.toString())[0];
             const hight = JSON.parse(threshold.highThreshold.toString())[0];
             return (
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div className="threshold-update_action">
                 <div className="threshold-children">
                   <span>0</span>
                   <div>
@@ -316,14 +316,8 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
             const lowHumi = JSON.parse(threshold.lowThreshold.toString())[1];
             const hightHumi = JSON.parse(threshold.highThreshold.toString())[1];
             return (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <div>
+              <div className="threshold-update_action">
+                <div className="threshold-children2">
                   <div className="threshold-children">
                     {/* <span style={{ paddingRight: 13 }}>Nhiệt độ:</span> */}
                     <span> 0</span>
