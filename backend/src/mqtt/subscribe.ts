@@ -215,7 +215,7 @@ export async function subscribeMqtt(
       // check topic here
       switch (topic.slice(15)) {
         case '/sensor': {
-          // socketGateway.server.emit('newStatus', parseMessage);
+          socketGateway.server.emit('newStatus', parseMessage);
           if (device.type === DeviceTypeEnum.TEMPERATURE_HUMIDITY_AIR_SENSOR) {
             return console.log({ sensor: parseMessage });
             // return prisma[convertData[device.type]].create({
@@ -244,17 +244,18 @@ export async function subscribeMqtt(
             'newStatus',
             parseMessage,
           );
-          return prisma.actuatorData.create({
-            data: {
-              status: parseMessage['status'],
-              gardenId: device.gardenId,
-              device: {
-                connect: {
-                  id: deviceId,
-                },
-              },
-            },
-          });
+          return true;
+          // return prisma.actuatorData.create({
+          //   data: {
+          //     status: parseMessage['status'],
+          //     gardenId: device.gardenId,
+          //     device: {
+          //       connect: {
+          //         id: deviceId,
+          //       },
+          //     },
+          //   },
+          // });
         }
         default: {
           console.log('topic', topic);
