@@ -29,14 +29,14 @@ export class NotificationController {
   async getNotifications(
     @Req() req: any,
     @Query('type', OptionalNotificationTypePipe) type: NotificationType,
-    @Query('seen', ParseBoolPipe) seen?: boolean,
+    @Query('seen', OptionalParseIntPipe) seen?: number,
     @Query('page', new OptionalParseIntPipe()) page?: number,
     @Query('limit', new OptionalParseIntPipe()) limit?: number,
   ): Promise<NotificationDetailType> {
     return this.notificationService.getNotifications({
       userId: req.user.id,
       notificationType: type,
-      seen,
+      seen: seen === undefined ? undefined : seen ? true : false,
       page: page || 1,
       limit: limit || 10,
     });

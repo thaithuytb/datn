@@ -86,7 +86,7 @@ const items2: MenuProps["items"] = [
 const { useToken } = theme;
 
 export default function HeaderLayout() {
-  const [typeNotification, setTypeNotification] = useState<string>("");
+  const [typeNotification, setTypeNotification] = useState<string | undefined>(undefined);
   const authContext = useContext(AuthContext);
   const notificationContext = useContext(NotificationContext);
   const notifications = notificationContext?.notifications;
@@ -124,12 +124,14 @@ export default function HeaderLayout() {
     };
   });
 
-  const getNotificationByType = async (type: string) => {
+  const getNotificationByType = async (type?: string) => {
     setTypeNotification(type);
     try {
-      const dto = {
+      const dto = type ? {
         type: type,
-        seen: false,
+        page: page,
+        limit: 10,
+      }: {
         page: page,
         limit: 10,
       };
@@ -217,8 +219,8 @@ export default function HeaderLayout() {
                       className="slectNotification"
                       style={{
                         backgroundColor:
-                          typeNotification === "" ? colorHeader : "",
-                        color: typeNotification === "GARDEN" ? "white" : "",
+                          typeNotification === undefined ? colorHeader : "",
+                        color: typeNotification === undefined ? "white" : "",
                       }}
                     >
                       Tất cả

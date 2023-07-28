@@ -1,3 +1,4 @@
+import queryString from "query-string";
 import axiosClient from "./axiosClient";
 
 export interface ApiResponse {
@@ -14,12 +15,12 @@ class NotificationApi {
     }
 
     getNotification(dto: {
-        type: string,
+        type?: string,
         seen?: boolean,
         page?: number,
         limit?: number
     }) {
-        const url = `/notifications?type=${dto.type}&seen=${dto.seen}&page=${dto.page}&limit=${dto.limit}`
+        const url = `/notifications?${queryString.stringify({ ...dto})}`
         return axiosClient.get(url)  as unknown as ApiResponse;
     }
 

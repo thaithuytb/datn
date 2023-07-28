@@ -100,6 +100,8 @@ const Setup: React.FC<ISetup> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  console.log(data)
+
   if (data) {
     formRef.current?.setFieldsValue(initialValues);
   }
