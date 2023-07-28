@@ -7,9 +7,11 @@ import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { MessageContext } from "../../contexts/MessageContext";
 import { Device } from "../../types/device.type";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
+dayjs.extend(customParseFormat);
 
 interface ISetup {
   isModalOpenSetup: boolean;
@@ -26,7 +28,7 @@ const Setup: React.FC<ISetup> = ({
   const success = messageContext?.success;
   // const warning = messageContext?.warning
 
-  const [data, setData] = useState();
+  const [data, setData] = useState<any>();
   const formRef = React.useRef<FormInstance>(null);
 
   let initialValues = {
@@ -40,42 +42,22 @@ const Setup: React.FC<ISetup> = ({
   };
 
   const onFinish = async (values: any) => {
-    let time: string[] = [];
-    let duration: number[] = [];
-    let startAt: string[] = [];
-    let endAt: string[] = [];
-    const todayStart = dayjs().startOf("day");
-
     if (values.device) {
-      for (const item of values.device) {
-        // const check = (item.time).isAfter(item.duration)
-
-        const timeItem = dayjs(item.time).format("HH:mm:ss");
-        const newTime = dayjs(item.duration).diff(todayStart, "second");
-
-        const startAtItem = dayjs(item.time).format("HH:mm:ss");
-        const endAtItem = dayjs(item.duration).format("HH:mm:ss");
-
-        time.push(timeItem);
-        duration.push(newTime);
-
-        startAt.push(startAtItem)
-        endAt.push(endAtItem)
-        try {
-          const dto = {
-            id: setup?.id,
-            type: setup?.type,
-            time: time,
-            duration: duration,
-            startAt: startAt,
-            endAt: endAt,
-          };
-          const res = await deviceApi.updateDevice(dto);
-          if (res.success) {
-            success("Cập nhật thành công!!!");
-          }
-        } catch (error) { }
-      }
+      const startAt = dayjs(values.device[0].startAt).format("HH:mm:ss");
+      const endAt = dayjs(values.device[0].endAt).format("HH:mm:ss");
+      const dto = {
+        id: setup?.id,
+        type: setup?.type,
+        startAt: startAt,
+        endAt: endAt,
+      };
+      try {
+        const res = await deviceApi.updateDevice(dto);
+        if (res.success) {
+          setIsModalOpenSetup(false);
+          success("Cập nhật thành công!!!");
+        }
+      } catch (error) {}
     }
   };
 
@@ -84,16 +66,15 @@ const Setup: React.FC<ISetup> = ({
       if (setup) {
         const res = await deviceApi.getDeviceById({ id: setup.id });
         if (res) {
-          const time = JSON.parse((res.data.time as string).replace(/'/g, '"'));
-          const duration = JSON.parse(res.data.duration);
+          const startAt = res.data.startAt;
+          const endAt = res.data.endAt;
 
-          const devive = duration.map((item: any, index: number) => {
-            return {
-              time: dayjs(`01/01/2023 ${time[index]}`, { format: "HH:mm:ss" }),
-              duration: dayjs().startOf("day").add(duration[index], "second"),
-            };
-          });
-          setData(devive);
+          setData([
+            {
+              startAt: dayjs(`01/01/2023 ${startAt}`, { format: "HH:mm:ss" }),
+              endAt: dayjs(`01/01/2023 ${endAt}`, { format: "HH:mm:ss" }),
+            },
+          ]);
         }
       }
     })();
@@ -105,6 +86,9 @@ const Setup: React.FC<ISetup> = ({
   if (data) {
     formRef.current?.setFieldsValue(initialValues);
   }
+
+  console.log(formRef);
+  console.log(data);
 
   return (
     <Modal
@@ -124,45 +108,49 @@ const Setup: React.FC<ISetup> = ({
         style={{ maxWidth: 600 }}
         ref={formRef}
       >
-        <Form.List name="device">
-          {(fields, { add, remove }) => (
-            <>
-              {fields.map(({ key, name, ...restField }) => (
-                <Space key={key} style={{ display: "flex" }} align="baseline">
-                  <Form.Item
-                    {...restField}
-                    name={[name, "time"]}
-                    rules={[{ required: true, message: "Chọn thời gian" }]}
-                    label="Thời gian bắt đầu"
+        {!data ? (
+          <></>
+        ) : (
+          <Form.List name="device">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, ...restField }) => (
+                  <Space key={key} style={{ display: "flex" }} align="baseline">
+                    <Form.Item
+                      // {...restField}
+                      name={[name, "startAt"]}
+                      rules={[{ required: true, message: "Chọn thời gian" }]}
+                      label="Thời gian bắt đầu"
+                    >
+                      <TimePicker format={"HH:mm"} />
+                    </Form.Item>
+                    <Form.Item
+                      // {...restField}
+                      name={[name, "endAt"]}
+                      rules={[
+                        { required: true, message: "Chọn khoảng thời gian" },
+                      ]}
+                      label="Thời gain kết thúc"
+                    >
+                      <TimePicker format={"HH:mm"} />
+                    </Form.Item>
+                    <MinusCircleOutlined onClick={() => remove(name)} />
+                  </Space>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
                   >
-                    <TimePicker format={"HH:mm"} />
-                  </Form.Item>
-                  <Form.Item
-                    {...restField}
-                    name={[name, "duration"]}
-                    rules={[
-                      { required: true, message: "Chọn khoảng thời gian" },
-                    ]}
-                    label="Thời gain kết thúc"
-                  >
-                    <TimePicker format={"HH:mm"} />
-                  </Form.Item>
-                  <MinusCircleOutlined onClick={() => remove(name)} />
-                </Space>
-              ))}
-              <Form.Item>
-                <Button
-                  type="dashed"
-                  onClick={() => add()}
-                  block
-                  icon={<PlusOutlined />}
-                >
-                  Thêm
-                </Button>
-              </Form.Item>
-            </>
-          )}
-        </Form.List>
+                    Thêm
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
+        )}
         <Form.Item>
           <Button type="primary" htmlType="submit">
             Cập nhật
