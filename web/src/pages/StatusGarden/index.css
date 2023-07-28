@@ -60,12 +60,21 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	min-width: 70%;
+}
+.threshold-children2 {
+	min-width: 70%;
 }
 
 .threshold-children div {
-	width: 100px;
+	width: 6rem;
 }
 
+.threshold-update_action {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
 .StatusDevices {
 	display: flex;
 	justify-content: space-between;
@@ -177,6 +186,10 @@ p {
 
 	.setup-status img, .setup-status_img{
 		width: 30%;
+	}
+
+	.threshold-update_action {
+		display: block;
 	}
 
 }

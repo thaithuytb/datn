@@ -140,8 +140,14 @@ const ShowModal: React.FC<IShowModal> = ({
   //hàm tính thời gian được chọn trừ đi thời gian hiện tại
   const duration = () => {
     const startTime = dayjs(`${currentDate.format("YYYY-MM-DD HH:mm")}`);
-    const endTime = dayjs(`${date} ${time}`);
-
+    let endTime = dayjs(`${currentDate.format("YYYY-MM-DD HH:mm")}`);
+    if(date && time) {
+      endTime = dayjs(`${date} ${time}`);
+    } else if(date && !time) {
+      endTime = dayjs(`${date} ${dayjs().format("HH:mm")}`);
+    }else if(!date && time) {
+      endTime = dayjs(`${dayjs().format("YYYY-MM-DD")} ${time}`);
+    }
     const newTime = endTime.diff(startTime, "minute");
     const hours = Math.floor(newTime / 60);
     const minutes = newTime % 60;
@@ -150,7 +156,9 @@ const ShowModal: React.FC<IShowModal> = ({
   };
 
   useEffect(() => {
-    setTimeRemaining(duration());
+    if(date || time) {
+      setTimeRemaining(duration());
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time, date]);
 
@@ -160,6 +168,9 @@ const ShowModal: React.FC<IShowModal> = ({
   const changeTime = (time: any, timeString: string) => {
     setTime(timeString);
   };
+
+  console.log(date, time)
+  console.log(timeRemaining)
 
   return (
     <Modal
