@@ -7,7 +7,9 @@
 #define LIGHT_PIN 26
 #define HUMI_PIN 27
 
-int _time = -10000;
+#define INTERVAL_TIME 20000
+
+int _time = -INTERVAL_TIME;
 
 bool isLoraBusy = false;
 
@@ -47,7 +49,7 @@ void loop() {
     loraRead();
   }
 
-  if (millis() - _time > 10000) {
+  if (millis() - _time > INTERVAL_TIME) {
     float temp = meansureTemp();
     float air = meansureAir();
     float humi = meansureHumi(HUMI_PIN);

@@ -1,59 +1,31 @@
-#include "button.h"
+#include "main.h"
 
 void enterButton14() {
     Serial.print(1);
-    lampOn(LAMP_PIN, lamp ? 0 : 1);
+    lampOn(LAMP_PIN, lamp == 1 ? 0 : 1);
+    lampLimit = lamp == 0 ? "99:9" : "00:0";
     delay(200);
-
-    String json = "{ \"ip\": \"" + String(LAMP_IP) + "\", \"status\": " + (lamp ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + 1 + "}";
-    mqttSend(trueTopics[1], json);
-    Serial.println(json); 
-    Serial.println(trueTopics[1]); 
-
-    Serial.print("lamp: ");
-    Serial.println(lamp);
 }
 
 void enterButton12() {
     Serial.print(2);
-    pumpStrength(PUMP_PIN, pump ? 0 : 1);
+    pumpStrength(PUMP_PIN, pump == 1 ? 0 : 1);
+    pumpLimit = pump == 0 ? "99:9" : "00:0";
     delay(200);
-
-    String json = "{ \"ip\": \"" + String(PUMP_IP) + "\", \"status\": " + (pump ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + 1 + "}";
-    mqttSend(trueTopics[1], json);
-    Serial.println(json); 
-    Serial.println(trueTopics[1]); 
-
-    Serial.print("pump: ");
-    Serial.println(pump);
 }
 
 void enterButton13() {
     Serial.print(3);
-    curtainOpen(CURTAIN_PIN, curtain ? 0 : 1);
+    curtainOpen(CURTAIN_PIN, curtain == 1 ? 0 : 1);
+    curtainLimit = curtain == 0 ? "99:9" : "00:0";
     delay(200);
-
-    String json = "{ \"ip\": \"" + String(CURTAIN_IP) + "\", \"status\": " + (curtain ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + 1 + "}";
-    mqttSend(trueTopics[1], json);
-    Serial.println(json); 
-    Serial.println(trueTopics[1]); 
-
-    Serial.print("curtain: ");
-    Serial.println(curtain);
 }
 
 void enterButton15() {
     Serial.print(4);
-    fanSpeed(FAN_PIN, fan ? 0 : 1);
+    fanSpeed(FAN_PIN, fan == 1 ? 0 : 1);
+    fanLimit = fan == 0 ? "99:9" : "00:0";
     delay(200);
-
-    String json = "{ \"ip\": \"" + String(FAN_IP) + "\", \"status\": " + (fan ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + 1 + "}";
-    mqttSend(trueTopics[1], json);
-    Serial.println(json); 
-    Serial.println(trueTopics[1]); 
-
-    Serial.print("fan: ");
-    Serial.println(fan);
 }
 
 void initButton() {

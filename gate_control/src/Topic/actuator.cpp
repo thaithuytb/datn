@@ -1,4 +1,5 @@
 #include <actuator.h>
+#include <changeTopic.h>
 
 void __actuator(String topic, DynamicJsonDocument doc, DynamicJsonDocument docJWT) {
   // actuator
@@ -12,12 +13,15 @@ void __actuator(String topic, DynamicJsonDocument doc, DynamicJsonDocument docJW
   bool status = doc["status"].as<bool>();
   String device = doc["ip"].as<String>();
   int create = doc["createdBy"].as<int>();
+  String endTime = doc["time"].as<String>();
 
   if (device == FAN_IP) {
     bool status = doc["status"].as<bool>();
     fanSpeed(FAN_PIN, status ? 1 : 0);
 
-    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (status ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + "}";
+    fanLimit = endTime;
+
+    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (status ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + ", \"time\": \"" + endTime + "\"}";
     if(!first) {
       mqttSend(topic, json);
       Serial.println(json); 
@@ -31,7 +35,9 @@ void __actuator(String topic, DynamicJsonDocument doc, DynamicJsonDocument docJW
     bool status = doc["status"].as<bool>();
     pumpStrength(PUMP_PIN, status ? 1 : 0);
 
-    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (status ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + "}";
+    pumpLimit = endTime;
+
+    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (status ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + ", \"time\": \"" + endTime + "\"}";
     if(!first) {
       mqttSend(topic, json);
       Serial.println(json); 
@@ -45,7 +51,9 @@ void __actuator(String topic, DynamicJsonDocument doc, DynamicJsonDocument docJW
     bool status = doc["status"].as<bool>();
     curtainOpen(CURTAIN_PIN, status ? 1 : 0);
 
-    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (status ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + "}";
+    curtainLimit = endTime;
+
+    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (status ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + ", \"time\": \"" + endTime + "\"}";
     if(!first) {
       mqttSend(topic, json);
       Serial.println(json); 
@@ -59,7 +67,9 @@ void __actuator(String topic, DynamicJsonDocument doc, DynamicJsonDocument docJW
     bool status = doc["status"].as<bool>();
     lampOn(LAMP_PIN, status ? 1 : 0);
 
-    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (status ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + "}";
+    lampLimit = endTime;
+
+    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (status ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + ", \"time\": \"" + endTime + "\"}";
     if(!first) {
       mqttSend(topic, json);
       Serial.println(json); 

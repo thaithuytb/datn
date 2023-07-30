@@ -28,7 +28,7 @@ String trueTopics[] = {
 
 int topicCount = 5;
 
-bool controlMode = true;
+bool controlMode = false;
 
 bool isLoraBusy = false;
 
@@ -79,6 +79,7 @@ void loop() {
       Serial.println(trueTopics[2]); 
       Serial.println("Is time up");
     }
+    deviceTimeController();
   }
 }
 
@@ -98,31 +99,31 @@ void handleLoraString() {
     
     int create = doc["createdBy"].as<int>();
 
-    temp = _temp;
-    air = _air;
-    humi = _humi;
-    light = _light;
+    tempValue = _temp;
+    airValue = _air;
+    humiValue = _humi;
+    lightValue = _light;
 
-    String json = "{ \"ip\": \"" + String(sen_temp_air_IP) + "\", \"temp\": " + (temp) + ", \"airHumidity\": " + (air) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + "}";
+    String json = "{ \"ip\": \"" + String(sen_temp_air_IP) + "\", \"temperature\": " + (tempValue) + ", \"humidityAir\": " + (airValue) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + "}";
     mqttSend("datn/" + uuid + "/sensor", json);
     Serial.println(json); 
     Serial.println("datn/" + uuid + "/sensor"); 
 
-    String json1 = "{ \"ip\": \"" + String(sen_light_IP) + "\", \"value\": " + (light) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + "}";
+    String json1 = "{ \"ip\": \"" + String(sen_light_IP) + "\", \"value\": " + (lightValue) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + "}";
     mqttSend("datn/" + uuid + "/sensor", json1);
     Serial.println(json1); 
     Serial.println("datn/" + uuid + "/sensor"); 
 
-    String json2 = "{ \"ip\": \"" + String(sen_humi_IP) + "\", \"value\": " + (humi) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + "}";
+    String json2 = "{ \"ip\": \"" + String(sen_humi_IP) + "\", \"value\": " + (humiValue) + ", \"gardenId\": 1" + ", \"createdBy\": " + create + "}";
     mqttSend("datn/" + uuid + "/sensor", json2);
     Serial.println(json2); 
     Serial.println("datn/" + uuid + "/sensor"); 
 
     Serial.println("Sender");
-    Serial.println(temp);
-    Serial.println(air);
-    Serial.println(humi);
-    Serial.println(light);
+    Serial.println(tempValue);
+    Serial.println(airValue);
+    Serial.println(humiValue);
+    Serial.println(lightValue);
     Serial.println("end");
   }
 }
@@ -148,16 +149,16 @@ void loraCallback(char c) {
 // called loop
 void mqttAction() {
   if (timeTick > 20000) {
-    Serial.print(temp);
+    Serial.print(tempValue);
   }
   if (timeTick > 20000) {
-    Serial.print(air);
+    Serial.print(airValue);
   }
   if (timeTick > 20000) {
-    Serial.print(humi);
+    Serial.print(humiValue);
   }
   if (timeTick > 20000) {
-    Serial.print(light);
+    Serial.print(lightValue);
   }
 }
 

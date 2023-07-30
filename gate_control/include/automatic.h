@@ -1,10 +1,12 @@
 #ifndef AUTOMATIC_h
 #define AUTOMATIC_h
 
-extern float temp;
-extern float air;
-extern float humi;
-extern float light;
+#include "main.h"
+
+extern float tempValue;
+extern float airValue;
+extern float humiValue;
+extern float lightValue;
 
 extern float tempThresh[10];
 extern float airThresh[10];

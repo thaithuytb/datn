@@ -15,15 +15,15 @@ const char* password = "desolator\0";
 
 bool isValidUUID = false;
 
-float temp = 0;
-float air = 0;
-float humi = 0;
-float light = 0;
+float tempValue = 99999;
+float airValue = 99999;
+float humiValue = 99999;
+float lightValue = 99999;
 
-float tempThresh[10] = {40};
-float airThresh[10] = {40};
-float humiThresh[10] = {40};
-float lightThresh[10] = {4000};
+float tempThresh[10] = {-99, -99};
+float airThresh[10] = {-99, -99};
+float humiThresh[10] = {-99, -99};
+float lightThresh[10] = {-99, -99};
 
 void setup_wifi() {
     delay(10);
