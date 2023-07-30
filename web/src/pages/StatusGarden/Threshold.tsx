@@ -291,7 +291,7 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
                     <Slider
                       style={{ margin: "0" }}
                       min={0}
-                      max={2000}
+                      max={10000}
                       range={{ draggableTrack: true }}
                       defaultValue={[low, hight]}
                       onChange={(value: number[]) =>
@@ -299,7 +299,7 @@ const Threshold: React.FC<{ gardenId: string }> = ({ gardenId }) => {
                       }
                     />
                   </div>
-                  <span>2000lux</span>
+                  <span>10000lux</span>
                 </div>
                 <button
                   className="button_threshold"

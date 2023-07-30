@@ -188,6 +188,10 @@ p {
 		width: 30%;
 	}
 
+	.setup-status_img {
+		width: 45%;
+	}
+
 	.threshold-update_action {
 		display: block;
 	}

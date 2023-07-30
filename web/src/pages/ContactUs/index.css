@@ -1,0 +1,10 @@
+.contact-us {
+	padding: 20px;
+}
+
+@media screen and (max-width: 500px){
+	.contact-us {
+		margin-top: 25px;
+		padding: 0.6rem;
+	}
+}

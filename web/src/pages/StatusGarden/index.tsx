@@ -93,7 +93,7 @@ const ShowModal: React.FC<IShowModal> = ({
   const handleOk = async () => {
     const isAuto = garden && !garden.isAuto;
 
-    let timeInput = "99";
+    let timeInput = "99-9 99:99";
 
     if (date && time) {
       const [hours, minute] = time.split(":");
@@ -115,8 +115,6 @@ const ShowModal: React.FC<IShowModal> = ({
     if (!date && time) {
       timeInput = `${dayjs().format("DD-M")} ${time}`;
     }
-
-    console.log(timeInput);
 
     const dto = {
       id: `${gardenId}`,
@@ -141,11 +139,11 @@ const ShowModal: React.FC<IShowModal> = ({
   const duration = () => {
     const startTime = dayjs(`${currentDate.format("YYYY-MM-DD HH:mm")}`);
     let endTime = dayjs(`${currentDate.format("YYYY-MM-DD HH:mm")}`);
-    if(date && time) {
+    if (date && time) {
       endTime = dayjs(`${date} ${time}`);
-    } else if(date && !time) {
+    } else if (date && !time) {
       endTime = dayjs(`${date} ${dayjs().format("HH:mm")}`);
-    }else if(!date && time) {
+    } else if (!date && time) {
       endTime = dayjs(`${dayjs().format("YYYY-MM-DD")} ${time}`);
     }
     const newTime = endTime.diff(startTime, "minute");
@@ -156,7 +154,7 @@ const ShowModal: React.FC<IShowModal> = ({
   };
 
   useEffect(() => {
-    if(date || time) {
+    if (date || time) {
       setTimeRemaining(duration());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -168,9 +166,6 @@ const ShowModal: React.FC<IShowModal> = ({
   const changeTime = (time: any, timeString: string) => {
     setTime(timeString);
   };
-
-  console.log(date, time)
-  console.log(timeRemaining)
 
   return (
     <Modal
@@ -277,12 +272,12 @@ export default function StatusGardens() {
 
   useEffect(() => {
     socket.on("newStatus", (data: any) => {
-      console.log(data);
       setMessage(data);
       messageContext?.success("Cập nhập trạng thái mới thành công !!!");
     });
     socket.on("newStatusGarden", (data: any) => {
       if (data) {
+        console.log(data);
         //update lại toàn bộ khu vườn
         setGardens((gardens: any) =>
           gardens?.map((garden: any) => {

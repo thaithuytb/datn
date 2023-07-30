@@ -70,3 +70,11 @@
 	height: auto;
 	border-radius: 30px;
 }
+
+.login-to-introduce {
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	width: 100%;
+	padding: 20px;
+}

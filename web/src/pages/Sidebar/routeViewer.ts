@@ -2,17 +2,27 @@ import { MenuItem } from "./routeSidebar";
 
 export const routesViewer: MenuItem[] = [
   {
-    titleSidebar: "Trang chủ",
-    key: "home",
-    url: "home",
+    titleSidebar: "Giới thiệu",
+    key: "introduce",
+    url: "/",
   },
   {
-    titleSidebar: "Xem khu vườn",
-    key: "garden",
-    url: "garden",
+    titleSidebar: "Các công nghệ được sử dụng",
+    key: "technologies",
+    url: "technologies",
   },
   {
-    titleSidebar: "Chỉ dẫn đường đi",
+    titleSidebar: "Kiểm thử hệ thống",
+    key: "garden-test",
+    url: "garden-test",
+  },
+  {
+    titleSidebar: "Liên hệ chúng tôi",
+    key: "contact-us",
+    url: "contact-us",
+  },
+  {
+    titleSidebar: "Chỉ dẫn đến thăm khu vườn",
     key: "road-map",
     url: "road-map",
   },

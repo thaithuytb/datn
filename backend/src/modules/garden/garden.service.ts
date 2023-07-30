@@ -101,7 +101,7 @@ export class GardenService {
         this.mqttService.sendMessage(
           `datn/${topic}/regime`,
           JSON.stringify({
-            // from: 'web',
+            from: 'web',
             gardenId,
             isAuto,
             time,

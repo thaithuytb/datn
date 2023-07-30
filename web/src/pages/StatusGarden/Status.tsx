@@ -54,7 +54,10 @@ const ModalConfirm: React.FC<PropsModalConfirm> = ({
 
   const handleOk = async () => {
     const { date, time } = times;
-    let timeInput = "99";
+    let timeInput = "99:9";
+    if (!device.valueDevice.status) {
+      timeInput = "00:0";
+    }
     if (date && time) {
       timeInput = `${date} ${time}`;
     }
@@ -201,6 +204,7 @@ const convertIcon = (
 };
 
 const convertNameToShow = (device: Device) => {
+  console.log(device);
   switch (device.type) {
     case "FAN":
       return (

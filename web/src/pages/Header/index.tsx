@@ -86,7 +86,9 @@ const items2: MenuProps["items"] = [
 const { useToken } = theme;
 
 export default function HeaderLayout() {
-  const [typeNotification, setTypeNotification] = useState<string | undefined>(undefined);
+  const [typeNotification, setTypeNotification] = useState<string | undefined>(
+    undefined
+  );
   const authContext = useContext(AuthContext);
   const notificationContext = useContext(NotificationContext);
   const notifications = notificationContext?.notifications;
@@ -94,13 +96,13 @@ export default function HeaderLayout() {
   const setNotifilcations = notificationContext?.setNotifilcations;
   const notificationApi = new NotificationApi();
   const [page, setPage] = useState<number>(1);
-  console.log(count)
+  console.log(count);
   const name = authContext?.authInformation?.user?.fullName || "user";
-  const isAuthenticated = authContext?.authInformation.isAuthenticated
-  const navigate = useNavigate()
-  const openLogin= () => {
-    navigate('/login')
-  }
+  const isAuthenticated = authContext?.authInformation.isAuthenticated;
+  const navigate = useNavigate();
+  const openLogin = () => {
+    navigate("/login");
+  };
 
   const { token } = useToken();
   const contentStyle = {
@@ -127,14 +129,16 @@ export default function HeaderLayout() {
   const getNotificationByType = async (type?: string) => {
     setTypeNotification(type);
     try {
-      const dto = type ? {
-        type: type,
-        page: page,
-        limit: 10,
-      }: {
-        page: page,
-        limit: 10,
-      };
+      const dto = type
+        ? {
+            type: type,
+            page: page,
+            limit: 10,
+          }
+        : {
+            page: page,
+            limit: 10,
+          };
       const res = await notificationApi.getNotification(dto);
       if (res && setNotifilcations) {
         if (page === 1 || type === typeNotification) {
@@ -146,11 +150,12 @@ export default function HeaderLayout() {
           ]);
         }
       }
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const showNotification = async (open: boolean) => {
     if (open) {
+      // setPage(1);
       getNotificationByType(typeNotification);
     }
   };
@@ -175,7 +180,7 @@ export default function HeaderLayout() {
       if (
         event.target.scrollTop > scrollTop &&
         event.target.offsetHeight + event.target.scrollTop >
-        event.target.scrollHeight
+          event.target.scrollHeight
       ) {
         throttle();
         setPage(page + 1);
@@ -197,9 +202,9 @@ export default function HeaderLayout() {
         <h2>Đại học Bách Khoa Hà Nội</h2>
       </div>
 
-      {!isAuthenticated ?
+      {!isAuthenticated ? (
         <div onClick={openLogin}>login</div>
-        :
+      ) : (
         <div className="header_right">
           <h3>Xin chào {name}</h3>
 
@@ -309,10 +314,7 @@ export default function HeaderLayout() {
             </Dropdown>
           </div>
         </div>
-
-      }
-
-
+      )}
     </Header>
   );
 }

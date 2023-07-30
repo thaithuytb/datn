@@ -1,9 +1,15 @@
-import React from 'react'
+import React, { useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Main = () => {
-  return (
-    <div>Main</div>
-  )
-}
+  const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
+  const isAuthenticated = authContext?.authInformation.isAuthenticated;
+  if (isAuthenticated) {
+    navigate("/home");
+  }
+  return <div>Main</div>;
+};
 
-export default Main
+export default Main;

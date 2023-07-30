@@ -1,7 +1,7 @@
 import "./index.css";
 import { useContext, useState } from "react";
 import { IInformationUserLogin } from "../../types/login.type";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
 import { MessageContext } from "../../contexts/MessageContext";
 // import background from "../../../public/Background.png";
@@ -71,9 +71,18 @@ export default function Login() {
               alt=""
             />
             <h3>Đại học Bách Khoa Hà Nội</h3>
+            {/* <div className="login-to-introduce"> */}
+            <Link className="login-to-introduce" to="/">
+              Trang giới thiệu
+            </Link>
+            {/* </div> */}
           </header>
+
           <form onSubmit={submitFormLogin}>
-            <div style={{display: 'flex', marginLeft: '-140px'}}><p style={{color:'red', paddingRight: '10px'}}>*</p> <p>Email</p></div>
+            <div style={{ display: "flex", marginLeft: "-140px" }}>
+              <p style={{ color: "red", paddingRight: "10px" }}>*</p>{" "}
+              <p>Email</p>
+            </div>
             <input
               type="text"
               placeholder="email"
@@ -81,7 +90,10 @@ export default function Login() {
               value={email}
               onChange={onChangeSetInformationUserLogin}
             />
-            <div style={{display: 'flex', marginLeft: '-120px'}}><p style={{color:'red', paddingRight: '10px'}}>*</p> <p>Mật khẩu</p></div>
+            <div style={{ display: "flex", marginLeft: "-120px" }}>
+              <p style={{ color: "red", paddingRight: "10px" }}>*</p>{" "}
+              <p>Mật khẩu</p>
+            </div>
             <input
               type="password"
               placeholder="password"

@@ -26,7 +26,7 @@ export const convertData = {
   LAMP: 'actuatorData',
   PUMP: 'actuatorData',
   LIGHT_SENSOR: 'lightLuxData',
-  HUMIDITY_SENSOR: 'humidityDataData',
+  HUMIDITY_SENSOR: 'humidityData',
   TEMPERATURE_HUMIDITY_AIR_SENSOR: 'temperatureHumidityAirData',
 };
 

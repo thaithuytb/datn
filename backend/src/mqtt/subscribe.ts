@@ -34,20 +34,20 @@ export async function subscribeMqtt(
     console.log('Connected to MQTT broker');
     client.subscribe(`datn/requestTopic`);
     //init
-    const initTopic = uuid().slice(0, 10);
+    const initTopic = '61d12683-f';
     client.publish('datn/changeTopic', newTopicJWT(initTopic));
     client.subscribe(`datn/${initTopic}/#`);
     await redis.set('newTopic', initTopic);
-    setInterval(async () => {
-      const oldTopic = await redis.get('newTopic');
-      const newTopic = uuid().slice(0, 10);
-      client.publish('datn/changeTopic', newTopicJWT(newTopic));
-      await redis.set('newTopic', newTopic);
-      client.subscribe(`datn/${newTopic}/#`);
-      console.log('subscribe topic: ', `datn/${newTopic}`);
-      client.unsubscribe(`datn/${oldTopic}/#`);
-      console.log('unsubscribe topic: ', `datn/${oldTopic}`);
-    }, 60000000 * 3); //3m- NOTE:interval only has 32 bit
+    // setInterval(async () => {
+    //   const oldTopic = await redis.get('newTopic');
+    //   const newTopic = '61d12683-f';
+    //   client.publish('datn/changeTopic', newTopicJWT(newTopic));
+    //   await redis.set('newTopic', newTopic);
+    //   client.subscribe(`datn/${newTopic}/#`);
+    //   console.log('subscribe topic: ', `datn/${newTopic}`);
+    //   client.unsubscribe(`datn/${oldTopic}/#`);
+    //   console.log('unsubscribe topic: ', `datn/${oldTopic}`);
+    // }, 60000000 * 3); //3m- NOTE:interval only has 32 bit
   });
 
   client.on('message', async function (topic, message) {
@@ -64,8 +64,7 @@ export async function subscribeMqtt(
     }
 
     if (topic === 'datn/requestTopic') {
-      const newTopic = await redis.get('newTopic');
-      client.publish('datn/changeTopic', newTopicJWT(newTopic));
+      client.publish('datn/changeTopic', newTopicJWT('61d12683-f'));
       return;
     }
 
@@ -74,15 +73,10 @@ export async function subscribeMqtt(
       if (typeof parseMessage['gardenId'] != 'number') {
         return console.log(`${parseMessage['gardenId']} is not number`);
       }
+      const newTopic = await redis.get('newTopic');
+
       const garden = await getGarden(prisma, gardenId);
       if (garden) {
-        const actuators = await getActuatorsByGardenId(prisma, garden.id);
-        const thresholds = await getThresholdsByGardenId(prisma, garden.id);
-        const latestStatusActuators = await getLatestStatusActuators(
-          prisma,
-          actuators,
-        );
-        const newTopic = await redis.get('newTopic');
         client.publish(
           `datn/${newTopic}/regime`,
           JSON.stringify({
@@ -91,18 +85,8 @@ export async function subscribeMqtt(
             first: true,
           }),
         );
-        for (const threshold of thresholds) {
-          client.publish(
-            `datn/${newTopic}/threshold`,
-            JSON.stringify({
-              from: 'web',
-              lowThreshold: JSON.parse(threshold.lowThreshold.toString()),
-              highThreshold: JSON.parse(threshold.highThreshold.toString()),
-              name: threshold.name,
-              first: true,
-            }),
-          );
-        }
+        const actuators = await getActuatorsByGardenId(prisma, garden.id);
+        console.log({ actuators });
         for (const actuator of actuators) {
           client.publish(
             `datn/${newTopic}/operator`,
@@ -116,6 +100,23 @@ export async function subscribeMqtt(
             }),
           );
         }
+        const thresholds = await getThresholdsByGardenId(prisma, garden.id);
+        for (const threshold of thresholds) {
+          client.publish(
+            `datn/${newTopic}/threshold`,
+            JSON.stringify({
+              from: 'web',
+              lowThreshold: JSON.parse(threshold.lowThreshold.toString()),
+              highThreshold: JSON.parse(threshold.highThreshold.toString()),
+              name: threshold.name,
+              first: true,
+            }),
+          );
+        }
+        const latestStatusActuators = await getLatestStatusActuators(
+          prisma,
+          actuators,
+        );
         for (const latestStatusActuator of latestStatusActuators) {
           client.publish(
             `datn/${newTopic}/actuator`,
@@ -218,26 +219,24 @@ export async function subscribeMqtt(
       // check topic here
       switch (topic.slice(15)) {
         case '/sensor': {
-          socketGateway.server.emit('newStatus', parseMessage);
+          socketGateway.emitToGarden('1', 'newStatus', parseMessage);
           if (device.type === DeviceTypeEnum.TEMPERATURE_HUMIDITY_AIR_SENSOR) {
-            return console.log({ sensor: parseMessage });
-            // return prisma[convertData[device.type]].create({
-            //   data: {
-            //     temp: parseMessage['temp'],
-            //     airHumidity: parseMessage['airHumidity'],
-            //     deviceId,
-            //     gardenId: device.gardenId,
-            //   },
-            // });
+            return prisma.temperatureHumidityAirData.create({
+              data: {
+                temperature: parseMessage['temperature'],
+                humidityAir: parseMessage['humidityAir'],
+                deviceId,
+                gardenId: device.gardenId,
+              },
+            });
           } else {
-            return console.log({ sensor: parseMessage });
-            // return prisma[convertData[device.type]].create({
-            // data: {
-            //   value: parseMessage['value'],
-            //   deviceId,
-            //   gardenId: device.gardenId,
-            // },
-            // });
+            return prisma[convertData[device.type]].create({
+              data: {
+                value: parseMessage['value'],
+                deviceId,
+                gardenId: device.gardenId,
+              },
+            });
           }
         }
         case '/actuator': {
@@ -247,18 +246,17 @@ export async function subscribeMqtt(
             'newStatus',
             parseMessage,
           );
-          return true;
-          // return prisma.actuatorData.create({
-          //   data: {
-          //     status: parseMessage['status'],
-          //     gardenId: device.gardenId,
-          //     device: {
-          //       connect: {
-          //         id: deviceId,
-          //       },
-          //     },
-          //   },
-          // });
+          return prisma.actuatorData.create({
+            data: {
+              status: parseMessage['status'],
+              gardenId: device.gardenId,
+              device: {
+                connect: {
+                  id: deviceId,
+                },
+              },
+            },
+          });
         }
         default: {
           console.log('topic', topic);

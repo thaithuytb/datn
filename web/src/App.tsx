@@ -23,11 +23,13 @@ import { SocketProvider } from "./contexts/SocketContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import CreateGarden from "./pages/Garden/Create";
 import RoadMap from "./pages/RoadMap";
-import Main from "./pages/Main";
-import '../src/pages/Responsive/responsive.css'
+import "../src/pages/Responsive/responsive.css";
+import Introduce from "./pages/Introduce";
+import Technology from "./pages/Technology";
+import ContactUs from "./pages/ContactUs";
+import GardenTest from "./pages/GardenTest";
 
 const RouteMain = () => {
-
   return (
     <>
       <HeaderLayout />
@@ -89,8 +91,11 @@ const RouteMain = () => {
               />
               <Route path="/*" element={<NotFound />} />
             </Route>
-            <Route path="/" element={<Main />} />
+            <Route path="/technologies" element={<Technology />} />
+            <Route path="/" element={<Introduce />} />
             <Route path="/road-map" element={<RoadMap />} />
+            <Route path="/contact-us" element={<ContactUs />} />
+            <Route path="/garden-test" element={<GardenTest />} />
           </Routes>
         </div>
       </div>
