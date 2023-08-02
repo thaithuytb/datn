@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  web_datn:
+    container_name: web_datn
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '${PORT}:${PORT}'

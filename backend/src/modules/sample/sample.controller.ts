@@ -3,16 +3,14 @@ import {
   Controller,
   Get,
   Param,
-  ParseBoolPipe,
   ParseIntPipe,
   Post,
-  Query,
 } from '@nestjs/common';
 import { SampleService } from './sample.service';
-import { CreateSampleDto } from './dto/sample.dto';
+import { CheckTypeSampleDto, CreateSampleDto } from './dto/sample.dto';
 import { PublicMqttService } from '../../mqtt/publish';
 
-@Controller('sample')
+@Controller('api/v1/sample')
 export class SampleController {
   constructor(
     private readonly sampleService: SampleService,
@@ -20,22 +18,8 @@ export class SampleController {
   ) {}
 
   @Get('publish')
-  public publish(@Query('topic') topic: string): void {
-    this.mqttService.sendMessage(
-      topic,
-      'thaidz' + (Math.random() * 100).toString(),
-    );
-  }
-
-  @Get()
-  async getSamples(
-    @Query('status', ParseBoolPipe) status = true,
-    @Query('name') name = '',
-  ) {
-    return this.sampleService.getSamples({
-      name,
-      status,
-    });
+  public publish(): void {
+    this.mqttService.test();
   }
 
   @Get(':id')
@@ -48,5 +32,11 @@ export class SampleController {
   @Post()
   async createSample(@Body('createSample') createSample: CreateSampleDto) {
     return this.sampleService.createSample(createSample);
+  }
+
+  @Post('checkType')
+  async checkTypeSample(@Body() dto: CheckTypeSampleDto) {
+    console.log({ dto });
+    return true;
   }
 }

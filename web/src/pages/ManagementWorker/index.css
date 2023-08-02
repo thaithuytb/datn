@@ -1,0 +1,65 @@
+.ManagementWorker {
+    padding: 15px 25px;
+}
+
+.ManagementWorker h3 {
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.add_people {
+    margin: .5rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.add_people-input {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@media screen and (max-width: 500px) {
+    .ManagementWorker {
+        padding: .6rem;
+    }
+
+    .ManagementWorker h3 {
+        font-size: 1rem;
+    }
+
+    .garden .garden_header h3 {
+        font-size: 1rem;
+    }
+
+    .garden_header {
+        margin: .5rem 0 .4rem 0;
+    }
+
+    .row_ManagementWorker {
+        padding: 0.6rem !important;
+        /* display: flex; */
+    }
+
+    .row_ManagementWorker-name {
+        width: 45%;
+    }
+
+    .row_ManagementWorker-action {
+        max-width: 5rem;
+        padding: .2rem !important;
+        text-align: center;
+    }
+
+    .row_ManagementWorker-action button {
+        width: 4.5rem;
+        margin: .1rem 0 !important;
+    }
+
+    .add_people-input {
+        width: 100%;
+        /* float: "right" */
+    }
+}

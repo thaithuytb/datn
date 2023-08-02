@@ -1,0 +1,14 @@
+.test_non {
+	display: none;
+}
+
+.home {
+	padding: 20px;
+}
+
+@media screen and (max-width: 500px){
+	.home {
+		margin-top: 25px;
+		padding: 0.6rem;
+	}
+}

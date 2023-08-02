@@ -1,0 +1,30 @@
+.introduce {
+	padding: 20px;
+}
+
+@media screen and (max-width: 500px){
+	.introduce {
+		margin-top: 25px;
+		padding: 0.6rem;
+	}
+}
+.introduce_img {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.introduce_img img {
+	width: 40%;
+}
+
+.introduce_img div {
+	/* width: 100%; */
+	padding: 20px;
+}
+
+@media screen and (max-width: 500px) { 
+	.introduce_img img {
+		width: 90%;
+	}
+}

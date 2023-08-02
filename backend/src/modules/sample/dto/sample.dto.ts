@@ -1,5 +1,5 @@
 import { Optional } from '@nestjs/common';
-import { IsBoolean, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsIn, IsNumber, IsString } from 'class-validator';
 
 export class GetSampleByIdDto {
   @IsNumber()
@@ -32,4 +32,16 @@ export class GetSamplesDto {
   @Optional()
   @IsBoolean()
   status?: boolean;
+}
+
+export enum NumberType {
+  TYPE_1 = 1,
+  TYPE_2 = 2,
+  TYPE_3 = 3,
+}
+
+export class CheckTypeSampleDto {
+  @IsEnum(NumberType)
+  // @IsIn([1, 2, 3])
+  type: NumberType;
 }

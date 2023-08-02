@@ -1,0 +1,131 @@
+.hamburger-react {
+    z-index: 3;
+}
+
+.icon_close {
+    display: none;
+    position: fixed;
+    transition: all 0.6s;
+}
+
+@media screen and (max-width: 500px) {
+    * {
+		font-size: 99%;
+	}
+
+    .responsive-hiden {
+		display: none;
+	}
+
+    /* -----side-bar------ */
+    .SidebarLayout ul {
+        width: 256px;
+        height: 100%;
+        transform: none;
+    }
+
+    #SidebarLayout-transform {
+        transform: translateX(-200%);
+    }
+    /* --------------------- */
+
+    .icon_close {
+        display: block;
+    }
+
+    .header {
+        z-index: 10;
+        padding-left: 0px;
+    }
+
+    .header_left h2 {
+        font-size: 14px;
+    }
+
+    .header_right h3 {
+        display: none;
+    }
+
+    .ant-menu {
+        position: absolute;
+        width: 200px;
+        transition: all 0.6s;
+    }
+
+    .content {
+        padding-top: 30px;
+        /* overflow: hidden; */
+        overflow-x: hidden;
+    }
+
+    .app_content {
+        overflow: hidden;
+    }
+
+    #chart {
+        overflow-x: auto;
+        padding-bottom: 40px;
+    }
+
+    .recharts-legend-wrapper {
+        left: 0px;
+        top: 220px !important;
+    }
+
+    /* .ant-table-content{
+        overflow: auto;
+    } */
+
+    .ant-empty-image {
+        width: 100%;
+    }
+
+    .login_form {
+        margin: auto;
+        width: 100%;
+    }
+
+    .login_form form {
+        margin: auto;
+        width: 50%;
+    }
+
+    .login_form input {
+        width: 100%;
+    }
+
+    .login_form h3 {
+        width: 100%;
+    }
+
+    .login_form header {
+        width: 100%;
+        transform: translateY(-150px);
+    }
+
+    .login {
+        width: 100%;
+        background: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+
+    .ant-empty-image img {
+        width: 100%;
+    }
+
+    #Dropdown_before {
+        width: 75%;
+        transform: translateX(34%);
+    }
+
+    .custom-dropdown {
+        border: none;
+        overflow: hidden;
+    }
+
+    .app {
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+}

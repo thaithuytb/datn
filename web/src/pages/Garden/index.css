@@ -1,0 +1,89 @@
+.garden {
+	padding: 15px 25px;
+}
+
+.garden_header p {
+	padding-left: 15px;
+}
+
+.garden .garden_header {
+	min-width: 300px;
+}
+
+.garden .garden_header h3 {
+	font-size: 1.5rem;
+	font-weight: 500;
+}
+
+.garden .garden_header p {
+	display: flex;
+	text-align: center;
+	flex-direction: column;
+	border: 1px solid #f0f0f0;
+	border-radius: 7px;
+	padding: 15px;
+	max-width: 200px;
+}
+
+.garden .garden_header p span:first-child {
+	font-size: 18px;
+	margin-bottom: 5px;
+}
+
+.garden_header h3 {
+	font-weight: 400;
+	color: rgb(14, 13, 13) !important;
+}
+
+.garden_header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 20px;
+}
+
+/* /////////////// */
+.ModalUpdateGarden {
+	display: flex;
+	justify-content: space-between;
+}
+
+.ModalUpdateGarden_left,
+.ModalUpdateGarden_right {
+	width: 45%;
+}
+
+.ModalUpdateGarden_right div,
+.ModalUpdateGarden_left div {
+	margin: 0.7rem 0;
+}
+
+/* ///////////////////// */
+@media screen and (max-width: 500px) {
+	.garden {
+		padding: .6rem;
+	}
+
+	.garden .garden_header h3 {
+		font-size: 1rem;
+	}
+
+	.garden_header {
+		margin: .5rem 0 .4rem 0;
+	}
+
+	.row_garden {
+		padding: 0.4rem !important;
+	}
+
+	.row_garden-action {
+		max-width: 5rem;
+		padding: .2rem !important;
+	}
+
+	.row_garden-action button {
+		width: 4.5rem;
+		margin: .1rem 0 !important;
+	}
+
+}

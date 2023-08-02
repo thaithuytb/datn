@@ -1,10 +1,11 @@
-export function messageToMqtt<T extends { gardenName: string }>(
+export function messageToMqtt<T extends { ip: string; type?: any }>(
   data: T,
 ): string {
-  const { gardenName, ...spreadData } = data;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { type, ...spreadData } = data;
   return JSON.stringify({
     from: 'web', // command to test
-    data: spreadData,
-    gardenName,
+    // gardenId: 1, //comment when have phan cung
+    ...spreadData,
   });
 }

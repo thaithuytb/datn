@@ -19,130 +19,218 @@ model Sample {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  name        String
-  phoneNumber String   @map("phone_number")
-  email       String   @unique
-  password    String
-  role        Role     @default(USER)
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  id            Int                    @id @default(autoincrement())
+  phoneNumber   String?                @map("phone_number")
+  email         String                 @unique
+  password      String
+  role          Role                   @default(USER)
+  createdAt     DateTime               @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt     DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  address       String?
+  fullName      String                 @map("full_name")
+  dateOfBirth   DateTime?              @map("date_of_birth")
+  gender        Gender                 @default(MALE)
+  gardens       GardensOnUsers[]
+  notifications NotificationsOnUsers[]
+  Notification  Notification[]
+  isDeleted     Boolean                @default(false)
 
   @@map("users")
 }
 
-model TempAir {
-  id                   Int      @id @default(autoincrement())
-  temp                 Float
-  tempThreshold        Float?   @map("temp_threshold")
-  airHumidity          Float    @map("air_humidity")
-  airHumidityThreshold Float?   @map("air_humidity_threshold")
-  ip                   String
-  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt            DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  gardenId             Int      @map("garden_id")
-  garden               Garden   @relation(fields: [gardenId], references: [id], onDelete: Cascade)
+model Device {
+  id                          Int                          @id @default(autoincrement())
+  ip                          String                       @unique
+  status                      Boolean                      @default(true)
+  type                        DeviceTypeEnum
+  createdAt                   DateTime                     @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt                   DateTime                     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  gardenId                    Int                          @map("garden_id")
+  garden                      Garden                       @relation(fields: [gardenId], references: [id], onDelete: Cascade)
+  isDeleted                   Boolean                      @default(false)
+  ActuatorData                ActuatorData[]
+  startAt                     String?
+  endAt                       String?
+  duration                    String?
+  time                        String?
+  TemperatureHumidityAirDatas TemperatureHumidityAirData[]
+  HumidityDatas               HumidityData[]
+  LightLuxDatas               LightLuxData[]
 
-  @@index([ip])
-  @@index([gardenId], map: "temp_airs_garden_id_fkey")
-  @@map("temp_airs")
+  @@map("devices")
 }
 
-model Humi {
+model Threshold {
+  id            Int               @id @default(autoincrement())
+  name          ThresholdNameEnum
+  lowThreshold  String?           @map("low_threshold")
+  highThreshold String?           @map("high_threshold")
+  gardenId      Int               @map("garden_id")
+  garden        Garden            @relation(fields: [gardenId], references: [id], onDelete: Cascade)
+  createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt     DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+
+  @@map("thresholds")
+}
+
+model TemperatureHumidityAirData {
+  id          Int      @id @default(autoincrement())
+  temperature Float
+  humidityAir Float    @map("humidity_air")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  gardenId    Int      @map("garden_id")
+  deviceId    Int      @map("device_id")
+  device      Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@index([deviceId])
+  @@index([deviceId, createdAt])
+  @@index([gardenId, deviceId])
+  @@map("temperature_humidity_air_datas")
+}
+
+model HumidityData {
   id        Int      @id @default(autoincrement())
   value     Float
-  threshold Float?
-  ip        String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   gardenId  Int      @map("garden_id")
-  garden    Garden   @relation(fields: [gardenId], references: [id], onDelete: Cascade)
+  deviceId  Int      @map("device_id")
+  device    Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 
-  @@index([ip])
-  @@index([gardenId], map: "humis_garden_id_fkey")
-  @@map("humis")
+  @@index([deviceId])
+  @@index([deviceId, createdAt])
+  @@index([gardenId, deviceId])
+  @@map("humidity_datas")
 }
 
-model Light {
+model LightLuxData {
   id        Int      @id @default(autoincrement())
   value     Float
-  threshold Float?
-  ip        String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   gardenId  Int      @map("garden_id")
-  garden    Garden   @relation(fields: [gardenId], references: [id], onDelete: Cascade)
+  deviceId  Int      @map("device_id")
+  device    Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 
-  @@index([ip])
-  @@index([gardenId], map: "lights_garden_id_fkey")
-  @@map("lights")
+  @@index([deviceId])
+  @@index([deviceId, createdAt])
+  @@index([gardenId, deviceId])
+  @@map("light_lux_datas")
 }
 
-model Fan {
+model ActuatorData {
   id        Int      @id @default(autoincrement())
   value     Float?
-  status    Boolean
-  ip        String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
   gardenId  Int      @map("garden_id")
-  garden    Garden   @relation(fields: [gardenId], references: [id], onDelete: Cascade)
-
-  @@index([ip])
-  @@index([gardenId], map: "fans_garden_id_fkey")
-  @@map("fans")
-}
-
-model Pump {
-  id        Int      @id @default(autoincrement())
-  value     Float?
+  deviceId  Int      @map("device_id")
+  device    Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   status    Boolean
-  ip        String
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  gardenId  Int      @map("garden_id")
-  garden    Garden   @relation(fields: [gardenId], references: [id], onDelete: Cascade)
 
-  @@index([ip])
-  @@index([gardenId], map: "pumps_garden_id_fkey")
-  @@map("pumps")
-}
-
-model Nebulizer {
-  id        Int      @id @default(autoincrement())
-  value     Float?
-  status    Boolean
-  ip        String
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  gardenId  Int      @map("garden_id")
-  garden    Garden   @relation(fields: [gardenId], references: [id], onDelete: Cascade)
-
-  @@index([ip])
-  @@index([gardenId], map: "nebulizers_garden_id_fkey")
-  @@map("nebulizers")
+  @@index([deviceId])
+  @@index([deviceId, createdAt])
+  @@index([gardenId, deviceId])
+  @@map("actuator_datas")
 }
 
 model Garden {
-  id         Int         @id @default(autoincrement())
-  name       String      @unique
-  address    String
-  width      Int?
-  length     Int?
-  landArea   Int         @map("land_area")
-  createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt  DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
-  fans       Fan[]
-  humis      Humi[]
-  lights     Light[]
-  nebulizers Nebulizer[]
-  pumps      Pump[]
-  tempAirs   TempAir[]
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  address     String
+  width       Int?
+  length      Int?
+  isAuto      Boolean          @default(true)
+  hight       Int?
+  landArea    Int              @map("land_area")
+  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt   DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  isDeleted   Boolean          @default(false)
+  coordinates String?
+  devices     Device[]
+  users       GardensOnUsers[]
+  Threshold   Threshold[]
 
   @@map("gardens")
+}
+
+model GardensOnUsers {
+  userId    Int        @map("user_id")
+  gardenId  Int        @map("garden_id")
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  role      RoleGarden @default(USER)
+  garden    Garden     @relation(fields: [gardenId], references: [id])
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@id([userId, gardenId])
+  @@index([gardenId], map: "gardensOnUsers_garden_id_fkey")
+  @@map("gardens_on_users")
+}
+
+model Notification {
+  id            Int                    @id @default(autoincrement())
+  description   String
+  title         String
+  createdAt     DateTime               @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt     DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  createdBy     Int                    @map("created_by")
+  createdByUser User                   @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  users         NotificationsOnUsers[]
+  gardenId      Int?                   @map("garden_id")
+  type          NotificationType
+
+  @@map("notifications")
+}
+
+model NotificationsOnUsers {
+  userId         Int          @map("user_id")
+  notificationId Int          @map("notification_id")
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(3)
+  seen           Boolean      @default(false)
+  notification   Notification @relation(fields: [notificationId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
+
+  @@id([userId, notificationId])
+  @@index([notificationId], map: "notificationsOnUsers_notification_id_fkey")
+  @@map("notifications_on_users")
 }
 
 enum Role {
   USER
   ADMIN
+  VIEWER
+}
+
+enum RoleGarden {
+  MANAGER
+  USER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum DeviceTypeEnum {
+  FAN
+  LAMP
+  PUMP
+  LIGHT_SENSOR
+  HUMIDITY_SENSOR
+  TEMPERATURE_HUMIDITY_AIR_SENSOR
+}
+
+enum ThresholdNameEnum {
+  LIGHT_SENSOR
+  HUMIDITY_SENSOR
+  TEMPERATURE_HUMIDITY_AIR_SENSOR
+}
+
+enum NotificationType {
+  GARDEN
+  DEVICE
+  OTHER
 }

@@ -1,0 +1,80 @@
+/* .background_login {
+	background-image: url("../../../public/Background.png");
+	background-size: 100%;
+} */
+.wp_login {
+	/* height: calc(100vh - 50px); */
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #52e961;
+}
+
+.login {
+	width: 80%;
+	height: 93%;
+	box-shadow: -5px -1px 10px -1px rgba(0, 0, 0, 0.52);
+	-webkit-box-shadow: -5px -1px 10px -1px rgba(0, 0, 0, 0.52);
+	-moz-box-shadow: -5px -1px 10px -1px rgba(0, 0, 0, 0.52);
+	display: flex;
+	border-radius: 20px;
+	background-color: white;
+}
+
+.login_form {
+	width: 50%;
+	height: 50%;
+	padding: 2rem;
+}
+
+.login_form header{
+	display: flex;
+	align-items: center;
+}
+.login_form form {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	margin-top: 18%;
+}
+
+.login_form input {
+	width: 280px;
+	border-radius: 5px;
+	padding: 15px 20px;
+	outline: none;
+	margin-bottom: 20px;
+	border:1px solid #52e961;
+}
+.login_form button {
+	width: 200px;
+	padding: 15px 20px;
+	background-color: #52e961;
+	color: white;
+	border: none;
+	font-weight: bold;
+	cursor: pointer;
+	border-radius: 5px;
+}
+
+.image_from {
+	width: 50%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+}
+
+.image_from img{
+	width: 95%;
+	height: auto;
+	border-radius: 30px;
+}
+
+.login-to-introduce {
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	width: 100%;
+	padding: 20px;
+}

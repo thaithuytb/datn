@@ -1,0 +1,199 @@
+.list_device_select__div_first {
+	display: flex;
+	align-items: center;
+}
+
+.list_device_select h3 {
+	font-size: 1.5rem;
+	font-weight: 500;
+}
+
+.list_device_select__div_second span {
+	padding-right: 7px;
+	padding-left: 10px;
+}
+
+.list_device_select__header {
+	display: flex;
+	align-items: center !important;
+	font-size: 16px;
+}
+
+.list_device_select__div_second .Button {
+	padding: 7px 10px;
+	margin: 0px 5px;
+	cursor: pointer;
+	background-color: #6dcfe7;
+	border: none;
+	border: 1px solid #999;
+	border-radius: 4px;
+	color: black;
+}
+
+.status_devices {
+	padding: 15px 25px;
+}
+
+.control_device {
+	cursor: pointer;
+	padding: 4px;
+	min-width: 4.3rem;
+	background-color: rgb(184, 223, 238);
+	border: 1px solid #999;
+	border-radius: 4px;
+}
+
+.control_device:hover {
+	background-color: rgb(99, 188, 223);
+}
+
+.button_threshold {
+	cursor: pointer;
+	padding: 4px;
+	min-width: 4rem;
+	background-color: rgb(184, 223, 238);
+	border: 1px solid #999;
+	border-radius: 4px;
+}
+
+.threshold-children {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	min-width: 70%;
+}
+.threshold-children2 {
+	min-width: 70%;
+}
+
+.threshold-children div {
+	width: 6rem;
+}
+
+.threshold-update_action {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.StatusDevices {
+	display: flex;
+	justify-content: space-between;
+	margin: .5rem 0;
+}
+
+.CardComponent {
+	border: 1px solid var(--color-header);
+	padding: .5rem;
+	width: 14%;
+	border-radius: 0.5rem;
+	position: relative;
+}
+
+.CardComponent h2,
+p {
+	margin: 0;
+}
+
+.CardComponent p {
+	margin: .5rem 0;
+}
+
+.CardComponent p>div {
+	color: rebeccapurple;
+}
+
+.setup-status >div{
+	float: right;
+	display: grid;
+}
+
+.setup-status >div button{
+	margin-bottom:.2rem ;
+	background-color: #6dcfe7;
+	color: rgb(255, 255, 255);
+}
+
+.setup-status >div >span{
+	color: rebeccapurple;
+	text-decoration: underline;
+	cursor: pointer;
+	max-width: 4rem;
+}
+.setup-status img, .setup-status_img{
+	width: 35%;
+}
+
+.setup-status, .setup-status_img {
+	margin-bottom: 1rem;
+}
+
+.CardComponent-date {
+	position: absolute;
+	bottom: 0rem;
+	font-size: .7rem;
+	font-style: italic;
+}
+/* ///////////////////// */
+@media screen and (max-width: 500px) {
+
+	.list_device_select h3 {
+		font-size: 1rem;
+		font-weight: 500;
+	}
+
+	.status_devices {
+		padding: .6rem;
+	}
+
+	.columns-table_status_devices-type {
+		width: 28%;
+	}
+
+	.columns-table_status_devices {
+		padding: .5rem !important;
+	}
+
+	.columns-table_status_devices-button {
+		padding: 0 !important;
+	}
+
+	/* --------Threshould--------- */
+	.columns-table_threshold-type {
+		width: 25%;
+	}
+
+	.threshold-children div {
+		width: 60px;
+	}
+
+	#dynamic_form_nest_item :where(.css-dev-only-do-not-override-15rg2km).ant-row {
+		display: block;
+	}
+
+	.StatusDevices {
+		flex-wrap: wrap;
+	}
+
+	.CardComponent {
+		width: 28%;
+		margin-bottom: .5rem;
+	}
+
+
+	.CardComponent p>div {
+		font-size: .7rem;
+	}
+
+	.setup-status img, .setup-status_img{
+		width: 30%;
+	}
+
+	.setup-status_img {
+		width: 45%;
+	}
+
+	.threshold-update_action {
+		display: block;
+	}
+
+}

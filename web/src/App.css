@@ -1,38 +1,43 @@
-.App {
-  text-align: center;
+:root {
+  --color-background: "gren";
+  --color-button: "gren";
+  --color-sidebar: "gren";
+  --color-header: #71d3f7;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+* {
+  font-size: 16px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.app {
+  background-image: url("../public/Background.png");
+  background-size: 100%;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.app_content {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  margin-top: 10vh;
 }
 
-.App-link {
-  color: #61dafb;
+.content {
+  flex: 1;
+  max-height: 90vh;
+  overflow: auto;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.form_left {
+  margin: 1rem;
 }
+
+.SidebarLayout {
+  height: 90vh;
+  /* background-color: #d9f4fe; */
+}
+
+.SidebarLayout>ul {
+  height: 100%;
+  background-color: #d9f4fe;
+  z-index: 1;
+}
+
+/* ----------------------------- */

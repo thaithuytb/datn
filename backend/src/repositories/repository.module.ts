@@ -1,11 +1,32 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from '../infrastructures/prisma.service';
 import { SampleRepository } from './sample.repository';
 import { GardenRepository } from './garden.repository';
-import { FanRepository } from './fan.repository';
+import { AuthRepository } from './auth.repository';
+import { NotificationRepository } from './notification.repository';
+import { DaoModule } from '../infrastructures/dao/dao.module';
+import { DeviceRepository } from './device.repository';
+import { ThresholdRepository } from './threshold.repository';
+import { DataStatisticalRepository } from './data.repository';
 
 @Module({
-  providers: [PrismaService, SampleRepository, GardenRepository, FanRepository],
-  exports: [SampleRepository, GardenRepository, FanRepository],
+  imports: [DaoModule],
+  providers: [
+    SampleRepository,
+    GardenRepository,
+    AuthRepository,
+    NotificationRepository,
+    DeviceRepository,
+    ThresholdRepository,
+    DataStatisticalRepository,
+  ],
+  exports: [
+    SampleRepository,
+    GardenRepository,
+    AuthRepository,
+    NotificationRepository,
+    DeviceRepository,
+    ThresholdRepository,
+    DataStatisticalRepository,
+  ],
 })
 export class RepositoryModule {}
