@@ -40,11 +40,3 @@ void __operator(String topic, DynamicJsonDocument doc, DynamicJsonDocument docJW
         Serial.println(topic);
     }
 }
-
-//   JSON.stringify({
-//             from: 'web',
-//             first: true,
-//             startAt: '00:00:00',
-//             endAt: '23:59:59',
-//             ip: 'fan_1_1',
-//           }),

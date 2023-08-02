@@ -16,7 +16,7 @@ String lampLimit = "00-00 00:00";
 void fanSend() {
     String device = FAN_IP;
 
-    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (fan ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + 0 + "}";
+    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (fan ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + 1 + "}";
     mqttSend(trueTopics[1], json);
     Serial.println(json); 
     Serial.println(trueTopics[1]); 
@@ -28,7 +28,7 @@ void fanSend() {
 void pumpSend() {
     String device = PUMP_IP;
 
-    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (pump ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + 0 + "}";
+    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (pump ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + 1 + "}";
     mqttSend(trueTopics[1], json);
     Serial.println(json); 
     Serial.println(trueTopics[1]); 
@@ -52,7 +52,7 @@ void curtainSend() {
 void lampSend() {
     String device = LAMP_IP;
 
-    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (lamp ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + 0 + "}";
+    String json = "{ \"ip\": \"" + device + "\", \"status\": " + (lamp ? String("true") : String("false")) + ", \"gardenId\": 1" + ", \"createdBy\": " + 1 + "}";
     mqttSend(trueTopics[1], json);
     Serial.println(json); 
     Serial.println(trueTopics[1]); 
