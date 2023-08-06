@@ -7,7 +7,6 @@ import {
 } from '@prisma/client';
 import * as mqtt from 'mqtt';
 import { newTopicJWT } from '../common/setJwtMqtt';
-import { uuid } from 'uuidv4';
 import { Redis } from 'ioredis';
 import { SocketGateway } from '../socket/socket.gateway';
 import { convertData } from '../modules/device/device.service';
@@ -147,7 +146,7 @@ export async function subscribeMqtt(
         // return console.log(`${parseMessage['createdBy']} is not number`);
       }
       const newNotification = await notificationService.createNotifications({
-        title: `Thay đổi trạng thái khu vườn`,
+        title: `Thay đổi trạng thái chăm sóc vườn cà chua`,
         description: `${
           parseMessage['createdBy'] ? 'Người dùng' : 'Hệ thống:'
         } vừa thay đổi chế độ chăm sóc sang ${
@@ -178,15 +177,21 @@ export async function subscribeMqtt(
       );
       await updateThreshold(prisma, parseMessage);
       if (typeof parseMessage['createdBy'] != 'number') {
-        return console.log(`${parseMessage['createdBy']} is not number`);
+        parseMessage['createdBy'] = 0;
       }
       const newNotification = await notificationService.createNotifications({
-        title: `Thay đổi ngưỡng ${parseMessage['name']} của khu vườn`,
-        description: `Thay đổi ngưỡng thiết bị ngày ${dayjs().format(
+        title: `Thay đổi ngưỡng thiết bị vườn cà chua ngày ${dayjs().format(
           'YYYY-MM-DD',
         )}`,
+        description: `Thay đổi ngưỡng ${
+          parseMessage['name'] === 'LIGHT_SENSOR'
+            ? 'cảm biến ánh sáng'
+            : parseMessage['name'] === 'HUMIDITY_SENSOR'
+            ? 'cảm biến độ ẩm đất'
+            : 'cảm biến nhiệt độ, độ ẩm không khí'
+        }`,
         type: NotificationType.DEVICE,
-        createdBy: parseMessage['createdBy'],
+        createdBy: parseMessage['createdBy'] ? parseMessage['createdBy'] : 1,
         // createdBy: 1,
         gardenId: parseInt(parseMessage['gardenId']),
       });
@@ -246,7 +251,7 @@ export async function subscribeMqtt(
             'newStatus',
             parseMessage,
           );
-          return prisma.actuatorData.create({
+          await prisma.actuatorData.create({
             data: {
               status: parseMessage['status'],
               gardenId: device.gardenId,
@@ -257,6 +262,34 @@ export async function subscribeMqtt(
               },
             },
           });
+
+          if (typeof parseMessage['createdBy'] != 'number') {
+            parseMessage['createdBy'] = 0;
+            // return console.log(`${parseMessage['createdBy']} is not number`);
+          }
+          const newNotification = await notificationService.createNotifications(
+            {
+              title: `Thay đổi trạng thái thiết bị chấp hành vườn cà chua ${dayjs().format(
+                'YYYY-MM-DD',
+              )}`,
+              description: `Thay đổi trạng thái ${
+                deviceId === 1 ? 'quạt' : deviceId === 2 ? 'đèn' : 'bơm'
+              }`,
+              type: NotificationType.DEVICE,
+              createdBy: parseMessage['createdBy']
+                ? parseMessage['createdBy']
+                : 1,
+              // createdBy: 1,
+              gardenId: parseInt(parseMessage['gardenId']),
+            },
+          );
+          if (newNotification) {
+            socketGateway.emitToGarden(
+              parseMessage['gardenId'].toString(),
+              'newCountNotification',
+              parseMessage,
+            );
+          }
         }
         default: {
           console.log('topic', topic);

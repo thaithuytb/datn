@@ -97,7 +97,7 @@ const ShowModal: React.FC<IShowModal> = ({
 
     if (date && time) {
       const [hours, minute] = time.split(":");
-      const [year, month, day] = date.split("-");
+      const [, month, day] = date.split("-");
 
       // Xóa số 0 ở đầu ngày và tháng nếu có
       const formattedDay = parseInt(day, 10).toString();
@@ -273,7 +273,9 @@ export default function StatusGardens() {
   useEffect(() => {
     socket.on("newStatus", (data: any) => {
       setMessage(data);
-      messageContext?.success("Cập nhập trạng thái mới thành công !!!");
+      if (data.status) {
+        messageContext?.success("Đã thay đổi trạng thái thiết bị chấp hành");
+      }
     });
     socket.on("newStatusGarden", (data: any) => {
       if (data) {
