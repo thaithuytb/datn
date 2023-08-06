@@ -5,7 +5,11 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 
-@WebSocketGateway({ namespace: 'datn', cors: true })
+@WebSocketGateway({
+  namespace: 'datn',
+  cors: true,
+  transports: ['websocket', 'polling'],
+})
 export class SocketGateway {
   @WebSocketServer() server: Server;
 
