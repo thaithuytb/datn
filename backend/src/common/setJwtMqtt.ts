@@ -1,15 +1,15 @@
 import * as jwt from 'jsonwebtoken';
-import { dayjsVps } from './dayjs-vps';
+import { dayjsVpsTimeFromRto } from './dayjs-vps';
 
 export const newTopicJWT = (topic: string) =>
   jwt.sign(
     {
       newTopic: topic,
-      day: parseInt(dayjsVps().format('D')),
-      month: parseInt(dayjsVps().format('M')),
+      day: parseInt(dayjsVpsTimeFromRto().format('D')),
+      month: parseInt(dayjsVpsTimeFromRto().format('M')),
       // year: parseInt(dayjs().format('YYYY')),
-      hour: parseInt(dayjsVps().format('H')),
-      minute: parseInt(dayjsVps().format('m')),
+      hour: parseInt(dayjsVpsTimeFromRto().format('H')),
+      minute: parseInt(dayjsVpsTimeFromRto().format('m')),
     },
     process.env.JWT_SECRET,
   );
