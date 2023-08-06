@@ -105,9 +105,9 @@ const RouteMain = () => {
 
 const App = () => {
   return (
-    <NotificationProvider>
-      <SocketProvider>
-        <AuthContextProvider>
+    <AuthContextProvider>
+      <NotificationProvider>
+        <SocketProvider>
           <MessageContextProvider>
             <GardenContextProvider>
               <DeviceContextProvider>
@@ -120,9 +120,9 @@ const App = () => {
               </DeviceContextProvider>
             </GardenContextProvider>
           </MessageContextProvider>
-        </AuthContextProvider>
-      </SocketProvider>
-    </NotificationProvider>
+        </SocketProvider>
+      </NotificationProvider>
+    </AuthContextProvider>
   );
 };
 

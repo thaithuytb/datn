@@ -17,19 +17,19 @@ export const SocketProvider: React.FC<PropsSocketContext> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const socket = socketIOClient(
-      process.env.REACT_APP_SERVER_WEB_SOCKET || "http://localhost:5000/datn"
-    );
-    setSocket(socket);
+    if (process.env.REACT_APP_SERVER_WEB_SOCKET) {
+      const socket = socketIOClient(process.env.REACT_APP_SERVER_WEB_SOCKET);
+      setSocket(socket);
 
-    const gardenIds = [1];
-    const payload = { gardenIds };
-    socket.emit("joinGarden", payload);
+      const gardenIds = [1];
+      const payload = { gardenIds };
+      socket.emit("joinGarden", payload);
 
-    //note return
-    return () => {
-      socket.disconnect();
-    };
+      //note return
+      return () => {
+        socket.disconnect();
+      };
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
