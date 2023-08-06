@@ -30,6 +30,7 @@ export class ThresholdController {
     dto: ChangeThresholdDto,
     @Req() req: any,
   ) {
+    console.log({ dto });
     return this.thresholdService.changeThreshold(dto, req.user.id);
   }
 }
