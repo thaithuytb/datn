@@ -51,14 +51,14 @@ void deviceAutomatic() {
     bool lampLightOn = lightValue < lightThresh[0] && !lampTimeOff;
     bool lampLightOff = lightValue > lightThresh[1];
 
-    bool lampTempOn = tempValue < tempThresh[0];
+    bool lampTempOn = tempValue < tempThresh[0] && !lampTimeOff;
     bool lampTempOff = tempValue > (tempThresh[0] + 5);
 
     if (lampLightOn || lampTempOn) {
         if(lamp != 1) {
             lampOn(LAMP_PIN, 1);
         }
-    } else if (lampTempOff && lampLightOff) {
+    } else if ((lampTempOff && lampLightOff) || lampTimeOff) {
         if(lamp != 0) {
             lampOn(LAMP_PIN, 0);
         }
