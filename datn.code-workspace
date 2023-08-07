@@ -1,12 +1,27 @@
 {
 	"folders": [
 		{
-			"path": "TempSensor"
+			"name": "controller",
+			"path": "controller"
 		},
 		{
+			"name": "gateway",
+			"path": "gateway"
+		},
+		{
+			"name": "sensor",
+			"path": "sensor"
+		},
+		{
+			"name": "gate_control",
+			"path": "gate_control"
+		},
+		{
+			"name": "backend",
 			"path": "backend"
 		},
 		{
+			"name": "web",
 			"path": "web"
 		}
 	],
@@ -40,7 +55,35 @@
 			"array": "cpp",
 			"utility": "cpp",
 			"string": "cpp",
-			"iosfwd": "cpp"
+			"iosfwd": "cpp",
+			"*.tcc": "cpp",
+			"cctype": "cpp",
+			"clocale": "cpp",
+			"cmath": "cpp",
+			"cstdarg": "cpp",
+			"cstdint": "cpp",
+			"cstdio": "cpp",
+			"cstdlib": "cpp",
+			"cstring": "cpp",
+			"ctime": "cpp",
+			"cwchar": "cpp",
+			"cwctype": "cpp",
+			"unordered_map": "cpp",
+			"unordered_set": "cpp",
+			"exception": "cpp",
+			"map": "cpp",
+			"memory_resource": "cpp",
+			"numeric": "cpp",
+			"string_view": "cpp",
+			"fstream": "cpp",
+			"initializer_list": "cpp",
+			"iomanip": "cpp",
+			"new": "cpp",
+			"sstream": "cpp",
+			"stdexcept": "cpp",
+			"streambuf": "cpp",
+			"cinttypes": "cpp",
+			"typeinfo": "cpp"
 		}
 	}
 }
