@@ -203,8 +203,13 @@ export default function HeaderLayout() {
       </div>
 
       {!isAuthenticated ? (
-        <div onClick={openLogin}>login</div>
+        <div>
+          <Button className="button_login-navigate" onClick={openLogin}>
+            Đăng nhập
+          </Button>
+        </div>
       ) : (
+        // <div onClick={openLogin}>Đăng nhập</div>
         <div className="header_right">
           <h3>Xin chào {name}</h3>
 

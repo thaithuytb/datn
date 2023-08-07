@@ -10,6 +10,11 @@
 	top: 0;
 	width: 100%;
 }
+/* style={{ color: "#71d3f7", fontWeight: "600" }} */
+.button_login-navigate {
+	color: #71d3f7;
+	font-weight: 600;
+}
 
 .header_left {
 	display: flex;

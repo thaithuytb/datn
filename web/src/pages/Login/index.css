@@ -8,7 +8,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #52e961;
+	color: #71d3f7;
 }
 
 .login {
@@ -45,12 +45,12 @@
 	padding: 15px 20px;
 	outline: none;
 	margin-bottom: 20px;
-	border:1px solid #52e961;
+	border:1px solid #71d3f7;
 }
 .login_form button {
 	width: 200px;
 	padding: 15px 20px;
-	background-color: #52e961;
+	background-color: #71d3f7;
 	color: white;
 	border: none;
 	font-weight: bold;
