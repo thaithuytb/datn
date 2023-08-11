@@ -96,7 +96,6 @@ export default function HeaderLayout() {
   const setNotifilcations = notificationContext?.setNotifilcations;
   const notificationApi = new NotificationApi();
   const [page, setPage] = useState<number>(1);
-  console.log(count);
   const name = authContext?.authInformation?.user?.fullName || "user";
   const isAuthenticated = authContext?.authInformation.isAuthenticated;
   const navigate = useNavigate();
@@ -141,7 +140,7 @@ export default function HeaderLayout() {
           };
       const res = await notificationApi.getNotification(dto);
       if (res && setNotifilcations) {
-        if (page === 1 || type === typeNotification) {
+        if (page === 1 && type === typeNotification) {
           setNotifilcations([...res.data.notifications]);
         } else {
           setNotifilcations((notifications: any) => [

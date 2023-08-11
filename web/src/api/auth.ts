@@ -84,6 +84,24 @@ class AuthApi {
     return axiosClient.get(url) as unknown as ApiResponse;
   }
 
+  deleteAcountInGarden(dto: {
+    userId: number,
+    gardenId: number
+  }) {
+    const url = `/auth/delete-in-garden`;
+    // validation
+    return axiosClient.post(url, { dto: { ...dto } }) as unknown as ApiResponse;
+  }
+
+  deleteAcount(dto: {
+    userId: number,
+  }) {
+    const url = `/auth/delete?id=${dto.userId}`;
+    // validation
+    return axiosClient.delete(url) as unknown as ApiResponse;
+  }
+
+
   static registerAuthApi() {
     return new AuthApi();
   }

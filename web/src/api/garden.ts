@@ -12,12 +12,29 @@ class GardenApi {
     return axiosClient.get(url) as unknown as ApiResponse;
   }
 
+  createGarden(dto: {
+    name: string,
+    address: string
+  }) {
+    const url = `/gardens/create`;
+    return axiosClient.post(url, { dto: { ...dto } }) as unknown as ApiResponse;
+  }
+
   changeStatusGarden(dto: {
     id: string;
     body: { isAuto: boolean; time?: string };
   }) {
     const url = `/gardens/${dto.id}/regime`;
     return axiosClient.post(url, { dto: dto.body }) as unknown as ApiResponse;
+  }
+
+  changeGarden(dto: {
+    name?: string,
+    address?: string,
+    coordinates?: string
+  }) {
+    const url = `/gardens/change`;
+    return axiosClient.post(url, { dto: { ...dto } }) as unknown as ApiResponse;
   }
 
   deleteGarden(dto: { id: number }) {

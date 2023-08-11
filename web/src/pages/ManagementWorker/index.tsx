@@ -37,23 +37,6 @@ export interface IViewEmpty {
   itemsOption: any;
 }
 
-const showDeleteConfirm = () => {
-  confirm({
-    title: "Bạn có muốn tiếp tục xóa",
-    icon: <ExclamationCircleFilled />,
-    content: 'ấn "Cancel" để hủy',
-    okText: "Xóa",
-    okType: "danger",
-    cancelText: "Cancel",
-    onOk() {
-      console.log("OK");
-    },
-    onCancel() {
-      console.log("Cancel");
-    },
-  });
-};
-
 export const ViewEmpty: React.FC<IViewEmpty> = ({
   selectGarden,
   itemsOption,
@@ -150,7 +133,7 @@ const ManagementWorker = () => {
         };
       });
       setLisUser(data);
-    } catch (error) {}
+    } catch (error) { }
   };
   const itemsOption: SelectProps["options"] =
     gardens?.map((garden) => ({
@@ -212,6 +195,31 @@ const ManagementWorker = () => {
     }
   };
 
+  const showDeleteConfirm = async () => {
+    confirm({
+      title: "Bạn có muốn tiếp tục xóa",
+      icon: <ExclamationCircleFilled />,
+      content: 'ấn "Cancel" để hủy',
+      okText: "Xóa",
+      okType: "danger",
+      cancelText: "Cancel",
+      async onOk() {
+        const dto = {
+          userId: 1,
+          gardenId: 1
+        }
+        const res = await authApi.deleteAcountInGarden(dto)
+        if(res.success) {
+          messageContext?.error("xoa thanh cong!!!")
+        }
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+
   //xử lý trong bảng--------------------------------------------
   let columns: ColumnsType<DataType> = [
     {
@@ -246,34 +254,34 @@ const ManagementWorker = () => {
   columns =
     roleUserOfPage === "ADMIN"
       ? [
-          ...columns,
-          {
-            title: "Thao tác",
-            className: "row_ManagementWorker-action",
-            align: "center",
-            render: (_, record) =>
-              listUser.length > 0 ? (
-                <>
-                  <Button
-                    onClick={() => showModal(record)}
-                    type="primary"
-                    ghost
-                    size="small"
-                  >
-                    Cập nhật
-                  </Button>
-                  <Button
-                    onClick={showDeleteConfirm}
-                    style={{ marginLeft: "0.5rem" }}
-                    danger
-                    size="small"
-                  >
-                    Xóa
-                  </Button>
-                </>
-              ) : null,
-          },
-        ]
+        ...columns,
+        {
+          title: "Thao tác",
+          className: "row_ManagementWorker-action",
+          align: "center",
+          render: (_, record) =>
+            listUser.length > 0 ? (
+              <>
+                <Button
+                  onClick={() => showModal(record)}
+                  type="primary"
+                  ghost
+                  size="small"
+                >
+                  Cập nhật
+                </Button>
+                <Button
+                  onClick={showDeleteConfirm}
+                  style={{ marginLeft: "0.5rem" }}
+                  danger
+                  size="small"
+                >
+                  Xóa
+                </Button>
+              </>
+            ) : null,
+        },
+      ]
       : columns;
 
   const showModal = (record: any) => {
@@ -362,6 +370,7 @@ const ManagementWorker = () => {
               setIsModalOpen={setIsModalOpen}
               itemsOption={itemsOption}
               changeRole={changeRole}
+              getAllUserByGardenId={getAllUserByGardenId}
             />
           )}
         </div>

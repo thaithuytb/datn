@@ -1,8 +1,24 @@
 import { Button, Form, Input } from "antd";
-import React from "react";
+import GardenApi from "../../api/garden";
+import { useNavigate } from "react-router-dom";
 
 const CreateGarden = () => {
-  const addNewGarden = () => {};
+  const gardenApi = GardenApi.registerAuthApi();
+  const navigate = useNavigate()
+  const addNewGarden = async (value: any) => {
+    try {
+      const dto = {
+        name: value.name,
+        address: value.address
+      }
+      const res = await gardenApi.createGarden(dto)
+      if (res.success) {
+        navigate('/garden')
+      }
+    } catch (error) {
+
+    }
+  };
   return (
     <Form
       className="form_left"

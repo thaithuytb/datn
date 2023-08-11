@@ -43,7 +43,7 @@ export default function Garden() {
   }, []);
 
   //xóa khu vườn
-  const showDeleteConfirm = (value: any) => {
+  const showDeleteConfirm = async (value: any) => {
     confirm({
       title: "Bạn có muốn tiếp tục xóa",
       icon: <ExclamationCircleFilled />,
@@ -51,8 +51,11 @@ export default function Garden() {
       okText: "Xóa",
       okType: "danger",
       cancelText: "Cancel",
-      onOk() {
-        gardenApi.deleteGarden({ id: value.id });
+      async onOk() {
+        const res = await gardenApi.deleteGarden({ id: value.id });
+        if (res.success && getGardens) {
+          getGardens()
+        }
       },
       onCancel() {
       },
@@ -117,7 +120,7 @@ export default function Garden() {
       render: (_, record) => (
         <>
           <Button type="primary" size="small"
-           ghost onClick={() => showModal(record)}>
+            ghost onClick={() => showModal(record)}>
             Cập nhật
           </Button>
           <Button
