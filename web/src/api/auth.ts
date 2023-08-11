@@ -40,6 +40,8 @@ class AuthApi {
     fullName?: string;
     phoneNumber?: string;
     address?: string;
+    dateOfBrith?: string
+    gender?: string
   }) {
     const url = "/auth/update-information";
     // validation
@@ -88,7 +90,8 @@ class AuthApi {
     userId: number,
     gardenId: number
   }) {
-    const url = `/auth/delete-in-garden`;
+    // account/delete
+    const url = `/auth/account-garden/delete`;
     // validation
     return axiosClient.post(url, { dto: { ...dto } }) as unknown as ApiResponse;
   }
@@ -96,9 +99,9 @@ class AuthApi {
   deleteAcount(dto: {
     userId: number,
   }) {
-    const url = `/auth/delete?id=${dto.userId}`;
+    const url = `/auth/account/delete`;
     // validation
-    return axiosClient.delete(url) as unknown as ApiResponse;
+    return axiosClient.post(url, {dto: {...dto}}) as unknown as ApiResponse;
   }
 
 
