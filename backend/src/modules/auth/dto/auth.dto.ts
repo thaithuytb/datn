@@ -20,6 +20,10 @@ export class UpdateInformationDto {
 
   @IsOptional()
   @IsString()
+  dateOfBirth?: string;
+
+  @IsOptional()
+  @IsString()
   password?: string;
 
   @IsOptional()

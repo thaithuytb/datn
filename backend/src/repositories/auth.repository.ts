@@ -88,6 +88,28 @@ export class AuthRepository implements IAuthRepository {
       },
     });
   }
+
+  async deleteAccount(id: number) {
+    return this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+  }
+
+  async deleteAccountInGarden(userId: number, gardenId: number) {
+    return this.prisma.gardensOnUsers.delete({
+      where: {
+        userId_gardenId: {
+          userId,
+          gardenId,
+        },
+      },
+    });
+  }
 }
 
 export interface IAuthRepository {

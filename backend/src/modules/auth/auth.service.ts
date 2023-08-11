@@ -250,4 +250,20 @@ export class AuthService {
     const users = await this.authRepository.getUsersByName(name);
     return responseSuccess(200, users);
   }
+
+  async deleteAccount(id: number) {
+    await this.authRepository.deleteAccount(id);
+    return {
+      success: true,
+      statusCode: HttpStatus.NO_CONTENT,
+    };
+  }
+
+  async deleteAccountInGarden(userId: number, gardenId: number) {
+    await this.authRepository.deleteAccountInGarden(userId, gardenId);
+    return {
+      success: true,
+      statusCode: HttpStatus.NO_CONTENT,
+    };
+  }
 }

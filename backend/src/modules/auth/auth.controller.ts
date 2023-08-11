@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   ParseIntPipe,
   Patch,
@@ -89,5 +90,25 @@ export class AuthController {
     @Body('dto') dto: UpsertGardensOnUsers,
   ): Promise<GardensOnUsersType> {
     return this.authService.upsertGardensOnUsers(dto);
+  }
+
+  @UseGuards(RoleAdminGuard)
+  @Delete('account/delete')
+  async deleteAccount(@Body() dto: { id: number }): Promise<{
+    success: boolean;
+    statusCode: number;
+  }> {
+    return this.authService.deleteAccount(dto.id);
+  }
+
+  @UseGuards(RoleAdminGuard)
+  @Delete('account-garden/delete')
+  async deleteAccountInGarden(
+    @Body() dto: { userId: number; gardenId: number },
+  ): Promise<{
+    success: boolean;
+    statusCode: number;
+  }> {
+    return this.authService.deleteAccountInGarden(dto.userId, dto.gardenId);
   }
 }
