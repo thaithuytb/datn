@@ -7,7 +7,12 @@ import {
 } from './models/garden.model';
 import { Prisma } from '@prisma/client';
 import { responseSuccess } from 'src/common/responseSuccess';
-import { ChangeStatusGardenDto, GetGardensDto } from './dto/garden.dto';
+import {
+  ChangeStatusGardenDto,
+  CreateGardenDto,
+  GetGardensDto,
+  UpdateGardenDto,
+} from './dto/garden.dto';
 import { Redis } from 'ioredis';
 import { PublicMqttService } from '../../mqtt/publish';
 
@@ -68,6 +73,7 @@ export class GardenService {
     const query: Prisma.GardenFindManyArgs = dto.userId
       ? {
           where: {
+            isDeleted: true,
             users: {
               some: {
                 userId: dto.userId,
@@ -80,6 +86,9 @@ export class GardenService {
           },
         }
       : {
+          where: {
+            isDeleted: true,
+          },
           include: {
             devices: true,
             users: true,
@@ -124,5 +133,23 @@ export class GardenService {
     }
     //TODO: need handle case topic is null
     return false;
+  }
+
+  async createGarden(dto: CreateGardenDto) {
+    const result = await this.gardenRepository.createGarden(dto);
+    return responseSuccess(201, result);
+  }
+
+  async deleteGarden(id: number) {
+    await this.gardenRepository.deleteGarden(id);
+    return {
+      success: true,
+      statusCode: HttpStatus.NO_CONTENT,
+    };
+  }
+
+  async updateGarden(dto: UpdateGardenDto) {
+    const result = await this.gardenRepository.updateGarden(dto);
+    return responseSuccess(200, result);
   }
 }

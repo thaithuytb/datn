@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../infrastructures/dao/prisma.service';
 import { Garden, Prisma } from '@prisma/client';
+import {
+  CreateGardenDto,
+  UpdateGardenDto,
+} from '../modules/garden/dto/garden.dto';
 
 @Injectable()
 export class GardenRepository implements IGardenRepository {
@@ -21,6 +25,40 @@ export class GardenRepository implements IGardenRepository {
   //TODO: can add feature filter garden
   async getGardens(arg: Prisma.GardenFindManyArgs): Promise<Garden[]> {
     return this.prisma.garden.findMany(arg);
+  }
+
+  async createGarden(dto: CreateGardenDto) {
+    return this.prisma.garden.upsert({
+      where: {
+        name: dto.name,
+      },
+      create: {
+        ...CreateGardenDto.transform(dto),
+      },
+      update: {
+        ...CreateGardenDto.transform(dto),
+      },
+    });
+  }
+
+  async deleteGarden(id: number) {
+    return this.prisma.garden.update({
+      where: {
+        id,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+  }
+
+  async updateGarden(dto: UpdateGardenDto) {
+    return this.prisma.garden.update({
+      where: {
+        id: dto.id,
+      },
+      data: UpdateGardenDto.transform(dto),
+    });
   }
 }
 

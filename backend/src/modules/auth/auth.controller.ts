@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   ParseIntPipe,
   Patch,
@@ -93,8 +92,8 @@ export class AuthController {
   }
 
   @UseGuards(RoleAdminGuard)
-  @Delete('account/delete')
-  async deleteAccount(@Body() dto: { id: number }): Promise<{
+  @Post('account/delete')
+  async deleteAccount(@Body('dto') dto: { id: number }): Promise<{
     success: boolean;
     statusCode: number;
   }> {
@@ -102,7 +101,7 @@ export class AuthController {
   }
 
   @UseGuards(RoleAdminGuard)
-  @Delete('account-garden/delete')
+  @Post('account-garden/delete')
   async deleteAccountInGarden(
     @Body() dto: { userId: number; gardenId: number },
   ): Promise<{

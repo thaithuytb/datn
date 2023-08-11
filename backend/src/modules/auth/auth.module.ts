@@ -20,6 +20,12 @@ export class AuthModule implements NestModule {
     consumer.apply(verifyTokenMiddleware).forRoutes('api/v1/auth/users/*');
     consumer
       .apply(verifyTokenMiddleware)
+      .forRoutes('api/v1/auth/account/delete');
+    consumer
+      .apply(verifyTokenMiddleware)
+      .forRoutes('api/v1/auth/account-garden/delete');
+    consumer
+      .apply(verifyTokenMiddleware)
       .forRoutes('api/v1/auth/upsert-gardens-on-users');
     consumer.apply(verifyTokenMiddleware).forRoutes('api/v1/auth/users');
   }

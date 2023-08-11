@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -11,7 +12,12 @@ import {
 import { GardenService } from './garden.service';
 import { RoleGardenGuard } from '../../guards/roleGardenGuard';
 import { Role } from '@prisma/client';
-import { ChangeStatusGardenDto } from './dto/garden.dto';
+import {
+  ChangeStatusGardenDto,
+  CreateGardenDto,
+  UpdateGardenDto,
+} from './dto/garden.dto';
+import { RoleAdminGuard } from '../../guards/roleAdminGuard';
 
 @Controller('api/v1/gardens')
 export class GardenController {
@@ -36,9 +42,21 @@ export class GardenController {
     return this.gardenService.getGardens({ userId: req.user.id });
   }
 
+  @UseGuards(RoleAdminGuard)
+  @Post('create')
+  async createGarden(@Body('dto') dto: CreateGardenDto) {
+    return this.gardenService.createGarden(dto);
+  }
+
+  @UseGuards(RoleAdminGuard)
+  @Post('delete')
+  async deleteGarden(@Body('dto') dto: { id: number }) {
+    return this.gardenService.deleteGarden(dto.id);
+  }
+
   @UseGuards(RoleGardenGuard)
-  @Get(':gardenId')
-  async getGardenById(@Param('gardenId', ParseIntPipe) gardenId: number) {
-    return this.gardenService.getGardenById(gardenId);
+  @Post('update')
+  async updateGarden(@Body('dto') dto: UpdateGardenDto) {
+    return this.gardenService.updateGarden(dto);
   }
 }

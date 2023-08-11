@@ -33,6 +33,7 @@
     "@nestjs-modules/ioredis": "^1.0.1",
     "@nestjs/common": "^9.4.0",
     "@nestjs/core": "^9.4.0",
+    "@nestjs/mapped-types": "^2.0.2",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/platform-socket.io": "^10.0.4",
     "@nestjs/websockets": "^9.4.0",
