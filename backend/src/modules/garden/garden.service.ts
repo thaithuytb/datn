@@ -73,7 +73,7 @@ export class GardenService {
     const query: Prisma.GardenFindManyArgs = dto.userId
       ? {
           where: {
-            isDeleted: true,
+            isDeleted: false,
             users: {
               some: {
                 userId: dto.userId,
@@ -87,7 +87,7 @@ export class GardenService {
         }
       : {
           where: {
-            isDeleted: true,
+            isDeleted: false,
           },
           include: {
             devices: true,
