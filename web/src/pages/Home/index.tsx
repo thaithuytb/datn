@@ -49,7 +49,7 @@ export default function Home() {
       if (res.success) {
         setDataStatistical(res.data);
       }
-    } catch (error) { }
+    } catch (error) {}
   };
 
   return (
@@ -184,7 +184,7 @@ export default function Home() {
                       )}
                       stroke="#8884d8"
                       dot={false}
-                    // className="test_non"
+                      // className="test_non"
                     />
                     <Line
                       // className="test_non"

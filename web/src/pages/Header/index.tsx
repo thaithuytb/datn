@@ -44,7 +44,7 @@ const ItemNotification: React.FC<IItemNotification> = ({ noti }) => {
         <h3 style={{ margin: "0" }}>{notification.title}</h3>
         <div>{notification.description}</div>
         <div style={{ fontSize: "0.7rem", color: `${colorHeader}` }}>
-          {`${dayjs(notification.createdAt).format('DD-MM-YYYY')}`}
+          {`${dayjs(notification.createdAt).format("DD-MM-YYYY")}`}
         </div>
       </div>
       {!notificationStatus.seen && (
@@ -97,6 +97,7 @@ export default function HeaderLayout() {
   const notificationApi = new NotificationApi();
   // const [page, setPage] = useState<number>(1);
   const name = authContext?.authInformation?.user?.fullName || "user";
+  const path = authContext?.authInformation?.user?.path;
   const isAuthenticated = authContext?.authInformation.isAuthenticated;
   const navigate = useNavigate();
   const openLogin = () => {
@@ -140,7 +141,7 @@ export default function HeaderLayout() {
           };
       const res = await notificationApi.getNotification(dto);
       if (res && setNotifilcations) {
-        console.log(res.data)
+        console.log(res.data);
         setNotifilcations([...res.data.notifications]);
       }
     } catch (error) {}
@@ -307,7 +308,7 @@ export default function HeaderLayout() {
               )}
             >
               <Space size="middle">
-                <Avatar />
+                <Avatar url={path} />
               </Space>
             </Dropdown>
           </div>

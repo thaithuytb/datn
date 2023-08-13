@@ -1,4 +1,4 @@
-import './index.css';
+import "./index.css";
 import { Button, DatePicker, Form, Input, Radio } from "antd";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -10,14 +10,14 @@ import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 
 export default function PersonalInformation() {
-  const [urlImage, setUrlImage] = useState<string | null>();
+  const [path, setPath] = useState<null | string>(null);
   const authContext = useContext(AuthContext);
   const user = authContext?.authInformation.user;
   const setAuthInformation = authContext?.setAuthInformation;
   const messageContext = useContext(MessageContext);
-  const [changeDisplay, setChangeDisplay] = useState<boolean>(true)
+  const [changeDisplay, setChangeDisplay] = useState<boolean>(true);
   const navigate = useNavigate();
-  const dateFormat = "YYYY-MM-DD"
+  const dateFormat = "YYYY-MM-DD";
 
   const initialValues = {
     email: user.email,
@@ -27,7 +27,8 @@ export default function PersonalInformation() {
     id: user.id,
     gender: user.gender,
     dateCreateAccount: dayjs(user.createdAt).format("YYYY-MM-DD"),
-    dateOfBrith: user.dateOfBirth ? dayjs(user.dateOfBirth, dateFormat) : null
+    dateOfBrith: user.dateOfBirth ? dayjs(user.dateOfBirth, dateFormat) : null,
+    path: user.path,
   };
 
   const updateInformation = async (values: any) => {
@@ -39,9 +40,9 @@ export default function PersonalInformation() {
       address: address,
       email: email,
       gender: gender,
-      dateOfBirth: dayjs(dateOfBrith)
+      dateOfBirth: dayjs(dateOfBrith),
     };
-    console.log(data)
+    console.log(data);
     const authApi = AuthApi.registerAuthApi();
     try {
       const res = await authApi.updateInformation(data);
@@ -83,20 +84,27 @@ export default function PersonalInformation() {
     if (event.target.files[0]) {
       const fileApi = new FileApi();
       const res = await fileApi.uploadAvatar(event.target.files[0]);
-      console.log(res);
-      // setUrlImage('')
+      if (typeof res?.data?.path === "string") {
+        setPath(res?.data?.path);
+      }
+      // console.log("aaaaa", res?.data?.path);
+      // // console.log(res);
+      // // setPath(JSON.stringify(res?.data?.path));
     }
   };
 
   //
   const change = () => {
-    setChangeDisplay(!changeDisplay)
-  }
+    setChangeDisplay(!changeDisplay);
+  };
 
   return (
     <div className="form_left">
       <label htmlFor="avatar">
-        <Avatar width="100px" url={urlImage || ''} />
+        <Avatar
+          width="100px"
+          url={path ? path : initialValues.path ? initialValues.path : ""}
+        />
       </label>
       <input
         type="file"
@@ -104,12 +112,13 @@ export default function PersonalInformation() {
         onChange={(e) => uploader(e)}
         name="postImg"
       />
-      <br /><br />
+      <br />
+      <br />
 
-      {changeDisplay ?
+      {changeDisplay ? (
         <Form
           name="personall_form"
-          labelCol={{ flex: '110px' }}
+          labelCol={{ flex: "110px" }}
           labelAlign="left"
           labelWrap
           wrapperCol={{ flex: 1 }}
@@ -157,16 +166,16 @@ export default function PersonalInformation() {
             <Button type="primary" htmlType="submit">
               Thay đổi thông tin
             </Button>
-            <span style={{ padding: '0 1rem' }} />
+            <span style={{ padding: "0 1rem" }} />
             <Button type="link" htmlType="button" onClick={change}>
               {`Mật khẩu ->`}
             </Button>
           </Form.Item>
         </Form>
-        :
+      ) : (
         <Form
           name="basic"
-          labelCol={{ flex: '110px' }}
+          labelCol={{ flex: "110px" }}
           labelAlign="left"
           labelWrap
           wrapperCol={{ flex: 1 }}
@@ -206,14 +215,13 @@ export default function PersonalInformation() {
             <Button type="link" htmlType="button" onClick={change}>
               {`<- Thông tin`}
             </Button>
-            <span style={{ padding: '0 1rem' }} />
+            <span style={{ padding: "0 1rem" }} />
             <Button type="primary" htmlType="submit">
               Thay đổi mật khẩu
             </Button>
           </Form.Item>
         </Form>
-      }
-    </ div>
-
+      )}
+    </div>
   );
 }

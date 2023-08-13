@@ -32,23 +32,23 @@ const Account = () => {
   const [totalPage, setTotalPage] = useState<number>();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const authApi = AuthApi.registerAuthApi();
-  const messageContext = useContext(MessageContext)
+  const messageContext = useContext(MessageContext);
 
   //navigate create account
   const create = () => {
     navigate("/account/create-account");
   };
-  
+
   //hàm tìm kiếm theo tên
   const onSearch = (value: string) => {
-    console.log(value)
-    if(value === '') {
+    console.log(value);
+    if (value === "") {
       getAccount(1);
     }
-    const newAccount = listAccount.filter((item:InformationAccount) => {
-      return item.fullName.toLowerCase().includes(value.toLowerCase())
-    })
-    setListAccount(newAccount)
+    const newAccount = listAccount.filter((item: InformationAccount) => {
+      return item.fullName.toLowerCase().includes(value.toLowerCase());
+    });
+    setListAccount(newAccount);
   };
 
   const showDeleteConfirm = (id: number) => {
@@ -60,11 +60,11 @@ const Account = () => {
       okType: "danger",
       cancelText: "Cancel",
       async onOk() {
-        const res = await authApi.deleteAcount({id})
-        if(res.success) {
-          console.log(res)
-          getAccount()
-          messageContext?.error("xoa thanh cong!!!")
+        const res = await authApi.deleteAcount({ id });
+        if (res.success) {
+          console.log(res);
+          getAccount();
+          messageContext?.error("Xóa tài khoản thành công!!!");
         }
       },
       onCancel() {
@@ -79,38 +79,38 @@ const Account = () => {
       title: "Stt",
       dataIndex: "stt",
       width: 10,
-      className:'responsive-hiden'
+      className: "responsive-hiden",
     },
     {
       title: "Tên đầy đủ",
       dataIndex: "fullName",
-      className:'row-acount row-acount-name'
+      className: "row-acount row-acount-name",
     },
     {
       title: "Email",
       dataIndex: "email",
-      className:'row-acount'
+      className: "row-acount",
     },
     {
       title: "Địa chỉ",
       dataIndex: "address",
-      className:'responsive-hiden'
+      className: "responsive-hiden",
     },
     {
       title: "Ngày tham gia",
       dataIndex: "dateCreateAccount",
-      className:'responsive-hiden'
+      className: "responsive-hiden",
     },
     {
       title: "Giới tính",
       dataIndex: "gender",
-      className:'responsive-hiden'
+      className: "responsive-hiden",
     },
     {
       title: "",
       dataIndex: "",
-      align:'center',
-      className:'row-acount-action',
+      align: "center",
+      className: "row-acount-action",
       render: (_, record) =>
         listAccount.length > 0 ? (
           <>
@@ -127,7 +127,6 @@ const Account = () => {
           </>
         ) : null,
     },
-    
   ];
 
   //thay đổi page
@@ -144,7 +143,7 @@ const Account = () => {
     const dto = { page };
     try {
       const res = await authApi.getUsers(dto);
-      setTotalPage(res?.data?.totalRecords)
+      setTotalPage(res?.data?.totalRecords);
       let stt = 0;
       if (page) {
         stt = (page - 1) * limit;
@@ -152,7 +151,7 @@ const Account = () => {
       const data = res?.data?.users.map(({ user }: any, index: number) => {
         return {
           key: index,
-          stt: index + 1+ stt,
+          stt: index + 1 + stt,
           id: user.id,
           fullName: user.fullName,
           email: user.email,
@@ -161,15 +160,15 @@ const Account = () => {
           gender: user.gender,
           dateCreateAccount: dayjs(user.createdAt).format("DD-YY-YYYY"),
           dateOfBirth: "NULL",
-          avatar: user.fullName,
+          avatar: user.path,
         };
       });
       setListAccount(data);
-    } catch (error) { }
+    } catch (error) {}
   };
   useEffect(() => {
     getAccount(1);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div className="account">
@@ -181,7 +180,9 @@ const Account = () => {
       </header>
 
       <div className="SearchAccount">
-        <span className="responsive-hiden" style={{ marginRight: "100px" }}>Tìm kiếm: </span>
+        <span className="responsive-hiden" style={{ marginRight: "100px" }}>
+          Tìm kiếm:{" "}
+        </span>
         <Search
           placeholder="Nhập tên muốn tìm..."
           allowClear
@@ -196,7 +197,7 @@ const Account = () => {
         pagination={{
           pageSize: 6,
           total: totalPage,
-          current: currentPage
+          current: currentPage,
         }}
         columns={columns}
         dataSource={listAccount}

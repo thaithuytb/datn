@@ -13,19 +13,19 @@ import { MessageContext } from "../../contexts/MessageContext";
 const { confirm } = Modal;
 
 export interface IGarden {
-  address: string
-  createdAt: string
-  devices: any[]
-  hight: number
-  id: number
-  isAuto: boolean
-  isDeleted: boolean
-  landArea: number
-  length: number
-  name: string
-  updatedAt: string
-  users: any[]
-  width: number
+  address: string;
+  createdAt: string;
+  devices: any[];
+  hight: number;
+  id: number;
+  isAuto: boolean;
+  isDeleted: boolean;
+  landArea: number;
+  length: number;
+  name: string;
+  updatedAt: string;
+  users: any[];
+  width: number;
 }
 
 export default function Garden() {
@@ -33,10 +33,10 @@ export default function Garden() {
   const gardenContext = useContext(GardenContext);
   const gardens = gardenContext?.gardens;
   const getGardens = gardenContext?.getGardens;
-  const navigate = useNavigate()
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-  const [garden, setGarden] = useState<IGarden>()
-  const messageContext = useContext(MessageContext)
+  const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [garden, setGarden] = useState<IGarden>();
+  const messageContext = useContext(MessageContext);
   useEffect(() => {
     if (getGardens) {
       getGardens();
@@ -55,14 +55,13 @@ export default function Garden() {
       cancelText: "Cancel",
       async onOk() {
         const res = await gardenApi.deleteGarden({ id: value.id });
-        console.log(res)
+        console.log(res);
         if (res.success && getGardens) {
-          getGardens()
-          messageContext?.error("Xóa")
+          getGardens();
+          messageContext?.error("Xóa thành công khu vườn");
         }
       },
-      onCancel() {
-      },
+      onCancel() {},
     });
   };
 
@@ -71,36 +70,36 @@ export default function Garden() {
       title: "Stt",
       align: "center",
       dataIndex: "id",
-      className: 'responsive-hiden'
+      className: "responsive-hiden",
     },
     {
       title: "Tên khu vườn",
       align: "center",
       dataIndex: "name",
-      className: 'row_garden'
+      className: "row_garden",
     },
     {
       title: "Địa chỉ",
       align: "center",
       dataIndex: "address",
-      className: 'row_garden'
+      className: "row_garden",
     },
     {
       title: "Ngày bắt đầu",
       align: "center",
       render: (_, record) => dayjs(record.createdAt).format("YYYY-MM-DD"),
-      className: 'row_garden responsive-hiden'
+      className: "row_garden responsive-hiden",
     },
     {
       title: "Chế độ chăm sóc hiện tại",
       align: "center",
       render: (_, record) => (record.isAuto ? "Tự chăm sóc" : "Tự điều chỉnh"),
-      className: 'row_garden responsive-hiden'
+      className: "row_garden responsive-hiden",
     },
     {
       title: "Số lượng thiết bị",
       align: "center",
-      className: 'row_garden',
+      className: "row_garden",
       render: (_, record) => {
         const countDevices = record.devices.length;
         const countDeviceAction = record.devices.filter(
@@ -117,39 +116,44 @@ export default function Garden() {
       title: "Số người tham gia",
       align: "center",
       render: (_, record) => record.users.length,
-      className: 'row_garden'
+      className: "row_garden",
     },
     {
       title: "Thao tác",
       render: (_, record) => (
         <>
-          <Button type="primary" size="small"
-            ghost onClick={() => showModal(record)}>
+          <Button
+            type="primary"
+            size="small"
+            ghost
+            onClick={() => showModal(record)}
+          >
             Cập nhật
           </Button>
           <Button
             size="small"
             onClick={() => showDeleteConfirm(record)}
-            style={{ marginLeft: "0.5rem" }} danger
+            style={{ marginLeft: "0.5rem" }}
+            danger
           >
             Xóa
           </Button>
         </>
       ),
       align: "center",
-      className: 'row_garden-action'
+      className: "row_garden-action",
     },
   ];
 
   const showModal = (record: IGarden) => {
-    setGarden(record)
+    setGarden(record);
     setIsModalOpen(true);
-  }
+  };
 
   //add new Garden
   const addNewGarden = () => {
-    navigate('/garden/new-garden')
-  }
+    navigate("/garden/new-garden");
+  };
 
   return (
     <div className="garden">
@@ -161,20 +165,20 @@ export default function Garden() {
       </div>
       {gardens && (
         <Table
-          style={{ maxWidth: '100%' }}
+          style={{ maxWidth: "100%" }}
           pagination={false}
           bordered={true}
           columns={columns}
           dataSource={gardens}
         />
       )}
-      {isModalOpen &&
+      {isModalOpen && (
         <Update
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
           garden={garden}
         />
-      }
+      )}
     </div>
   );
 }

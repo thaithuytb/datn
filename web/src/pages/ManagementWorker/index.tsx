@@ -30,7 +30,7 @@ interface DataType {
   garden: string;
   gardenId?: any;
   date: string;
-  userId: number
+  userId: number;
 }
 
 export interface IViewEmpty {
@@ -134,7 +134,7 @@ const ManagementWorker = () => {
         };
       });
       setLisUser(data);
-    } catch (error) { }
+    } catch (error) {}
   };
   const itemsOption: SelectProps["options"] =
     gardens?.map((garden) => ({
@@ -188,7 +188,7 @@ const ManagementWorker = () => {
       const dto = { ...dtoAddUser };
       const res = await authApi.upsertGardensOnUser(dto);
       if (res.success) {
-        messageContext?.success("Them nguoi thanh cong");
+        messageContext?.success("Thêm nhân viên vào khu vườn thành công");
         getAllUserByGardenId(garden);
       }
     } catch (error) {
@@ -196,7 +196,11 @@ const ManagementWorker = () => {
     }
   };
 
-  const showDeleteConfirm = async (userId: number, gardenId: number, record:DataType) => {
+  const showDeleteConfirm = async (
+    userId: number,
+    gardenId: number,
+    record: DataType
+  ) => {
     confirm({
       title: "Bạn có muốn tiếp tục xóa",
       icon: <ExclamationCircleFilled />,
@@ -207,17 +211,17 @@ const ManagementWorker = () => {
       async onOk() {
         const dto = {
           userId: userId,
-          gardenId: gardenId
-        }
-        const res = await authApi.deleteAcountInGarden(dto)
-        if(res.success) {
+          gardenId: gardenId,
+        };
+        const res = await authApi.deleteAcountInGarden(dto);
+        if (res.success) {
           getAllUserByGardenId({
             id: gardenId,
             value: record?.name,
             label: record?.name,
             garden: garden,
           });
-          messageContext?.error("xoa thanh cong!!!")
+          messageContext?.error("Xóa nhân viên thành công!!!");
         }
       },
       onCancel() {
@@ -225,7 +229,6 @@ const ManagementWorker = () => {
       },
     });
   };
-
 
   //xử lý trong bảng--------------------------------------------
   let columns: ColumnsType<DataType> = [
@@ -261,34 +264,36 @@ const ManagementWorker = () => {
   columns =
     roleUserOfPage === "ADMIN"
       ? [
-        ...columns,
-        {
-          title: "Thao tác",
-          className: "row_ManagementWorker-action",
-          align: "center",
-          render: (_, record) =>
-            listUser.length > 0 ? (
-              <>
-                <Button
-                  onClick={() => showModal(record)}
-                  type="primary"
-                  ghost
-                  size="small"
-                >
-                  Cập nhật
-                </Button>
-                <Button
-                  onClick={() => showDeleteConfirm(record.userId, record.gardenId, record)}
-                  style={{ marginLeft: "0.5rem" }}
-                  danger
-                  size="small"
-                >
-                  Xóa
-                </Button>
-              </>
-            ) : null,
-        },
-      ]
+          ...columns,
+          {
+            title: "Thao tác",
+            className: "row_ManagementWorker-action",
+            align: "center",
+            render: (_, record) =>
+              listUser.length > 0 ? (
+                <>
+                  <Button
+                    onClick={() => showModal(record)}
+                    type="primary"
+                    ghost
+                    size="small"
+                  >
+                    Cập nhật
+                  </Button>
+                  <Button
+                    onClick={() =>
+                      showDeleteConfirm(record.userId, record.gardenId, record)
+                    }
+                    style={{ marginLeft: "0.5rem" }}
+                    danger
+                    size="small"
+                  >
+                    Xóa
+                  </Button>
+                </>
+              ) : null,
+          },
+        ]
       : columns;
 
   const showModal = (record: any) => {
