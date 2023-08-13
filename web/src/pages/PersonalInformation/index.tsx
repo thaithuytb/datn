@@ -17,7 +17,7 @@ export default function PersonalInformation() {
   const messageContext = useContext(MessageContext);
   const [changeDisplay, setChangeDisplay] = useState<boolean>(true)
   const navigate = useNavigate();
-  const dateFormat = "DD-MM-YYYY"
+  const dateFormat = "YYYY-MM-DD"
 
   const initialValues = {
     email: user.email,
@@ -26,38 +26,37 @@ export default function PersonalInformation() {
     address: user.address,
     id: user.id,
     gender: user.gender,
-    dateCreateAccount: dayjs(user.createdAt).format("DD-MM-YYYY"),
-    dateOfBrith: user.dateOfBrith ? dayjs(user.dateOfBrith, dateFormat) : null
+    dateCreateAccount: dayjs(user.createdAt).format("YYYY-MM-DD"),
+    dateOfBrith: user.dateOfBirth ? dayjs(user.dateOfBirth, dateFormat) : null
   };
 
   const updateInformation = async (values: any) => {
-    const { id, fullName, email, phoneNumber, address, gender, createdAt, dateOfBrith } =
+    const { fullName, email, phoneNumber, address, gender, dateOfBrith } =
       values;
     const data = {
       fullName: fullName,
       phoneNumber: phoneNumber,
       address: address,
       email: email,
-      // id: id,
-      // gender: gender,
-      // dateCreateAccount: createdAt,
-      // dateOfBrith: `dayjs(user.dateOfBrith, dateFormat)
+      gender: gender,
+      dateOfBirth: dayjs(dateOfBrith)
     };
+    console.log(data)
     const authApi = AuthApi.registerAuthApi();
-    // try {
-    //   const res = await authApi.updateInformation(data);
-    //   setAuthInformation({
-    //     ...authContext?.authInformation,
-    //     user: { ...res.data },
-    //   });
-    //   messageContext?.success("Cập nhật thông tin cá nhân thành công !!!");
-    // } catch (error: any) {
-    //   messageContext?.error(error?.message);
-    // }
+    try {
+      const res = await authApi.updateInformation(data);
+      setAuthInformation({
+        ...authContext?.authInformation,
+        user: { ...res.data },
+      });
+      messageContext?.success("Cập nhật thông tin cá nhân thành công !!!");
+    } catch (error: any) {
+      messageContext?.error(error?.message);
+    }
   };
 
   const onChangPassword = async (values: any) => {
-    const { email, password, newPassword, authenticationPassword } = values;
+    const { password, newPassword, authenticationPassword } = values;
     if (newPassword !== authenticationPassword) {
       messageContext?.error("mật khẩu mới nhập lại sai");
     } else {
@@ -137,7 +136,7 @@ export default function PersonalInformation() {
 
           <Form.Item label="Ngày sinh" name="dateOfBrith">
             <DatePicker
-              // defaultValue={dayjs(currentDate, dateFormat)}
+              // defaultValue={dayjs(user.dateOfBirth, dateFormat)}
               inputReadOnly={true}
               format={dateFormat}
             />

@@ -22,12 +22,14 @@ interface IShowModal {
   setIsModalOpen: (isModalOpen: boolean) => void;
   itemsOption: any;
   changeRole: IChangeRole | undefined;
+  getAllUserByGardenId: (garden: any, page?: number | undefined, limit?: number) => Promise<void>
 }
 
 const ChangeRole: React.FC<IShowModal> = ({
   isModalOpen,
   setIsModalOpen,
   changeRole,
+  getAllUserByGardenId
 }) => {
   const [changeRoleProps, setChangeRoleProps] = useState<IChangeRole>();
   const [dto, setDto] = useState<{
@@ -57,8 +59,11 @@ const ChangeRole: React.FC<IShowModal> = ({
   const handleOk = async () => {
     try {
       const authApi = AuthApi.registerAuthApi();
-      await authApi.upsertGardensOnUser(dto);
-      setIsModalOpen(false);
+      const res = await authApi.upsertGardensOnUser(dto);
+      if(res.success) {
+        await getAllUserByGardenId(changeRole?.garden, undefined);
+        setIsModalOpen(false);
+      }
     } catch (error) {
       console.log(error);
     }

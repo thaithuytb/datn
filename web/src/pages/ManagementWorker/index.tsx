@@ -30,29 +30,13 @@ interface DataType {
   garden: string;
   gardenId?: any;
   date: string;
+  userId: number
 }
 
 export interface IViewEmpty {
   selectGarden: any;
   itemsOption: any;
 }
-
-const showDeleteConfirm = () => {
-  confirm({
-    title: "Bạn có muốn tiếp tục xóa",
-    icon: <ExclamationCircleFilled />,
-    content: 'ấn "Cancel" để hủy',
-    okText: "Xóa",
-    okType: "danger",
-    cancelText: "Cancel",
-    onOk() {
-      console.log("OK");
-    },
-    onCancel() {
-      console.log("Cancel");
-    },
-  });
-};
 
 export const ViewEmpty: React.FC<IViewEmpty> = ({
   selectGarden,
@@ -150,7 +134,7 @@ const ManagementWorker = () => {
         };
       });
       setLisUser(data);
-    } catch (error) {}
+    } catch (error) { }
   };
   const itemsOption: SelectProps["options"] =
     gardens?.map((garden) => ({
@@ -212,6 +196,37 @@ const ManagementWorker = () => {
     }
   };
 
+  const showDeleteConfirm = async (userId: number, gardenId: number, record:DataType) => {
+    confirm({
+      title: "Bạn có muốn tiếp tục xóa",
+      icon: <ExclamationCircleFilled />,
+      content: 'ấn "Cancel" để hủy',
+      okText: "Xóa",
+      okType: "danger",
+      cancelText: "Cancel",
+      async onOk() {
+        const dto = {
+          userId: userId,
+          gardenId: gardenId
+        }
+        const res = await authApi.deleteAcountInGarden(dto)
+        if(res.success) {
+          getAllUserByGardenId({
+            id: gardenId,
+            value: record?.name,
+            label: record?.name,
+            garden: garden,
+          });
+          messageContext?.error("xoa thanh cong!!!")
+        }
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+
   //xử lý trong bảng--------------------------------------------
   let columns: ColumnsType<DataType> = [
     {
@@ -246,34 +261,34 @@ const ManagementWorker = () => {
   columns =
     roleUserOfPage === "ADMIN"
       ? [
-          ...columns,
-          {
-            title: "Thao tác",
-            className: "row_ManagementWorker-action",
-            align: "center",
-            render: (_, record) =>
-              listUser.length > 0 ? (
-                <>
-                  <Button
-                    onClick={() => showModal(record)}
-                    type="primary"
-                    ghost
-                    size="small"
-                  >
-                    Cập nhật
-                  </Button>
-                  <Button
-                    onClick={showDeleteConfirm}
-                    style={{ marginLeft: "0.5rem" }}
-                    danger
-                    size="small"
-                  >
-                    Xóa
-                  </Button>
-                </>
-              ) : null,
-          },
-        ]
+        ...columns,
+        {
+          title: "Thao tác",
+          className: "row_ManagementWorker-action",
+          align: "center",
+          render: (_, record) =>
+            listUser.length > 0 ? (
+              <>
+                <Button
+                  onClick={() => showModal(record)}
+                  type="primary"
+                  ghost
+                  size="small"
+                >
+                  Cập nhật
+                </Button>
+                <Button
+                  onClick={() => showDeleteConfirm(record.userId, record.gardenId, record)}
+                  style={{ marginLeft: "0.5rem" }}
+                  danger
+                  size="small"
+                >
+                  Xóa
+                </Button>
+              </>
+            ) : null,
+        },
+      ]
       : columns;
 
   const showModal = (record: any) => {
@@ -362,6 +377,7 @@ const ManagementWorker = () => {
               setIsModalOpen={setIsModalOpen}
               itemsOption={itemsOption}
               changeRole={changeRole}
+              getAllUserByGardenId={getAllUserByGardenId}
             />
           )}
         </div>

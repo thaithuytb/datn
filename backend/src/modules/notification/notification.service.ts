@@ -49,8 +49,8 @@ export class NotificationService {
       orderBy: {
         createdAt: 'desc',
       },
-      take: dto.limit,
-      skip: (dto.page - 1) * dto.limit,
+      // take: dto.limit,
+      // skip: (dto.page - 1) * dto.limit,
     };
     if (dto.notificationType) {
       condition.where.type = dto.notificationType;

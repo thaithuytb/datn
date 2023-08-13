@@ -1,8 +1,9 @@
 import "./index.css";
 import { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { Button, Input, Modal, Table } from "antd";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import AuthApi from "../../api/auth";
+import { MessageContext } from "../../contexts/MessageContext";
 import Profile from "./Profile";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -23,23 +24,6 @@ interface InformationAccount {
   avata?: string;
 }
 
-const showDeleteConfirm = () => {
-  confirm({
-    title: "Bạn có muốn tiếp tục xóa",
-    icon: <ExclamationCircleFilled />,
-    content: 'ấn "Cancel" để hủy',
-    okText: "Xóa",
-    okType: "danger",
-    cancelText: "Cancel",
-    onOk() {
-      console.log("OK");
-    },
-    onCancel() {
-      console.log("Cancel");
-    },
-  });
-};
-
 const Account = () => {
   const navigate = useNavigate();
   const [account, setAccount] = useState<InformationAccount>();
@@ -47,6 +31,8 @@ const Account = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [totalPage, setTotalPage] = useState<number>();
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const authApi = AuthApi.registerAuthApi();
+  const messageContext = useContext(MessageContext)
 
   //navigate create account
   const create = () => {
@@ -54,7 +40,38 @@ const Account = () => {
   };
   
   //hàm tìm kiếm theo tên
-  const onSearch = (value: string) => console.log(value);
+  const onSearch = (value: string) => {
+    console.log(value)
+    if(value === '') {
+      getAccount(1);
+    }
+    const newAccount = listAccount.filter((item:InformationAccount) => {
+      return item.fullName.toLowerCase().includes(value.toLowerCase())
+    })
+    setListAccount(newAccount)
+  };
+
+  const showDeleteConfirm = (id: number) => {
+    confirm({
+      title: "Bạn có muốn tiếp tục xóa",
+      icon: <ExclamationCircleFilled />,
+      content: 'ấn "Cancel" để hủy',
+      okText: "Xóa",
+      okType: "danger",
+      cancelText: "Cancel",
+      async onOk() {
+        const res = await authApi.deleteAcount({id})
+        if(res.success) {
+          console.log(res)
+          getAccount()
+          messageContext?.error("xoa thanh cong!!!")
+        }
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
 
   //cột trong bảng
   const columns: ColumnsType<InformationAccount> = [
@@ -101,7 +118,7 @@ const Account = () => {
               Chi tiết
             </Button>
             <Button
-              onClick={showDeleteConfirm}
+              onClick={() => showDeleteConfirm(record.id)}
               style={{ marginLeft: "0.5rem" }}
               danger
             >
@@ -126,7 +143,6 @@ const Account = () => {
   const getAccount = async (page?: number | undefined, limit: number = 6) => {
     const dto = { page };
     try {
-      const authApi = AuthApi.registerAuthApi();
       const res = await authApi.getUsers(dto);
       setTotalPage(res?.data?.totalRecords)
       let stt = 0;
@@ -153,6 +169,7 @@ const Account = () => {
   };
   useEffect(() => {
     getAccount(1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div className="account">

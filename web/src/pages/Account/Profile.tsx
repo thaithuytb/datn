@@ -20,9 +20,6 @@ interface IShowModal {
 
 const Profile: React.FC<IShowModal> = ({ isModalOpen, setIsModalOpen, account }) => {
 
-    const handleOk = () => {
-        setIsModalOpen(false)
-    }
     const handleCancel = () => {
         setIsModalOpen(false)
     }

@@ -187,6 +187,9 @@ export class AuthService {
       }));
     } else {
       const condition: Prisma.UserFindManyArgs = {
+        where: {
+          isDeleted: false,
+        },
         take: limit,
         skip: (page - 1) * limit,
         include: {

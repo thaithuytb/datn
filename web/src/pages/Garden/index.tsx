@@ -9,6 +9,7 @@ import GardenApi from "../../api/garden";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import Update from "./Update";
+import { MessageContext } from "../../contexts/MessageContext";
 const { confirm } = Modal;
 
 export interface IGarden {
@@ -35,6 +36,7 @@ export default function Garden() {
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [garden, setGarden] = useState<IGarden>()
+  const messageContext = useContext(MessageContext)
   useEffect(() => {
     if (getGardens) {
       getGardens();
@@ -43,7 +45,7 @@ export default function Garden() {
   }, []);
 
   //xóa khu vườn
-  const showDeleteConfirm = (value: any) => {
+  const showDeleteConfirm = async (value: any) => {
     confirm({
       title: "Bạn có muốn tiếp tục xóa",
       icon: <ExclamationCircleFilled />,
@@ -51,8 +53,13 @@ export default function Garden() {
       okText: "Xóa",
       okType: "danger",
       cancelText: "Cancel",
-      onOk() {
-        gardenApi.deleteGarden({ id: value.id });
+      async onOk() {
+        const res = await gardenApi.deleteGarden({ id: value.id });
+        console.log(res)
+        if (res.success && getGardens) {
+          getGardens()
+          messageContext?.error("Xóa")
+        }
       },
       onCancel() {
       },
@@ -117,7 +124,7 @@ export default function Garden() {
       render: (_, record) => (
         <>
           <Button type="primary" size="small"
-           ghost onClick={() => showModal(record)}>
+            ghost onClick={() => showModal(record)}>
             Cập nhật
           </Button>
           <Button
