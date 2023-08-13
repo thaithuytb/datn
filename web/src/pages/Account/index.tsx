@@ -40,9 +40,18 @@ const Account = () => {
   };
   
   //hàm tìm kiếm theo tên
-  const onSearch = (value: string) => console.log(value);
+  const onSearch = (value: string) => {
+    console.log(value)
+    if(value === '') {
+      getAccount(1);
+    }
+    const newAccount = listAccount.filter((item:InformationAccount) => {
+      return item.fullName.toLowerCase().includes(value.toLowerCase())
+    })
+    setListAccount(newAccount)
+  };
 
-  const showDeleteConfirm = (userId: number) => {
+  const showDeleteConfirm = (id: number) => {
     confirm({
       title: "Bạn có muốn tiếp tục xóa",
       icon: <ExclamationCircleFilled />,
@@ -51,8 +60,10 @@ const Account = () => {
       okType: "danger",
       cancelText: "Cancel",
       async onOk() {
-        const res = await authApi.deleteAcount({userId})
+        const res = await authApi.deleteAcount({id})
         if(res.success) {
+          console.log(res)
+          getAccount()
           messageContext?.error("xoa thanh cong!!!")
         }
       },

@@ -1,5 +1,6 @@
-import React, { ReactNode, createContext, useEffect, useState } from "react";
+import React, { ReactNode, createContext, useContext, useEffect, useState } from "react";
 import NotificationApi from "../api/notification";
+import { AuthContext } from "./AuthContext";
 
 interface PropsNotificationContext {
   children: ReactNode;
@@ -20,6 +21,7 @@ export interface INotification {
     date: string;
     gardenId: number;
     type: string;
+    createdAt:string
   };
   createdBy: {
     fullName: string;
@@ -39,6 +41,7 @@ export const NotificationProvider: React.FC<PropsNotificationContext> = ({
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [count, setCount] = useState<number>(0);
   const notificationApi = new NotificationApi();
+  const authContext = useContext(AuthContext)
 
   useEffect(() => {
     (async () => {
@@ -49,7 +52,7 @@ export const NotificationProvider: React.FC<PropsNotificationContext> = ({
     })();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [authContext?.authInformation.isAuthenticated]);
 
   const data = {
     notifications,

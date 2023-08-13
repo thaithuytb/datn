@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import GardenApi from "../../api/garden";
 import { MessageContext } from "../../contexts/MessageContext";
+import { GardenContext } from "../../contexts/GardenContext";
 
 interface IShowModal {
   isModalOpen: boolean;
@@ -17,7 +18,8 @@ const Update: React.FC<IShowModal> = ({
   setIsModalOpen,
   garden,
 }) => {
-
+  const gardenContext = useContext(GardenContext)!;
+  const getGardens = gardenContext?.getGardens;
   const gardenApi = GardenApi.registerAuthApi()
   const messageContext = useContext(MessageContext)
   const success = messageContext?.success
@@ -27,28 +29,43 @@ const Update: React.FC<IShowModal> = ({
   ).length;
 
   const [data, setData] = useState({
-    name:garden?.name,
+    id: garden?.id,
+    name: garden?.name,
     address: garden?.address,
-    coordinates: ''
+    length: garden?.length,
+    width: garden?.width,
+    hight: garden?.hight,
+    landArea: garden?.landArea
   })
 
-  const changParams = (e:any) => {
+  const changParams = (e: any) => {
     let name = e.target.name
     let value = e.target.value
-    setData({
-      ...data,
-      [name] : value
-    })
+    if (name === 'name' || name === 'address') {
+      setData({
+        ...data,
+        [name]: value
+      })
+    } else {
+      setData({
+        ...data,
+        [name]: Number(value)
+      })
+    }
+
   }
 
-  const handleOk = async() => { 
+  const handleOk = async () => {
     try {
       const res = await gardenApi.changeGarden(data)
+      console.log(res)
       if(res.success) {
-        success("cap nhap thanh cong!!!!")
+        getGardens()
+        setIsModalOpen(false);
+        success("Cập nhập thành công")
       }
     } catch (error) {
-      
+
     }
   };
   const handleCancel = () => {
@@ -74,19 +91,31 @@ const Update: React.FC<IShowModal> = ({
           <div>
             <span>Tên khu vườn:</span>
             <span>
-              <Input defaultValue={garden?.name} name="name" onChange={changParams}/>
+              <Input defaultValue={garden?.name} name="name" onChange={changParams} />
             </span>
           </div>
           <div>
             <span>Địa chỉ:</span>
             <span>
-              <Input defaultValue={garden?.address} name="address" onChange={changParams}/>
+              <Input defaultValue={garden?.address} name="address" onChange={changParams} />
             </span>
           </div>
           <div>
-            <span>Tọa độ khu vườn:</span>
+            <span>Chiều dài:</span>
             <span>
-              <Input defaultValue={garden?.address} name="coordinates" onChange={changParams}/>
+              <Input defaultValue={garden?.length} name="length" onChange={changParams} />
+            </span>
+          </div>
+          <div>
+            <span>Chiều rộng:</span>
+            <span>
+              <Input defaultValue={garden?.width} name="width" onChange={changParams} />
+            </span>
+          </div>
+          <div>
+            <span>Chiều cao:</span>
+            <span>
+              <Input defaultValue={garden?.hight} name="hight" onChange={changParams} />
             </span>
           </div>
         </div>
@@ -101,10 +130,10 @@ const Update: React.FC<IShowModal> = ({
           </div>
           <div>
             Số lượng thiết bị:
-            <Link to={`/management-devices/${garden?.id}`}>
-              {" "}
-              {`${countDeviceAction} hoạt động/${countDevices} thiết bị`}
-            </Link>
+            {/* <Link to={`/management-devices/${garden?.id}`}> */}
+            {" "}
+            {`${countDeviceAction} hoạt động/${countDevices} thiết bị`}
+            {/* </Link> */}
           </div>
           <div>
             Chế độ chăm sóc hiện tại:
@@ -117,6 +146,13 @@ const Update: React.FC<IShowModal> = ({
             <span>Ngày bắt đầu:</span>
             <span>
               {` `} {dayjs(garden?.createdAt).format("YYYY-MM-DD")}
+            </span>
+          </div>
+
+          <div>
+            <span>Diện tích:</span>
+            <span>
+              <Input defaultValue={garden?.landArea} name="" onChange={changParams} disabled />
             </span>
           </div>
         </div>

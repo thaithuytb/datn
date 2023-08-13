@@ -2,7 +2,6 @@ import { createContext, ReactNode, useEffect, useState } from "react";
 import { IInformationUserLogin } from "../types/login.type";
 import AuthApi from "../api/auth";
 import { LOCAL_STORAGE_TOKEN } from "../common/local-storage-token";
-import { useNavigate } from "react-router-dom";
 
 interface PropsAuthContext {
   children: ReactNode;

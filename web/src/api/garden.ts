@@ -15,36 +15,44 @@ class GardenApi {
   createGarden(dto: {
     name: string,
     address: string
+    width?: number,
+    length?: number,
+    hight?: number,
+    landArea: number,
   }) {
-    const url = `/gardens/create`;
-    return axiosClient.post(url, { dto: { ...dto } }) as unknown as ApiResponse;
-  }
+  const url = `/gardens/create`;
+  return axiosClient.post(url, { dto: { ...dto } }) as unknown as ApiResponse;
+}
 
-  changeStatusGarden(dto: {
-    id: string;
-    body: { isAuto: boolean; time?: string };
-  }) {
-    const url = `/gardens/${dto.id}/regime`;
-    return axiosClient.post(url, { dto: dto.body }) as unknown as ApiResponse;
-  }
+changeStatusGarden(dto: {
+  id: string;
+  body: { isAuto: boolean; time?: string };
+}) {
+  const url = `/gardens/${dto.id}/regime`;
+  return axiosClient.post(url, { dto: dto.body }) as unknown as ApiResponse;
+}
 
-  changeGarden(dto: {
-    name?: string,
-    address?: string,
-    coordinates?: string
-  }) {
-    const url = `/gardens/change`;
-    return axiosClient.post(url, { dto: { ...dto } }) as unknown as ApiResponse;
-  }
+changeGarden(dto: {
+  id?:number,
+  name?: string,
+  address?: string,
+  width?: number;
+  length?: number;
+  hight?: number;
+  landArea?: number;
+}) {
+  const url = `/gardens/update`;
+  return axiosClient.post(url, { dto: { ...dto } }) as unknown as ApiResponse;
+}
 
-  deleteGarden(dto: { id: number }) {
-    const url = `/gardens/delete`;
-    return axiosClient.post(url, { dto }) as unknown as ApiResponse;
-  }
+deleteGarden(dto: { id: number }) {
+  const url = `/gardens/delete`;
+  return axiosClient.post(url, { dto }) as unknown as ApiResponse;
+}
 
   static registerAuthApi() {
-    return new GardenApi();
-  }
+  return new GardenApi();
+}
 }
 
 export default GardenApi;

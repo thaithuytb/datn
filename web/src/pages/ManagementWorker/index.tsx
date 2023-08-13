@@ -30,6 +30,7 @@ interface DataType {
   garden: string;
   gardenId?: any;
   date: string;
+  userId: number
 }
 
 export interface IViewEmpty {
@@ -195,7 +196,7 @@ const ManagementWorker = () => {
     }
   };
 
-  const showDeleteConfirm = async () => {
+  const showDeleteConfirm = async (userId: number, gardenId: number, record:DataType) => {
     confirm({
       title: "Bạn có muốn tiếp tục xóa",
       icon: <ExclamationCircleFilled />,
@@ -205,11 +206,17 @@ const ManagementWorker = () => {
       cancelText: "Cancel",
       async onOk() {
         const dto = {
-          userId: 1,
-          gardenId: 1
+          userId: userId,
+          gardenId: gardenId
         }
         const res = await authApi.deleteAcountInGarden(dto)
         if(res.success) {
+          getAllUserByGardenId({
+            id: gardenId,
+            value: record?.name,
+            label: record?.name,
+            garden: garden,
+          });
           messageContext?.error("xoa thanh cong!!!")
         }
       },
@@ -271,7 +278,7 @@ const ManagementWorker = () => {
                   Cập nhật
                 </Button>
                 <Button
-                  onClick={showDeleteConfirm}
+                  onClick={() => showDeleteConfirm(record.userId, record.gardenId, record)}
                   style={{ marginLeft: "0.5rem" }}
                   danger
                   size="small"

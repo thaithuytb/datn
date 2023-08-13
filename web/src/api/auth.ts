@@ -97,7 +97,7 @@ class AuthApi {
   }
 
   deleteAcount(dto: {
-    userId: number,
+    id: number,
   }) {
     const url = `/auth/account/delete`;
     // validation

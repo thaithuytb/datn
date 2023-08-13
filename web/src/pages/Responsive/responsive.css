@@ -119,10 +119,9 @@
         transform: translateX(34%);
     }
 
-    .custom-dropdown {
-        border: none;
-        overflow: hidden;
-    }
+    /* .custom-dropdown {
+        max-width: 100%;
+    } */
 
     .app {
         background-repeat: no-repeat;

@@ -103,7 +103,7 @@ export class AuthController {
   @UseGuards(RoleAdminGuard)
   @Post('account-garden/delete')
   async deleteAccountInGarden(
-    @Body() dto: { userId: number; gardenId: number },
+    @Body('dto') dto: { userId: number; gardenId: number },
   ): Promise<{
     success: boolean;
     statusCode: number;

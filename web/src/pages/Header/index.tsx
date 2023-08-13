@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useState } from "react";
 import "./index.css";
 import { Badge, Button, Divider, Dropdown, Space, Switch, theme } from "antd";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,6 +11,7 @@ import { colorHeader } from "../../types/variableMain";
 import { NotificationContext } from "../../contexts/NotificationContext";
 import { INotification } from "../../contexts/NotificationContext";
 import NotificationApi from "../../api/notification";
+import dayjs from "dayjs";
 
 interface IItemNotification {
   noti: INotification;
@@ -19,7 +20,6 @@ interface IItemNotification {
 const ItemNotification: React.FC<IItemNotification> = ({ noti }) => {
   const notificationContext = useContext(NotificationContext);
   const setCount = notificationContext?.setCount;
-  // const count = notificationContext?.count;
   const notification = noti.notification;
   const notificationStatus = noti.notificationStatus;
   const update = async () => {
@@ -44,7 +44,7 @@ const ItemNotification: React.FC<IItemNotification> = ({ noti }) => {
         <h3 style={{ margin: "0" }}>{notification.title}</h3>
         <div>{notification.description}</div>
         <div style={{ fontSize: "0.7rem", color: `${colorHeader}` }}>
-          11/11/2001
+          {`${dayjs(notification.createdAt).format('DD-MM-YYYY')}`}
         </div>
       </div>
       {!notificationStatus.seen && (
@@ -95,7 +95,7 @@ export default function HeaderLayout() {
   const count = notificationContext?.count;
   const setNotifilcations = notificationContext?.setNotifilcations;
   const notificationApi = new NotificationApi();
-  const [page, setPage] = useState<number>(1);
+  // const [page, setPage] = useState<number>(1);
   const name = authContext?.authInformation?.user?.fullName || "user";
   const isAuthenticated = authContext?.authInformation.isAuthenticated;
   const navigate = useNavigate();
@@ -131,23 +131,17 @@ export default function HeaderLayout() {
       const dto = type
         ? {
             type: type,
-            page: page,
+            // page: page,
             limit: 10,
           }
         : {
-            page: page,
+            // page: page,
             limit: 10,
           };
       const res = await notificationApi.getNotification(dto);
       if (res && setNotifilcations) {
-        if (page === 1 && type === typeNotification) {
-          setNotifilcations([...res.data.notifications]);
-        } else {
-          setNotifilcations((notifications: any) => [
-            ...notifications,
-            ...res.data.notifications,
-          ]);
-        }
+        console.log(res.data)
+        setNotifilcations([...res.data.notifications]);
       }
     } catch (error) {}
   };
@@ -159,36 +153,36 @@ export default function HeaderLayout() {
     }
   };
 
-  const throttle = useMemo(() => {
-    let lastCall = 0;
-    return function () {
-      const now = new Date().getTime();
-      if (now - lastCall < 500) {
-        return;
-      }
-      lastCall = now;
-      getNotificationByType(typeNotification);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // const throttle = useMemo(() => {
+  //   let lastCall = 0;
+  //   return function () {
+  //     const now = new Date().getTime();
+  //     if (now - lastCall < 500) {
+  //       return;
+  //     }
+  //     lastCall = now;
+  //     getNotificationByType(typeNotification);
+  //   };
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
-  const handleScroll = () => {
-    const node = document.getElementById("Dropdown_before");
-    let scrollTop = 0;
-    node?.parentElement?.addEventListener("scroll", (event: any) => {
-      if (
-        event.target.scrollTop > scrollTop &&
-        event.target.offsetHeight + event.target.scrollTop >
-          event.target.scrollHeight
-      ) {
-        throttle();
-        setPage(page + 1);
-      }
-      scrollTop = event.target.scrollTop;
-    });
-  };
+  // const handleScroll = () => {
+  //   const node = document.getElementById("Dropdown_before");
+  //   let scrollTop = 0;
+  //   node?.parentElement?.addEventListener("scroll", (event: any) => {
+  //     if (
+  //       event.target.scrollTop > scrollTop &&
+  //       event.target.offsetHeight + event.target.scrollTop >
+  //         event.target.scrollHeight
+  //     ) {
+  //       throttle();
+  //       setPage(page + 1);
+  //     }
+  //     scrollTop = event.target.scrollTop;
+  //   });
+  // };
 
-  handleScroll();
+  // handleScroll();
 
   return (
     <Header className="header">
