@@ -30,7 +30,7 @@ model User {
   fullName      String                 @map("full_name")
   dateOfBirth   DateTime?              @map("date_of_birth")
   gender        Gender                 @default(MALE)
-  path          String?
+  path          String?                @db.VarChar(5000)
   gardens       GardensOnUsers[]
   notifications NotificationsOnUsers[]
   Notification  Notification[]

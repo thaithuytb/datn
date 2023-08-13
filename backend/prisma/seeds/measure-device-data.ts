@@ -25,47 +25,54 @@ export async function createMeasureDeviceData(
     },
   });
 
-  for (let i = 1; i < 200; ++i) {
+  for (let i = 1; i < 2000; ++i) {
     promiseList.push(
       prisma.lightLuxData.create({
         data: {
-          value:
-            i > 70 ? 2000 + Math.random() * 1000 : 4000 + Math.random() * 2000,
+          value: i > 1000 ? 700 + Math.random() * 20 : 300 + Math.random() * 50,
           gardenId: garden.id,
           deviceId: deviceIdLight.id,
-          createdAt: dayjs('2023-07-03')
-            .add(i + Math.random(), 'hour')
+          createdAt: dayjs('2023-08-12')
+            .add(i * 40, 's')
             .toISOString(),
         },
       }),
     );
   }
 
-  for (let i = 1; i < 300; ++i) {
+  for (let i = 1; i < 2000; ++i) {
+    let data = 40;
+    if (i < 10) {
+      data = 40;
+    }
+    data = 30 + i;
+    if (data > 80) {
+      data = 50 + Math.random() * 30;
+    }
     promiseList.push(
       prisma.humidityData.create({
         data: {
-          value: 45 + Math.random() * 45,
+          value: data,
           gardenId: garden.id,
           deviceId: deviceIdHumi.id,
-          createdAt: dayjs('2023-07-03')
-            .add(i + Math.random(), 'hour')
+          createdAt: dayjs('2023-08-12')
+            .add(i * 40, 's')
             .toISOString(),
         },
       }),
     );
   }
 
-  for (let i = 1; i < 400; ++i) {
+  for (let i = 1; i < 2000; ++i) {
     promiseList.push(
       prisma.temperatureHumidityAirData.create({
         data: {
-          temperature: 15 + Math.random() * 30,
-          humidityAir: 45 + Math.random() * 45,
+          temperature: 20 + Math.random() * 5,
+          humidityAir: 50 + Math.random() * 5,
           gardenId: garden.id,
           deviceId: deviceIdTempAir.id,
-          createdAt: dayjs('2023-07-03')
-            .add(i + Math.random(), 'hour')
+          createdAt: dayjs('2023-08-12')
+            .add(i * 40, 's')
             .toISOString(),
         },
       }),

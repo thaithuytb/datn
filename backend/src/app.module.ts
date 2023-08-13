@@ -33,6 +33,7 @@ import { ThresholdModule } from './modules/threshold/threshold.module';
     DeviceModule,
     UploadModule,
     ThresholdModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -112,12 +112,13 @@ export class AuthRepository implements IAuthRepository {
   }
 
   async uploadAvatarUser(userId: number, path: string) {
+    console.log({ path });
     return this.prisma.user.update({
       where: {
         id: userId,
       },
       data: {
-        path,
+        path: path || '',
       },
     });
   }

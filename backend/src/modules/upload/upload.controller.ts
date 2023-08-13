@@ -8,6 +8,7 @@ import {
 import { UploadService } from './upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AwsS3Service } from '../../infrastructures/aws-s3.service';
+import { responseSuccess } from '../../common/responseSuccess';
 
 @Controller('api/v1/upload')
 export class UploadController {
@@ -19,10 +20,10 @@ export class UploadController {
   @UseInterceptors(FileInterceptor('fileImage'))
   async uploadAvatar(@UploadedFile() fileImage, @Req() req: any): Promise<any> {
     const s3FilePath = await this.awsS3Service.uploadImage(fileImage);
+    console.log({ s3FilePath });
     if (s3FilePath.path) {
       await this.uploadService.uploadService(s3FilePath.path, req.user.id);
     }
-    console.log({ s3FilePath });
-    return s3FilePath;
+    return responseSuccess(201, s3FilePath);
   }
 }
