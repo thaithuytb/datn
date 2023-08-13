@@ -110,6 +110,17 @@ export class AuthRepository implements IAuthRepository {
       },
     });
   }
+
+  async uploadAvatarUser(userId: number, path: string) {
+    return this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        path,
+      },
+    });
+  }
 }
 
 export interface IAuthRepository {

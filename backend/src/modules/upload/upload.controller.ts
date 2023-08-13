@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Req,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -16,8 +17,11 @@ export class UploadController {
   ) {}
   @Post('/avatar')
   @UseInterceptors(FileInterceptor('fileImage'))
-  async uploadAvatar(@UploadedFile() fileImage): Promise<any> {
+  async uploadAvatar(@UploadedFile() fileImage, @Req() req: any): Promise<any> {
     const s3FilePath = await this.awsS3Service.uploadImage(fileImage);
+    if (s3FilePath.path) {
+      await this.uploadService.uploadService(s3FilePath.path, req.user.id);
+    }
     console.log({ s3FilePath });
     return s3FilePath;
   }

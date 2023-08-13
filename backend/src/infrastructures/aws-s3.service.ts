@@ -16,8 +16,8 @@ export class AwsS3Service {
     this.client = new S3Client({
       region: 'ap-northeast-1',
       credentials: {
-        accessKeyId: 'AKIASMXT6WUPX2EAV4PP',
-        secretAccessKey: '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',
+        accessKeyId: process.env.ACCESS_KEY_ID,
+        secretAccessKey: process.env.SECRET_ACCESS_KEY,
       },
     });
   }
@@ -68,7 +68,7 @@ export class AwsS3Service {
       Key: fileName,
     });
     const signedUrl = await getSignedUrl(this.client, command, {
-      expiresIn: 60 * 60,
+      expiresIn: 60 * 60 * 24 * 3,
     });
     return {
       path: signedUrl,

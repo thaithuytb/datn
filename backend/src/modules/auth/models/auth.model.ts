@@ -65,6 +65,7 @@ export class UserResponseDetail {
       fullName: dto.fullName,
       gender: dto.gender,
       role: dto.role,
+      path: dto.path,
     };
   }
 }
@@ -86,4 +87,5 @@ interface IUserResponseDetail {
   fullName: string;
   gender?: string;
   role: Role;
+  path?: string;
 }
